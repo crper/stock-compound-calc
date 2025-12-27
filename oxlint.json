@@ -1,0 +1,53 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "plugins": ["unicorn", "typescript", "oxc", "react", "jsx-a11y", "promise", "react-hooks"],
+  "settings": {
+    "react": {
+      "version": "19.2.3",
+      "linkComponents": [{ "name": "Link", "linkAttribute": "to" }]
+    },
+    "jsx-a11y": {
+      "components": {
+        "Link": "a",
+        "Button": "button"
+      }
+    }
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "style": "warn",
+    "restriction": "off",
+    "perf": "off",
+    "nursery": "allow"
+  },
+  "rules": {
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react/jsx-key": "error",
+    "react/jsx-no-duplicate-props": "warn",
+    "react/no-array-index-key": "warn",
+    "react/no-unescaped-entities": "warn",
+    "react/no-deprecated": "warn",
+    "jsx-a11y/alt-text": "warn",
+    "jsx-a11y/aria-role": "warn",
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-unnecessary-type-assertion": "warn",
+    "typescript/no-floating-promises": "error",
+    "no-console": "error",
+    "no-debugger": "error",
+    "no-unused-vars": "error",
+    "no-var": "error",
+    "prefer-const": "error"
+  },
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "bun": true
+  },
+  "ignore": ["dist/**", "node_modules/**", "*.config.js", "*.config.ts", "build.ts", ".iflow/**"]
+}

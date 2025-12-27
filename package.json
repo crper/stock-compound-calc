@@ -1,0 +1,38 @@
+{
+  "name": "bun-react-template",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot src/server/index.ts",
+    "start": "NODE_ENV=production bun src/server/index.ts",
+    "build": "bun run lint && bun run build.ts",
+    "lint": "oxlint --type-aware src",
+    "lint:fix": "oxlint --type-aware --fix src",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check ."
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@tanstack/react-query": "^5.90.17",
+    "antd": "^6.2.0",
+    "bun-plugin-tailwind": "^0.1.2",
+    "dayjs": "^1.11.19",
+    "decimal.js": "^10.6.0",
+    "es-toolkit": "^1.43.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "recharts": "^3.6.0",
+    "tailwindcss": "^4.1.18",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.91.2",
+    "@types/bun": "latest",
+    "@types/react": "^19.2.8",
+    "@types/react-dom": "^19.2.3",
+    "oxfmt": "^0.24.0",
+    "oxlint": "^1.39.0",
+    "oxlint-tsgolint": "^0.11.0"
+  }
+}
