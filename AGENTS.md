@@ -29,6 +29,7 @@ bun test path/to/test.ts # 运行单个测试文件
 ## 📐 代码风格与规范
 
 ### 导入规范
+
 - 使用 `@/` 别名引用内部路径（tsconfig paths 配置）
 - 导入分组顺序: `外部库` → `内部模块` → `类型导入`
 - 每组之间空一行，同组按字母排序，避免循环依赖
@@ -44,6 +45,7 @@ import type { CalculationParams } from "@/shared/types";
 ```
 
 ### 命名约定
+
 - **组件**: PascalCase (`CalculationForm`, `ResultCard`)
 - **函数/变量**: camelCase (`calculateReturns`, `isLoading`)
 - **常量**: UPPER_SNAKE_CASE (`MAX_BOARD_COUNT`, `DEFAULT_CONFIG`)
@@ -52,6 +54,7 @@ import type { CalculationParams } from "@/shared/types";
 - **布尔变量**: `is/has/can` 前缀 (`isValid`, `hasError`, `canSubmit`)
 
 ### TypeScript 规范
+
 - **严格模式**: 已启用，禁止 `any` 类型，必要时使用 `unknown`
 - **类型定义**: 优先从 Zod schemas 推断 `type T = z.infer<typeof Schema>`
 - **避免类型断言**: 优先使用类型守卫和类型窄化
@@ -72,6 +75,7 @@ function isAppError(error: unknown): error is AppError {
 ```
 
 ### React 组件规范
+
 - **仅函数组件**: 禁止类组件
 - **命名导出**: 禁止默认导出，使用 `export const Component = ...`
 - **Props 类型**: 使用 TypeScript interface，明确标记必需/可选
@@ -87,12 +91,14 @@ ResultCard.displayName = 'ResultCard';
 ```
 
 ### Hooks 规范
+
 - **自定义 Hook**: 以 `use` 开头，使用 PascalCase (`useStockCalculator`)
 - **状态管理**: 服务端状态用 React Query，本地状态用 useState/useReducer
 - **副作用**: useEffect 依赖数组必须完整，或通过 eslint-disable 注释说明
 - **性能**: 大计算使用 useMemo，稳定回调使用 useCallback
 
 ### 错误处理
+
 - **统一错误类型**: 使用 `@/shared/utils/errorHandler` 的 `AppError` 和 `ErrorFactory`
 - **未知错误包装**: 所有 catch 块必须用 `ErrorHandler.handleUnknown(error)` 包装
 - **Zod 验证失败**: 重新抛出为 AppError (ErrorType.VALIDATION)
@@ -111,6 +117,7 @@ throw ErrorFactory.validation("连板数量必须为整数", "boardCount", value
 ```
 
 ### 高精度计算
+
 - **必须使用 Decimal.js**: 所有股票价格/收益率计算
 - **全局配置**: 使用 `src/shared/constants` 中的 `DECIMAL_CONFIG`
 - **类型转换**: Decimal → Number 必须通过 `.toString()` 中转
