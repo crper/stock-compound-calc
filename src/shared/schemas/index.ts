@@ -26,12 +26,20 @@ export const DailyDetailSchema = z.object({
 
 export type DailyDetail = z.infer<typeof DailyDetailSchema>;
 
+export const KeyMetricsSchema = z.object({
+  doubleDays: z.number().nullable(),
+  tenXDays: z.number().nullable(),
+  breakEvenReturn: z.number().nullable(),
+  annualizedReturn: z.number().nullable(),
+});
+
 export const CalculationResultSchema = z.object({
   finalPrice: z.number(),
   totalReturn: z.number(),
   totalGain: z.number(),
   details: z.array(z.string()),
   dailyDetails: z.array(DailyDetailSchema),
+  keyMetrics: KeyMetricsSchema.optional(),
 });
 
 export type CalculationResult = z.infer<typeof CalculationResultSchema>;
@@ -53,3 +61,5 @@ export const BatchDeleteSchema = z.object({
 });
 
 export type BatchDeleteRequest = z.infer<typeof BatchDeleteSchema>;
+
+export type KeyMetrics = z.infer<typeof KeyMetricsSchema>;

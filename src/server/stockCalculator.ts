@@ -4,6 +4,13 @@ import { validateCalculationParams as validateParams } from "@/shared/utils/vali
 import { ErrorHandler, ErrorFactory } from "@/shared/utils/errorHandler";
 import { DECIMAL_CONFIG } from "@/shared/constants";
 
+export interface KeyMetrics {
+  doubleDays: number | null;
+  tenXDays: number | null;
+  breakEvenReturn: number | null;
+  annualizedReturn: number | null;
+}
+
 // 配置Decimal全局精度
 Decimal.set({
   precision: DECIMAL_CONFIG.PRECISION,
@@ -17,7 +24,6 @@ Decimal.set({
  */
 export const calculateStockReturns = (params: CalculationParams): CalculationResult => {
   try {
-    // 使用统一验证
     validateParams(params);
   } catch (error) {
     throw ErrorHandler.handleUnknown(error);
@@ -25,7 +31,6 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
 
   const { initialPrice, boardCount, dailyReturn } = params;
 
-  // 使用Decimal进行高精度计算
   let currentPriceDecimal = new Decimal(initialPrice);
   const initialPriceDecimal = new Decimal(initialPrice);
   const dailyReturnDecimal = new Decimal(dailyReturn).div(100);
@@ -36,20 +41,17 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
   for (let i = 1; i <= boardCount; i++) {
     const previousPriceDecimal = currentPriceDecimal;
 
-    // 高精度计算：currentPrice = currentPrice * (1 + dailyReturn / 100)
     const multiplier = new Decimal(1).plus(dailyReturnDecimal);
     currentPriceDecimal = currentPriceDecimal.mul(multiplier);
 
     const dailyGainDecimal = currentPriceDecimal.minus(previousPriceDecimal);
     const dailyReturnPercentDecimal = dailyGainDecimal.div(previousPriceDecimal).mul(100);
 
-    // 转换为Number用于显示（保留足够精度）
     const previousPrice = Number(previousPriceDecimal.toString());
     const currentPrice = Number(currentPriceDecimal.toString());
     const dailyGain = Number(dailyGainDecimal.toString());
     const dailyReturnPercent = Number(dailyReturnPercentDecimal.toString());
 
-    // 检查计算结果是否有效
     if (!isFinite(currentPrice) || currentPrice <= 0) {
       throw ErrorFactory.calculation(`第${i}天计算结果异常，请检查输入参数`, {
         day: i,
@@ -74,15 +76,19 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
   const totalGainDecimal = currentPriceDecimal.minus(initialPriceDecimal);
   const totalReturnDecimal = totalGainDecimal.div(initialPriceDecimal).mul(100);
 
-  // 转换为Number用于返回
   const finalPrice = Number(currentPriceDecimal.toString());
   const totalGain = Number(totalGainDecimal.toString());
   const totalReturn = Number(totalReturnDecimal.toString());
 
-  // 最终验证
   if (!isFinite(finalPrice) || finalPrice <= 0) {
     throw ErrorFactory.calculation("计算结果异常，请检查输入参数", { finalPrice, params });
   }
+
+  const keyMetrics = calculateKeyMetrics({
+    initialPrice,
+    boardCount: 1,
+    dailyReturn,
+  });
 
   return {
     finalPrice,
@@ -90,6 +96,7 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
     totalGain,
     details,
     dailyDetails,
+    keyMetrics,
   };
 };
 
@@ -112,5 +119,61 @@ export const calculateBidirectionalReturns = (params: CalculationParams) => {
   return {
     up: upResult,
     down: downResult,
+  };
+};
+
+/**
+ * 计算关键指标
+ */
+export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
+  const { initialPrice, dailyReturn, boardCount } = params;
+
+  const dailyReturnDecimal = new Decimal(dailyReturn).div(100);
+  const multiplier = new Decimal(1).plus(dailyReturnDecimal);
+
+  if (dailyReturn === 0) {
+    return {
+      doubleDays: null,
+      tenXDays: null,
+      breakEvenReturn: 0,
+      annualizedReturn: 0,
+    };
+  }
+
+  let doubleDays: number | null = null;
+  let tenXDays: number | null = null;
+
+  if (dailyReturn > 0) {
+    const initialPriceDecimal = new Decimal(initialPrice);
+
+    const doublePrice = initialPriceDecimal.mul(2);
+    const tenXPrice = initialPriceDecimal.mul(10);
+
+    doubleDays = Math.ceil(
+      Math.log(Number(doublePrice.div(initialPriceDecimal).toString())) /
+        Math.log(Number(multiplier.toString())),
+    );
+
+    tenXDays = Math.ceil(
+      Math.log(Number(tenXPrice.div(initialPriceDecimal).toString())) /
+        Math.log(Number(multiplier.toString())),
+    );
+  }
+
+  const initialPriceDecimal = new Decimal(initialPrice);
+  const currentPriceDecimal = initialPriceDecimal.mul(multiplier.pow(boardCount));
+  const finalPrice = Number(currentPriceDecimal.toString());
+
+  let breakEvenReturn: number | null = null;
+  if (finalPrice !== 0) {
+    const breakEvenDecimal = new Decimal(finalPrice).minus(initialPrice).div(finalPrice).mul(100);
+    breakEvenReturn = Number(breakEvenDecimal.toString());
+  }
+
+  return {
+    doubleDays,
+    tenXDays,
+    breakEvenReturn,
+    annualizedReturn: null,
   };
 };

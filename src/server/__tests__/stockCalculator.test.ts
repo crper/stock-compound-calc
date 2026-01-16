@@ -1,5 +1,9 @@
 import { describe, it, expect } from "bun:test";
-import { calculateBidirectionalReturns, calculateStockReturns } from "../stockCalculator";
+import {
+  calculateBidirectionalReturns,
+  calculateStockReturns,
+  calculateKeyMetrics,
+} from "../stockCalculator";
 import type { CalculationParams } from "@/shared/types";
 
 describe("Stock Calculator", () => {
@@ -160,6 +164,115 @@ describe("Stock Calculator", () => {
 
       expect(result.finalPrice).toBeCloseTo(109999.99, 2);
       expect(result.finalPrice).toBeLessThan(1000000);
+    });
+
+    it("should include keyMetrics in result", () => {
+      const params: CalculationParams = {
+        initialPrice: 10,
+        boardCount: 5,
+        dailyReturn: 10,
+      };
+
+      const result = calculateStockReturns(params);
+
+      expect(result.keyMetrics).toBeDefined();
+      expect(result.keyMetrics?.doubleDays).toBeGreaterThan(0);
+      expect(result.keyMetrics?.tenXDays).toBeGreaterThan(0);
+      expect(result.keyMetrics?.breakEvenReturn).toBeDefined();
+    });
+  });
+
+  describe("calculateKeyMetrics", () => {
+    it("should calculate double days correctly for 10% daily return", () => {
+      const params: CalculationParams = {
+        initialPrice: 10,
+        boardCount: 1,
+        dailyReturn: 10,
+      };
+
+      const metrics = calculateKeyMetrics(params);
+
+      expect(metrics.doubleDays).toBeCloseTo(8, 0);
+      expect(metrics.tenXDays).toBeCloseTo(25, 0);
+    });
+
+    it("should calculate break even return correctly", () => {
+      const params: CalculationParams = {
+        initialPrice: 10,
+        boardCount: 1,
+        dailyReturn: 10,
+      };
+
+      const metrics = calculateKeyMetrics(params);
+
+      expect(metrics.breakEvenReturn).toBeCloseTo(9.09, 2);
+    });
+
+    it("should handle zero daily return", () => {
+      const params: CalculationParams = {
+        initialPrice: 10,
+        boardCount: 1,
+        dailyReturn: 0,
+      };
+
+      const metrics = calculateKeyMetrics(params);
+
+      expect(metrics.doubleDays).toBeNull();
+      expect(metrics.tenXDays).toBeNull();
+      expect(metrics.breakEvenReturn).toBe(0);
+      expect(metrics.annualizedReturn).toBe(0);
+    });
+
+    it("should handle negative daily return", () => {
+      const params: CalculationParams = {
+        initialPrice: 10,
+        boardCount: 1,
+        dailyReturn: -10,
+      };
+
+      const metrics = calculateKeyMetrics(params);
+
+      expect(metrics.doubleDays).toBeNull();
+      expect(metrics.tenXDays).toBeNull();
+      expect(metrics.breakEvenReturn).toBeCloseTo(-11.11, 2);
+    });
+
+    it("should calculate double days for 20% daily return", () => {
+      const params: CalculationParams = {
+        initialPrice: 10,
+        boardCount: 1,
+        dailyReturn: 20,
+      };
+
+      const metrics = calculateKeyMetrics(params);
+
+      expect(metrics.doubleDays).toBeCloseTo(4, 0);
+      expect(metrics.tenXDays).toBeCloseTo(13, 0);
+    });
+
+    it("should calculate double days for 30% daily return", () => {
+      const params: CalculationParams = {
+        initialPrice: 10,
+        boardCount: 1,
+        dailyReturn: 30,
+      };
+
+      const metrics = calculateKeyMetrics(params);
+
+      expect(metrics.doubleDays).toBeCloseTo(3, 0);
+      expect(metrics.tenXDays).toBeCloseTo(9, 0);
+    });
+
+    it("should calculate break even return correctly for large initial price", () => {
+      const params: CalculationParams = {
+        initialPrice: 100,
+        boardCount: 1,
+        dailyReturn: 10,
+      };
+
+      const metrics = calculateKeyMetrics(params);
+
+      expect(metrics.breakEvenReturn).toBeCloseTo(9.09, 2);
     });
   });
 });

@@ -2,12 +2,12 @@
  * 计算结果概览卡片组件
  * 显示涨停/跌停的汇总信息
  */
-import { RiseOutlined, FallOutlined } from "@ant-design/icons";
-import { Card, Col, Divider, Row, Tag, Typography } from "antd";
-import React from "react";
+import { RiseOutlined, FallOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { Card, Col, Divider, Row, Tag, Tooltip, Typography } from "antd";
 import type { CalculationResult } from "@/shared/types";
 import { TREND_COLORS } from "@/shared/constants";
 import { formatCurrency, formatPercentage } from "@/shared/utils/formatters";
+import React from "react";
 
 const { Text } = Typography;
 
@@ -28,6 +28,7 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
     const IconComponent = isUp ? RiseOutlined : FallOutlined;
     const title = isUp ? "连续涨停" : "连续跌停";
     const colors = isUp ? TREND_COLORS.up : TREND_COLORS.down;
+    const metrics = result.keyMetrics;
 
     return (
       <Card
@@ -100,6 +101,76 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
             </div>
           </Col>
         </Row>
+
+        {/* 关键指标区域 */}
+        {metrics && (
+          <>
+            <Divider className={`my-5 ${colors.divider}`} />
+            <div className="mt-5">
+              <div className="flex items-center gap-2 mb-4">
+                <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  关键指标
+                </Text>
+                <Tooltip title="关键指标帮助您快速评估投资潜力和风险">
+                  <InfoCircleOutlined className="text-gray-400 text-[13px]" />
+                </Tooltip>
+              </div>
+              <Row gutter={[isMobile ? 12 : 16, isMobile ? 12 : 16]}>
+                {/* 翻倍天数 */}
+                {metrics.doubleDays !== null && (
+                  <Col span={isMobile ? 12 : 8}>
+                    <div className="text-center p-3 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-md border border-green-200 dark:border-green-800">
+                      <Text className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                        翻倍天数
+                      </Text>
+                      <Tooltip
+                        title={`以 ${Math.abs(params?.dailyReturn || 0)}% 涨跌幅，需要 ${metrics.doubleDays} 天翻倍`}
+                      >
+                        <Text className="text-base md:text-lg font-bold text-green-600 dark:text-green-400">
+                          {metrics.doubleDays} 天
+                        </Text>
+                      </Tooltip>
+                    </div>
+                  </Col>
+                )}
+
+                {/* 盈亏平衡回撤 */}
+                {metrics.breakEvenReturn !== null && (
+                  <Col span={isMobile ? 12 : 8}>
+                    <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-md border border-orange-200 dark:border-orange-800">
+                      <Text className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                        盈亏平衡回撤
+                      </Text>
+                      <Tooltip title={`回到初始价需要下跌 ${metrics.breakEvenReturn.toFixed(2)}%`}>
+                        <Text className="text-base md:text-lg font-bold text-orange-600 dark:text-orange-400">
+                          {formatPercentage(Math.abs(metrics.breakEvenReturn), { multiply: false })}
+                        </Text>
+                      </Tooltip>
+                    </div>
+                  </Col>
+                )}
+
+                {/* 10倍天数 */}
+                {metrics.tenXDays !== null && (
+                  <Col span={isMobile ? 12 : 8}>
+                    <div className="text-center p-3 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-md border border-purple-200 dark:border-purple-800">
+                      <Text className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                        10倍天数
+                      </Text>
+                      <Tooltip
+                        title={`以 ${Math.abs(params?.dailyReturn || 0)}% 涨跌幅，需要 ${metrics.tenXDays} 天达到10倍`}
+                      >
+                        <Text className="text-base md:text-lg font-bold text-purple-600 dark:text-purple-400">
+                          {metrics.tenXDays} 天
+                        </Text>
+                      </Tooltip>
+                    </div>
+                  </Col>
+                )}
+              </Row>
+            </div>
+          </>
+        )}
 
         {/* 计算条件提示 */}
         {params && (

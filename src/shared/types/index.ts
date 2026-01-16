@@ -3,6 +3,7 @@ export type {
   CalculationResult,
   CalculationHistory,
   DailyDetail,
+  KeyMetrics,
 } from "@/shared/schemas";
 
 export interface ApiResponse<T = unknown> {
