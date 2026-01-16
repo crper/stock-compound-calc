@@ -1,11 +1,7 @@
-/**
- * 股价计算工具模块
- * 提供股票连板收益计算功能
- */
 import Decimal from "decimal.js";
 import type { DailyDetail, CalculationResult, CalculationParams } from "@/shared/types";
 import { validateCalculationParams as validateParams } from "@/shared/utils/validator";
-import { ErrorFactory, ErrorHandler } from "@/shared/utils/errorHandler";
+import { ErrorHandler, ErrorFactory } from "@/shared/utils/errorHandler";
 import { DECIMAL_CONFIG } from "@/shared/constants";
 
 // 配置Decimal全局精度
@@ -20,27 +16,14 @@ Decimal.set({
  * 计算股价收益
  */
 export const calculateStockReturns = (params: CalculationParams): CalculationResult => {
-  const { initialPrice, boardCount, dailyReturn } = params;
-
-  // 边界条件检查
-  if (initialPrice <= 0) {
-    throw ErrorFactory.validation("初始价格必须大于 0");
-  }
-
-  if (boardCount > 1000) {
-    throw ErrorFactory.validation("连板数量不能超过 1000 天");
-  }
-
-  if (boardCount < 1) {
-    throw ErrorFactory.validation("连板数量至少为 1 天");
-  }
-
   try {
     // 使用统一验证
     validateParams(params);
   } catch (error) {
     throw ErrorHandler.handleUnknown(error);
   }
+
+  const { initialPrice, boardCount, dailyReturn } = params;
 
   // 使用Decimal进行高精度计算
   let currentPriceDecimal = new Decimal(initialPrice);

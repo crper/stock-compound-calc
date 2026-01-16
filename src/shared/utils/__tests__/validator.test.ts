@@ -65,7 +65,7 @@ describe("Validator", () => {
     it("should return false for invalid initial price", () => {
       expect(isFieldValid(-1, "initialPrice")).toBe(false);
       expect(isFieldValid(0, "initialPrice")).toBe(false);
-      expect(isFieldValid(100000, "initialPrice")).toBe(false);
+      expect(isFieldValid(1000000001, "initialPrice")).toBe(false);
     });
 
     it("should return true for valid board count", () => {

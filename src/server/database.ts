@@ -1,6 +1,24 @@
 import { Database } from "bun:sqlite";
 import type { CalculationParams, CalculationHistory, CalculationResult } from "@/shared/types";
 
+interface DatabaseRow {
+  id: string;
+  timestamp: number;
+  initial_price: number;
+  board_count: number;
+  daily_return: number;
+  final_price_up: number;
+  total_return_up: number;
+  total_gain_up: number;
+  details_up: string;
+  daily_details_up: string;
+  final_price_down: number;
+  total_return_down: number;
+  total_gain_down: number;
+  details_down: string;
+  daily_details_down: string;
+}
+
 let db: Database | null = null;
 
 export const getDatabase = (): Database => {
@@ -90,7 +108,7 @@ export const getCalculations = (limit: number = 50): CalculationHistory[] => {
     LIMIT ?
   `);
 
-  const rows = query.all(limit) as any[];
+  const rows = query.all(limit) as DatabaseRow[];
 
   return rows.map((row) => ({
     id: row.id,

@@ -47,3 +47,9 @@ export const CalculationHistorySchema = z.object({
 });
 
 export type CalculationHistory = z.infer<typeof CalculationHistorySchema>;
+
+export const BatchDeleteSchema = z.object({
+  ids: z.array(z.string()).min(1, "至少选择一条记录"),
+});
+
+export type BatchDeleteRequest = z.infer<typeof BatchDeleteSchema>;

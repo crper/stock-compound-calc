@@ -2,26 +2,35 @@ import { serve } from "bun";
 import index from "../index.html";
 import { getDatabase } from "./database";
 import { calculationsRoutes } from "./calculations";
+import { getEnv } from "@/shared/config";
+import { logger } from "@/shared/utils/logger";
 
 try {
   getDatabase();
-  console.log("✅ Database initialized successfully");
+  logger.info("Database initialized successfully");
 } catch (error) {
-  console.error("❌ Failed to initialize database:", error);
+  const err = error instanceof Error ? error : new Error(String(error));
+  logger.error("Failed to initialize database", err);
   throw error;
 }
 
+const env = getEnv();
+
 const server = serve({
-  port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
+  port: env.PORT,
   routes: {
     "/*": index,
     "/api/calculations": calculationsRoutes,
   },
 
-  development: process.env.NODE_ENV !== "production" && {
+  development: env.NODE_ENV !== "production" && {
     hmr: true,
     console: true,
   },
 });
 
-console.log(`🚀 Server running at ${server.url}`);
+logger.info("Server started", {
+  url: server.url,
+  environment: env.NODE_ENV,
+  port: env.PORT,
+});
