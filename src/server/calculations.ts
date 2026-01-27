@@ -55,11 +55,11 @@ export const calculationsRoutes = {
             offset: calculatedOffset
           }
         });
-      } else {
-        // 如果没有提供分页参数，则返回所有数据（保持向后兼容）
-        const { data: calculations } = getCalculations({ limit: 1000 }); // 限制最大数量
-        return apiResponse.success(calculations);
-      }
+       } else {
+         // 如果没有提供分页参数，则返回所有数据（保持向后兼容）
+         const result = getCalculations({ limit: 1000 }); // 限制最大数量
+         return apiResponse.success(result.data);
+       }
     } catch (error) {
       const appError = ErrorHandler.handleUnknown(error);
       ErrorHandler.log(appError);

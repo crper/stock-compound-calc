@@ -167,6 +167,22 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
                     </div>
                   </Col>
                 )}
+
+                {/* 年化收益率 */}
+                {metrics.annualizedReturn !== null && (
+                  <Col span={isMobile ? 12 : 8}>
+                    <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-md border border-blue-200 dark:border-blue-800">
+                      <Text className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                        年化收益率
+                      </Text>
+                      <Tooltip title={`按 ${params?.boardCount} 天计算的年化收益率`}>
+                        <Text className="text-base md:text-lg font-bold text-blue-600 dark:text-blue-400">
+                          {formatPercentage(Math.abs(metrics.annualizedReturn), { multiply: false })}
+                        </Text>
+                      </Tooltip>
+                    </div>
+                  </Col>
+                )}
               </Row>
             </div>
           </>

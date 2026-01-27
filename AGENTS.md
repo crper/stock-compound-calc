@@ -81,6 +81,7 @@ function isAppError(error: unknown): error is AppError {
 - **Props 类型**: 使用 TypeScript interface，明确标记必需/可选
 - **性能优化**: 使用 `React.memo` 包裹导出的 UI 组件
 - **解构 Props**: 在函数签名处直接解构，明确依赖
+- **关键指标计算**: 包括年化收益率(CAGR)等重要投资指标
 
 ```typescript
 export const ResultCard: React.FC<ResultCardProps> = React.memo(({ results, isMobile }) => {

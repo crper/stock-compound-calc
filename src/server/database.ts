@@ -17,6 +17,8 @@ interface DatabaseRow {
   total_gain_down: number;
   details_down: string;
   daily_details_down: string;
+  key_metrics_up: string;
+  key_metrics_down: string;
 }
 
 let db: Database | null = null;
@@ -47,6 +49,8 @@ const initializeDatabase = (database: Database): void => {
       total_gain_down REAL NOT NULL,
       details_down TEXT NOT NULL,
       daily_details_down TEXT NOT NULL,
+      key_metrics_up TEXT,
+      key_metrics_down TEXT,
       UNIQUE(initial_price, board_count, daily_return)
     )
   `);
@@ -78,8 +82,9 @@ export const saveCalculation = (
     INSERT OR REPLACE INTO calculations (
       id, timestamp, initial_price, board_count, daily_return,
       final_price_up, total_return_up, total_gain_up, details_up, daily_details_up,
-      final_price_down, total_return_down, total_gain_down, details_down, daily_details_down
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      final_price_down, total_return_down, total_gain_down, details_down, daily_details_down,
+      key_metrics_up, key_metrics_down
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   query.run(
@@ -98,6 +103,8 @@ export const saveCalculation = (
     results.down.totalGain,
     JSON.stringify(results.down.details),
     JSON.stringify(results.down.dailyDetails),
+    JSON.stringify(results.up.keyMetrics),
+    JSON.stringify(results.down.keyMetrics),
   );
 
   return history;
@@ -140,6 +147,7 @@ export const getCalculations = (options: PaginationOptions = {}): { data: Calcul
         totalGain: row.total_gain_up,
         details: JSON.parse(row.details_up),
         dailyDetails: JSON.parse(row.daily_details_up),
+        keyMetrics: JSON.parse(row.key_metrics_up),
       },
       down: {
         finalPrice: row.final_price_down,
@@ -147,6 +155,7 @@ export const getCalculations = (options: PaginationOptions = {}): { data: Calcul
         totalGain: row.total_gain_down,
         details: JSON.parse(row.details_down),
         dailyDetails: JSON.parse(row.daily_details_down),
+        keyMetrics: JSON.parse(row.key_metrics_down),
       },
     },
   }));

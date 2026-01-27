@@ -188,10 +188,39 @@ export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
     breakEvenReturn = Number(breakEvenDecimal.toString());
   }
 
+  // 计算年化收益率
+  let annualizedReturn: number | null = null;
+  if (boardCount > 0) {
+    // 将天数转换为年份（按365天/年计算）
+    const years = boardCount / 365;
+    if (years > 0) {
+      // CAGR = (最终价值 ÷ 初始价值)^(1 ÷ 年数) - 1
+      // 使用对数计算以避免大数计算问题
+      const growthFactor = new Decimal(finalPrice).div(initialPrice);
+      
+      // 对于非常大的增长因子，我们需要特别处理
+      if (growthFactor.gt(1e6)) { // 如果增长倍数超过100万倍，视为极端情况
+        annualizedReturn = null;
+      } else {
+        // 使用对数形式计算以避免溢出
+        const logGrowthFactor = parseFloat(growthFactor.toString());
+        const cagrLog = Math.log(logGrowthFactor) / years;
+        const annualizedReturnDecimal = new Decimal(Math.exp(cagrLog)).minus(1).mul(100);
+        annualizedReturn = Number(annualizedReturnDecimal.toString());
+        
+        // 检查是否为有限数
+        if (!isFinite(annualizedReturn) || Math.abs(annualizedReturn) > 1000) {
+          // 如果年化收益率超过1000%（即10倍），则置为null，避免显示不切实际的数字
+          annualizedReturn = null;
+        }
+      }
+    }
+  }
+
   return {
     doubleDays,
     tenXDays,
     breakEvenReturn,
-    annualizedReturn: null,
+    annualizedReturn,
   };
 };
