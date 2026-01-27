@@ -8,18 +8,58 @@ import { CalculationParamsSchema, BatchDeleteSchema } from "@/shared/schemas";
 import { ErrorHandler } from "@/shared/utils/errorHandler";
 import { apiResponse } from "./utils/apiResponse";
 
-// 最大返回历史记录数量
-const MAX_HISTORY_COUNT = 50;
+
 
 export const calculationsRoutes = {
   /**
    * GET /api/calculations
    * 获取所有计算历史记录
    */
-  async GET() {
+  async GET(req: Request) {
     try {
-      const calculations = getCalculations(MAX_HISTORY_COUNT);
-      return apiResponse.success(calculations);
+      // 解析查询参数
+      const url = new URL(req.url);
+      const hasPaginationParams = url.searchParams.has('limit') || url.searchParams.has('page') || url.searchParams.has('offset');
+      
+      if (hasPaginationParams) {
+        // 如果提供了分页参数，则执行分页查询
+        const limit = parseInt(url.searchParams.get('limit') || '50');
+        const offset = parseInt(url.searchParams.get('offset') || '0');
+        const page = parseInt(url.searchParams.get('page') || '1');
+
+        // 使用页面参数计算偏移量
+        const calculatedOffset = offset > 0 ? offset : (page - 1) * limit;
+        
+        // 设置限制范围
+        const normalizedLimit = Math.max(1, Math.min(limit, 100)); // 限制每页最多100条
+        
+        const { data: calculations, totalCount } = getCalculations({ 
+          limit: normalizedLimit, 
+          offset: calculatedOffset 
+        });
+        
+        // 计算分页信息
+        const totalPages = Math.ceil(totalCount / normalizedLimit);
+        const hasNextPage = calculatedOffset + normalizedLimit < totalCount;
+        const hasPrevPage = calculatedOffset > 0;
+
+        return apiResponse.success({
+          data: calculations,
+          pagination: {
+            currentPage: page,
+            pageSize: normalizedLimit,
+            totalCount,
+            totalPages,
+            hasNext: hasNextPage,
+            hasPrev: hasPrevPage,
+            offset: calculatedOffset
+          }
+        });
+      } else {
+        // 如果没有提供分页参数，则返回所有数据（保持向后兼容）
+        const { data: calculations } = getCalculations({ limit: 1000 }); // 限制最大数量
+        return apiResponse.success(calculations);
+      }
     } catch (error) {
       const appError = ErrorHandler.handleUnknown(error);
       ErrorHandler.log(appError);

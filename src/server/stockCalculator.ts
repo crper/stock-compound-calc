@@ -31,6 +31,27 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
 
   const { initialPrice, boardCount, dailyReturn } = params;
 
+  // 对极端值进行早期检测，避免过度计算
+  if (boardCount > 3650) { // 限制最大计算天数为10年
+    throw ErrorFactory.validation("连板天数不能超过3650天(约10年)，请减少天数以提高性能", "boardCount", boardCount);
+  }
+
+  if (Math.abs(dailyReturn) > 100) {  // 每日涨跌幅不能超过100%
+    throw ErrorFactory.validation("每日涨跌幅不能超过100%", "dailyReturn", dailyReturn);
+  }
+
+  // 预测最终价格是否会超出合理范围
+  if (boardCount > 0 && Math.abs(dailyReturn) > 10) {
+    const dailyMultiplier = new Decimal(dailyReturn).div(100).plus(1);
+    const finalMultiplier = dailyMultiplier.pow(boardCount);
+    const estimatedFinalPrice = new Decimal(initialPrice).mul(finalMultiplier);
+
+    // 如果预计价格过大（超过1万亿），拒绝计算
+    if (estimatedFinalPrice.gt(1e12)) {
+      throw ErrorFactory.validation(`计算会导致价格过高(${estimatedFinalPrice.toString()}元)，请调整参数`, "dailyReturn", dailyReturn);
+    }
+  }
+
   let currentPriceDecimal = new Decimal(initialPrice);
   const initialPriceDecimal = new Decimal(initialPrice);
   const dailyReturnDecimal = new Decimal(dailyReturn).div(100);
@@ -86,7 +107,7 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
 
   const keyMetrics = calculateKeyMetrics({
     initialPrice,
-    boardCount: 1,
+    boardCount,  // 使用实际的 boardCount 而不是固定的 1
     dailyReturn,
   });
 
@@ -128,8 +149,10 @@ export const calculateBidirectionalReturns = (params: CalculationParams) => {
 export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
   const { initialPrice, dailyReturn, boardCount } = params;
 
+  // 只创建一次必要的Decimal对象
   const dailyReturnDecimal = new Decimal(dailyReturn).div(100);
   const multiplier = new Decimal(1).plus(dailyReturnDecimal);
+  const initialPriceDecimal = new Decimal(initialPrice);
 
   if (dailyReturn === 0) {
     return {
@@ -144,23 +167,18 @@ export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
   let tenXDays: number | null = null;
 
   if (dailyReturn > 0) {
-    const initialPriceDecimal = new Decimal(initialPrice);
-
     const doublePrice = initialPriceDecimal.mul(2);
     const tenXPrice = initialPriceDecimal.mul(10);
 
-    doubleDays = Math.ceil(
-      Math.log(Number(doublePrice.div(initialPriceDecimal).toString())) /
-        Math.log(Number(multiplier.toString())),
-    );
+    // 避免重复创建Decimal对象，提前转换为数字
+    const logDoubleRatio = Number(doublePrice.div(initialPriceDecimal).toString());
+    const logTenRatio = Number(tenXPrice.div(initialPriceDecimal).toString());
+    const multiplierValue = Number(multiplier.toString());
 
-    tenXDays = Math.ceil(
-      Math.log(Number(tenXPrice.div(initialPriceDecimal).toString())) /
-        Math.log(Number(multiplier.toString())),
-    );
+    doubleDays = Math.ceil(Math.log(logDoubleRatio) / Math.log(multiplierValue));
+    tenXDays = Math.ceil(Math.log(logTenRatio) / Math.log(multiplierValue));
   }
 
-  const initialPriceDecimal = new Decimal(initialPrice);
   const currentPriceDecimal = initialPriceDecimal.mul(multiplier.pow(boardCount));
   const finalPrice = Number(currentPriceDecimal.toString());
 

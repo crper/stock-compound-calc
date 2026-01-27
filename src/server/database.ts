@@ -51,7 +51,11 @@ const initializeDatabase = (database: Database): void => {
     )
   `);
 
+  // 添加更多索引以提高查询性能
   database.run("CREATE INDEX IF NOT EXISTS idx_timestamp ON calculations(timestamp)");
+  database.run("CREATE INDEX IF NOT EXISTS idx_initial_price ON calculations(initial_price)");
+  database.run("CREATE INDEX IF NOT EXISTS idx_daily_return ON calculations(daily_return)");
+  database.run("CREATE INDEX IF NOT EXISTS idx_board_count ON calculations(board_count)");
 };
 
 export const saveCalculation = (
@@ -99,18 +103,29 @@ export const saveCalculation = (
   return history;
 };
 
-export const getCalculations = (limit: number = 50): CalculationHistory[] => {
-  const database = getDatabase();
+export interface PaginationOptions {
+  limit?: number;
+  offset?: number;
+}
 
+export const getCalculations = (options: PaginationOptions = {}): { data: CalculationHistory[], totalCount: number } => {
+  const database = getDatabase();
+  const { limit = 50, offset = 0 } = options;
+
+  // 查询总记录数
+  const countQuery = database.prepare("SELECT COUNT(*) as count FROM calculations");
+  const totalCount = (countQuery.get() as { count: number }).count;
+
+  // 查询分页数据
   const query = database.prepare(`
     SELECT * FROM calculations 
     ORDER BY timestamp DESC 
-    LIMIT ?
+    LIMIT ? OFFSET ?
   `);
 
-  const rows = query.all(limit) as DatabaseRow[];
+  const rows = query.all(limit, offset) as DatabaseRow[];
 
-  return rows.map((row) => ({
+  const data = rows.map((row) => ({
     id: row.id,
     timestamp: new Date(row.timestamp),
     params: {
@@ -135,6 +150,8 @@ export const getCalculations = (limit: number = 50): CalculationHistory[] => {
       },
     },
   }));
+
+  return { data, totalCount };
 };
 
 export const clearCalculations = (): void => {
