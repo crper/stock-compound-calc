@@ -171,9 +171,9 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 prefix="¥"
                 suffix="元"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                parser={(value) => {
+                parser={(value: string | undefined): number => {
                   const parsed = value ? Number(value.replace(/¥\s?|元|(,*)/g, "")) : 0.01;
-                  return parsed as 0.01 | 1000000000;
+                  return Math.max(0.01, Math.min(1000000000, parsed));
                 }}
                 onChange={(value) => handleFieldChange("initialPrice", value)}
               />

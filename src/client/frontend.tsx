@@ -6,11 +6,21 @@
  */
 
 import { createRoot } from "react-dom/client";
-import App from "./App";
+import { ErrorBoundary } from "@/client/components";
+import { App } from "./App";
 
 function start() {
-  const root = createRoot(document.getElementById("root")!);
-  root.render(<App />);
+  const rootElement = document.getElementById("root");
+  if (!rootElement) {
+    console.error("Root element not found");
+    return;
+  }
+  const root = createRoot(rootElement);
+  root.render(
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>,
+  );
 }
 
 if (document.readyState === "loading") {

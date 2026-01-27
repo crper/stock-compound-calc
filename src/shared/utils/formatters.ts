@@ -9,6 +9,23 @@ import "dayjs/locale/zh-cn";
 dayjs.locale("zh-cn");
 
 /**
+ * 安全解析数字字符串
+ */
+const parseNumber = (value: string | number): number | null => {
+  if (typeof value === "number") return value;
+  if (typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  const regex = /^-?\d+(\.\d+)?$/;
+  if (!regex.test(trimmed)) return null;
+
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+/**
  * 数字格式化选项
  */
 interface NumberFormatOptions {
@@ -65,9 +82,9 @@ export const formatNumber = (
     return "--";
   }
 
-  const numValue = typeof value === "string" ? parseFloat(value) : value;
+  const numValue = parseNumber(value);
 
-  if (isNaN(numValue)) {
+  if (numValue === null) {
     return "--";
   }
 
@@ -117,9 +134,9 @@ export const formatCurrency = (
     return "--";
   }
 
-  const numValue = typeof value === "string" ? parseFloat(value) : value;
+  const numValue = parseNumber(value);
 
-  if (isNaN(numValue)) {
+  if (numValue === null) {
     return "--";
   }
 
@@ -175,9 +192,9 @@ export const formatPercentage = (
     return "--";
   }
 
-  const numValue = typeof value === "string" ? parseFloat(value) : value;
+  const numValue = parseNumber(value);
 
-  if (isNaN(numValue)) {
+  if (numValue === null) {
     return "--";
   }
 

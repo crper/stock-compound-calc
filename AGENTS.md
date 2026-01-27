@@ -1,7 +1,7 @@
 # AGENTS.md - AI 编码指南
 
 **项目:** 股票计算器 (Bun + React 19 + TypeScript + SQLite + React Query + Tailwind v4 + Ant Design v6)
-**最后更新:** 2026-01-16
+**最后更新:** 2026-01-28
 
 ## 🛠 核心命令
 
@@ -113,8 +113,6 @@ try {
   ErrorHandler.log(appError);
   throw appError;
 }
-
-throw ErrorFactory.validation("连板数量必须为整数", "boardCount", value);
 ```
 
 ### 高精度计算
@@ -127,8 +125,7 @@ throw ErrorFactory.validation("连板数量必须为整数", "boardCount", value
 import Decimal from "decimal.js";
 Decimal.set(DECIMAL_CONFIG);
 const price = new Decimal(initialPrice);
-const multiplier = new Decimal(dailyReturn).div(100);
-const result = price.mul(multiplier);
+const result = price.mul(new Decimal(dailyReturn).div(100));
 ```
 
 ## 📂 项目结构
@@ -140,6 +137,14 @@ src/
 └── shared/          # 共享逻辑 (constants, schemas, types, utils)
 ```
 
+## 🤖 AI 代理指南 (AI Agent Guidelines)
+
+- **工具选择**: 必须使用 `bun` 而非 `npm`/`yarn`/`pnpm`
+- **自我验证**: 完成任务前，必须运行 `bun run lint` 和相关测试
+- **文件操作**: 修改现有文件前，先读取内容；创建新文件前，检查目录是否存在
+- **配置保护**: 除非明确要求，不要修改 `package.json`, `tsconfig.json` 等配置文件
+- **上下文感知**: 在回答问题或编写代码前，先搜索相关代码 (grep/glob) 以保持一致性
+
 ## ⚠️ 关键约束
 
 - **禁止** 默认导出 (使用命名导出 `export const Foo = ...`)
@@ -149,7 +154,6 @@ src/
 - **禁止** `any` 类型 (使用 `unknown` + 类型守卫)
 - **必须** 所有 API 输入使用 Zod schema 验证
 - **必须** 每次提交前运行 `bun run lint` + `bun run format`
-- **必须** TDD 开发时用 `bun test -t "功能名称"` 快速验证
 
 ## 🚀 开发流程
 

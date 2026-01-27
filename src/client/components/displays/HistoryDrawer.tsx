@@ -58,9 +58,12 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
 
     const handleClearHistory = async () => {
       setClearing(true);
-      onClearHistory();
-      setClearing(false);
-      setSelectedIds(new Set());
+      try {
+        onClearHistory();
+      } finally {
+        setClearing(false);
+        setSelectedIds(new Set());
+      }
     };
 
     const handleBatchDelete = async () => {
@@ -70,9 +73,13 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
       }
 
       if (onDeleteHistory) {
-        onDeleteHistory(Array.from(selectedIds));
-        setSelectedIds(new Set());
-        message.success(`已删除 ${selectedIds.size} 条记录`);
+        try {
+          onDeleteHistory(Array.from(selectedIds));
+          setSelectedIds(new Set());
+          message.success(`已删除 ${selectedIds.size} 条记录`);
+        } catch {
+          message.error("删除失败，请稍后重试");
+        }
       } else {
         message.error("批量删除功能暂未实现");
       }
@@ -267,7 +274,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
                       stopPropagation: () => {},
                       preventDefault: () => {},
                       defaultPrevented: false,
-                    } as any);
+                    } as React.MouseEvent);
                   } else {
                     onLoadHistory(item);
                     onClose();
@@ -307,7 +314,7 @@ const HistoryCard: React.FC<HistoryCardProps> = React.memo(
         stopPropagation: () => {},
         preventDefault: () => {},
         defaultPrevented: false,
-      } as any);
+      } as React.MouseEvent);
     };
 
     return (

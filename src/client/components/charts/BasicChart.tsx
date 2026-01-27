@@ -68,7 +68,26 @@ const getChartConfig = (isMobile: boolean) => ({
 export const BasicChart: React.FC<BasicChartProps> = React.memo(
   ({ results, isMobile, chartType = "BAR" }) => {
     const chartData = useMemo(() => getChartData(results), [results]);
+    const isDarkMode = useMemo(() => {
+      if (typeof window !== "undefined") {
+        return document.documentElement.classList.contains("dark");
+      }
+      return false;
+    }, []);
     const config = useMemo(() => getChartConfig(isMobile), [isMobile]);
+
+    const colors = useMemo(
+      () => ({
+        up: isDarkMode ? "#4ade80" : "#52c41a",
+        down: isDarkMode ? "#f87171" : "#ff4d4f",
+        axisTick: isDarkMode ? "#9ca3af" : "#999",
+        axisLine: isDarkMode ? "#4b5563" : "#d9d9d9",
+        grid: isDarkMode ? "#374151" : "#e0e0e0",
+        tooltipBg: isDarkMode ? "rgba(17, 24, 39, 0.95)" : "rgba(0,0,0,0.85)",
+        tooltipText: isDarkMode ? "#f3f4f6" : "#fff",
+      }),
+      [isDarkMode],
+    );
 
     if (chartData.length === 0) {
       return (
@@ -78,18 +97,22 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
       );
     }
 
-    const commonGrid = <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />;
+    const commonGrid = <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} />;
     const commonXAxis = (
       <XAxis
         dataKey="day"
-        tick={{ fill: "#999", fontSize: config.tickFontSize }}
-        tickLine={{ stroke: "#d9d9d9" }}
+        tick={{ fill: colors.axisTick, fontSize: config.tickFontSize }}
+        tickLine={{ stroke: colors.axisLine }}
       />
     );
     const commonTooltip = (
       <Tooltip
-        contentStyle={{ backgroundColor: "rgba(0,0,0,0.85)", color: "#fff", borderRadius: 6 }}
-        itemStyle={{ color: "#fff" }}
+        contentStyle={{
+          backgroundColor: colors.tooltipBg,
+          color: colors.tooltipText,
+          borderRadius: 6,
+        }}
+        itemStyle={{ color: colors.tooltipText }}
       />
     );
     const commonLegend = <Legend wrapperStyle={{ fontSize: 12 }} />;
@@ -114,14 +137,14 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
               {commonLegend}
               <Line
                 dataKey="涨停"
-                stroke="#52c41a"
+                stroke={colors.up}
                 strokeWidth={config.lineWidth}
                 dot={{ r: isMobile ? 3 : 4 }}
                 name="涨停价"
               />
               <Line
                 dataKey="跌停"
-                stroke="#ff4d4f"
+                stroke={colors.down}
                 strokeWidth={config.lineWidth}
                 dot={{ r: isMobile ? 3 : 4 }}
                 name="跌停价"
@@ -151,14 +174,14 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
             {commonLegend}
             <Bar
               dataKey="涨停"
-              fill="#52c41a"
+              fill={colors.up}
               radius={[2, 2, 0, 0]}
               name="涨停价"
               barSize={config.barSize}
             />
             <Bar
               dataKey="跌停"
-              fill="#ff4d4f"
+              fill={colors.down}
               radius={[2, 2, 0, 0]}
               name="跌停价"
               barSize={config.barSize}

@@ -3,7 +3,7 @@ import { QueryProvider } from "@/client/components/QueryProvider";
 import { ThemeProvider } from "@/client/theme";
 import "@/client/index.css";
 
-export function App() {
+export const App: React.FC = () => {
   return (
     <QueryProvider>
       <ThemeProvider>
@@ -16,6 +16,6 @@ export function App() {
       </ThemeProvider>
     </QueryProvider>
   );
-}
+};
 
-export default App;
+App.displayName = "App";

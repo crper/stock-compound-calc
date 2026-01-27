@@ -177,7 +177,9 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
                       </Text>
                       <Tooltip title={`按 ${params?.boardCount} 天计算的年化收益率`}>
                         <Text className="text-base md:text-lg font-bold text-blue-600 dark:text-blue-400">
-                          {formatPercentage(Math.abs(metrics.annualizedReturn), { multiply: false })}
+                          {formatPercentage(Math.abs(metrics.annualizedReturn), {
+                            multiply: false,
+                          })}
                         </Text>
                       </Tooltip>
                     </div>

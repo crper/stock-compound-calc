@@ -1,6 +1,15 @@
 import { Database } from "bun:sqlite";
 import type { CalculationParams, CalculationHistory, CalculationResult } from "@/shared/types";
 
+const safeJsonParse = <T>(json: string | null | undefined, defaultValue: T): T => {
+  if (!json) return defaultValue;
+  try {
+    return JSON.parse(json) as T;
+  } catch {
+    return defaultValue;
+  }
+};
+
 interface DatabaseRow {
   id: string;
   timestamp: number;
@@ -115,7 +124,9 @@ export interface PaginationOptions {
   offset?: number;
 }
 
-export const getCalculations = (options: PaginationOptions = {}): { data: CalculationHistory[], totalCount: number } => {
+export const getCalculations = (
+  options: PaginationOptions = {},
+): { data: CalculationHistory[]; totalCount: number } => {
   const database = getDatabase();
   const { limit = 50, offset = 0 } = options;
 
@@ -145,17 +156,55 @@ export const getCalculations = (options: PaginationOptions = {}): { data: Calcul
         finalPrice: row.final_price_up,
         totalReturn: row.total_return_up,
         totalGain: row.total_gain_up,
-        details: JSON.parse(row.details_up),
-        dailyDetails: JSON.parse(row.daily_details_up),
-        keyMetrics: JSON.parse(row.key_metrics_up),
+        details: safeJsonParse(row.details_up, [] as string[]),
+        dailyDetails: safeJsonParse(
+          row.daily_details_up,
+          [] as {
+            day: number;
+            openPrice: number;
+            closePrice: number;
+            dailyGain: number;
+            dailyReturnPercent: number;
+          }[],
+        ),
+        keyMetrics: safeJsonParse(
+          row.key_metrics_up,
+          undefined as
+            | {
+                doubleDays: number | null;
+                tenXDays: number | null;
+                breakEvenReturn: number | null;
+                annualizedReturn: number | null;
+              }
+            | undefined,
+        ),
       },
       down: {
         finalPrice: row.final_price_down,
         totalReturn: row.total_return_down,
         totalGain: row.total_gain_down,
-        details: JSON.parse(row.details_down),
-        dailyDetails: JSON.parse(row.daily_details_down),
-        keyMetrics: JSON.parse(row.key_metrics_down),
+        details: safeJsonParse(row.details_down, [] as string[]),
+        dailyDetails: safeJsonParse(
+          row.daily_details_down,
+          [] as {
+            day: number;
+            openPrice: number;
+            closePrice: number;
+            dailyGain: number;
+            dailyReturnPercent: number;
+          }[],
+        ),
+        keyMetrics: safeJsonParse(
+          row.key_metrics_down,
+          undefined as
+            | {
+                doubleDays: number | null;
+                tenXDays: number | null;
+                breakEvenReturn: number | null;
+                annualizedReturn: number | null;
+              }
+            | undefined,
+        ),
       },
     },
   }));

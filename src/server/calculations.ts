@@ -8,8 +8,6 @@ import { CalculationParamsSchema, BatchDeleteSchema } from "@/shared/schemas";
 import { ErrorHandler } from "@/shared/utils/errorHandler";
 import { apiResponse } from "./utils/apiResponse";
 
-
-
 export const calculationsRoutes = {
   /**
    * GET /api/calculations
@@ -19,25 +17,28 @@ export const calculationsRoutes = {
     try {
       // 解析查询参数
       const url = new URL(req.url);
-      const hasPaginationParams = url.searchParams.has('limit') || url.searchParams.has('page') || url.searchParams.has('offset');
-      
+      const hasPaginationParams =
+        url.searchParams.has("limit") ||
+        url.searchParams.has("page") ||
+        url.searchParams.has("offset");
+
       if (hasPaginationParams) {
         // 如果提供了分页参数，则执行分页查询
-        const limit = parseInt(url.searchParams.get('limit') || '50');
-        const offset = parseInt(url.searchParams.get('offset') || '0');
-        const page = parseInt(url.searchParams.get('page') || '1');
+        const limit = parseInt(url.searchParams.get("limit") || "50");
+        const offset = parseInt(url.searchParams.get("offset") || "0");
+        const page = parseInt(url.searchParams.get("page") || "1");
 
         // 使用页面参数计算偏移量
         const calculatedOffset = offset > 0 ? offset : (page - 1) * limit;
-        
+
         // 设置限制范围
         const normalizedLimit = Math.max(1, Math.min(limit, 100)); // 限制每页最多100条
-        
-        const { data: calculations, totalCount } = getCalculations({ 
-          limit: normalizedLimit, 
-          offset: calculatedOffset 
+
+        const { data: calculations, totalCount } = getCalculations({
+          limit: normalizedLimit,
+          offset: calculatedOffset,
         });
-        
+
         // 计算分页信息
         const totalPages = Math.ceil(totalCount / normalizedLimit);
         const hasNextPage = calculatedOffset + normalizedLimit < totalCount;
@@ -52,14 +53,14 @@ export const calculationsRoutes = {
             totalPages,
             hasNext: hasNextPage,
             hasPrev: hasPrevPage,
-            offset: calculatedOffset
-          }
+            offset: calculatedOffset,
+          },
         });
-       } else {
-         // 如果没有提供分页参数，则返回所有数据（保持向后兼容）
-         const result = getCalculations({ limit: 1000 }); // 限制最大数量
-         return apiResponse.success(result.data);
-       }
+      } else {
+        // 如果没有提供分页参数，则返回所有数据（保持向后兼容）
+        const result = getCalculations({ limit: 1000 }); // 限制最大数量
+        return apiResponse.success(result.data);
+      }
     } catch (error) {
       const appError = ErrorHandler.handleUnknown(error);
       ErrorHandler.log(appError);
