@@ -1,7 +1,7 @@
 # AGENTS.md - AI 编码指南
 
 **项目:** 股票计算器 (Bun + React 19 + TypeScript + SQLite + React Query + Tailwind v4 + Ant Design v6)
-**最后更新:** 2026-01-28
+**最后更新:** 2026-01-29
 
 ## 🛠 核心命令
 
@@ -24,7 +24,34 @@ bun test -t "pattern"    # 按名称运行特定测试 (TDD 推荐)
 bun test -t "功能名称"   # 运行包含中文的测试
 bun test --watch         # 监听模式
 bun test path/to/test.ts # 运行单个测试文件
+bun test:coverage        # 运行测试并生成覆盖率报告
 ```
+
+## 🎨 视觉效果与交互优化规范
+
+### 设计系统
+
+- **主题系统**: 使用 `ThemeProvider` 统一管理深色/浅色模式切换
+- **渐变背景**: 采用 `from-[#667eea] to-[#764ba2]` 主色调搭配
+- **毛玻璃效果**: 使用 `bg-white/95 backdrop-blur-md` 创建半透明毛玻璃效果
+- **过渡动画**: 所有颜色变化使用 `transition-colors duration-300` 或 `duration-500`
+- **阴影效果**: 卡片组件使用 `shadow-lg` 和 `shadow-indigo-500/30`
+
+### 组件交互模式
+
+- **响应式布局**: 使用 Ant Design 的 `Row`/`Col` 组件实现响应式网格
+- **渐进式反馈**: 表单验证采用实时反馈，错误提示使用 Ant Design `Alert`
+- **加载状态**: 计算过程中显示加载指示器
+- **主题切换**: 支持通过 `ThemeToggle` 组件无缝切换深浅色主题
+- **历史记录**: 使用 `Drawer` 组件展示历史记录，配备浮动按钮增强移动端体验
+- **数据可视化**: 使用 Recharts 库展示收益趋势图表
+
+### 视觉层次结构
+
+- **标题层级**: 主标题使用渐变文字效果 `bg-gradient-to-br from-[#667eea] to-[#764ba2]`
+- **卡片设计**: 圆角 `rounded-xl`，边框 `border border-white/20 dark:border-gray-700/50`
+- **按钮样式**: 主要操作按钮使用渐变背景 `linear-gradient(135deg, #667eea 0%, #764ba2 100%)`
+- **图标集成**: 使用 Ant Design 图标与自定义装饰元素结合
 
 ## 📐 代码风格与规范
 
@@ -82,6 +109,7 @@ function isAppError(error: unknown): error is AppError {
 - **性能优化**: 使用 `React.memo` 包裹导出的 UI 组件
 - **解构 Props**: 在函数签名处直接解构，明确依赖
 - **关键指标计算**: 包括年化收益率(CAGR)等重要投资指标
+- **视觉设计**: 组件需遵循设计系统规范，确保统一的视觉体验
 
 ```typescript
 export const ResultCard: React.FC<ResultCardProps> = React.memo(({ results, isMobile }) => {
@@ -97,6 +125,7 @@ ResultCard.displayName = 'ResultCard';
 - **状态管理**: 服务端状态用 React Query，本地状态用 useState/useReducer
 - **副作用**: useEffect 依赖数组必须完整，或通过 eslint-disable 注释说明
 - **性能**: 大计算使用 useMemo，稳定回调使用 useCallback
+- **UI 相关**: 交互逻辑封装到 hooks 中，如 `useResponsive`, `useStockCalculator`
 
 ### 错误处理
 
@@ -137,7 +166,8 @@ src/
 │   ├── hooks/       # 自定义 Hooks
 │   ├── services/    # 业务服务层 (API 交互)
 │   ├── pages/       # 页面组件
-│   └── theme/       # 主题配置
+│   ├── theme/       # 主题配置
+│   └── index.css    # 全局样式和 Tailwind 配置
 ├── server/          # Bun 后端 (API, database, logic, __tests__)
 └── shared/          # 共享逻辑 (constants, schemas, types, utils)
 ```
@@ -150,6 +180,7 @@ src/
 - **配置保护**: 除非明确要求，不要修改 `package.json`, `tsconfig.json` 等配置文件
 - **上下文感知**: 在回答问题或编写代码前，先搜索相关代码 (grep/glob) 以保持一致性
 - **服务层模式**: 所有 API 请求必须封装在 `src/client/services` 中，禁止在组件或 Hooks 中直接调用 fetch
+- **视觉一致性**: 任何 UI/UX 变更都必须遵循设计系统规范
 
 ## ⚠️ 关键约束
 
@@ -161,11 +192,13 @@ src/
 - **必须** 所有 API 输入使用 Zod schema 验证
 - **必须** 每次提交前运行 `bun run lint` + `bun run format`
 - **必须** 在前端业务逻辑变更时更新或添加 `src/client/services/__tests__` 下的测试
+- **必须** 视觉变更保持深色/浅色模式兼容性
 
 ## 🚀 开发流程
 
 1. **准备阶段**: 使用 `grep`/`glob` 研究，设计变更方案
 2. **TDD 测试先行**: 在 `__tests__` 编写测试用例
 3. **实现阶段**: 遵循代码规范，核心计算用 Decimal.js
-4. **本地验证**: `bun test -t "功能"` → `bun run lint` → `bun run format`
-5. **最终构建**: `bun run build` 确保生产构建成功
+4. **视觉优化**: 实现 UI 组件时遵循设计系统规范
+5. **本地验证**: `bun test -t "功能"` → `bun run lint` → `bun run format`
+6. **最终构建**: `bun run build` 确保生产构建成功
