@@ -42,8 +42,13 @@ export const calculationService = {
   /**
    * 获取分页历史记录
    */
-  getPaginatedHistory: async (page: number, limit: number): Promise<PaginatedResponse<CalculationHistory>> => {
-    const response = await fetch(`${API_CONSTANTS.BASE_URL}/calculations?page=${page}&limit=${limit}`);
+  getPaginatedHistory: async (
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResponse<CalculationHistory>> => {
+    const response = await fetch(
+      `${API_CONSTANTS.BASE_URL}/calculations?page=${page}&limit=${limit}`,
+    );
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }

@@ -67,10 +67,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
         size={responsive.cardSize}
         title={
           <div className="flex items-center justify-between">
-            <Title
-              level={4}
-              className="!m-0 dark:text-gray-100 text-lg lg:text-base"
-            >
+            <Title level={4} className="!m-0 dark:text-gray-100 text-lg lg:text-base">
               计算参数
             </Title>
           </div>
@@ -116,16 +113,10 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               name="initialPrice"
               label={
                 <Space size="small" className="whitespace-nowrap">
-                  <Text
-                    strong
-                    className="dark:text-gray-200 text-base lg:text-sm"
-                  >
+                  <Text strong className="dark:text-gray-200 text-base lg:text-sm">
                     初始股价
                   </Text>
-                  <Text
-                    type="secondary"
-                    className="dark:text-gray-400 text-xs lg:text-[11px]"
-                  >
+                  <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
                     (元)
                   </Text>
                 </Space>
@@ -162,16 +153,10 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
             >
               <div>
                 <Space size="small" style={{ marginBottom: 8 }} className="whitespace-nowrap">
-                  <Text
-                    strong
-                    className="dark:text-gray-200 text-base lg:text-sm"
-                  >
+                  <Text strong className="dark:text-gray-200 text-base lg:text-sm">
                     涨跌幅度
                   </Text>
-                  <Text
-                    type="secondary"
-                    className="dark:text-gray-400 text-xs lg:text-[11px]"
-                  >
+                  <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
                     (%)
                   </Text>
                 </Space>
@@ -259,16 +244,10 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
             >
               <div>
                 <Space size="small" style={{ marginBottom: 8 }} className="whitespace-nowrap">
-                  <Text
-                    strong
-                    className="dark:text-gray-200 text-base lg:text-sm"
-                  >
+                  <Text strong className="dark:text-gray-200 text-base lg:text-sm">
                     连板数量
                   </Text>
-                  <Text
-                    type="secondary"
-                    className="dark:text-gray-400 text-xs lg:text-[11px]"
-                  >
+                  <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
                     (天)
                   </Text>
                 </Space>

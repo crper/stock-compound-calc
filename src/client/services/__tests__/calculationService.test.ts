@@ -7,7 +7,9 @@ describe("calculationService", () => {
 
   beforeEach(() => {
     // @ts-expect-error - Bun mock is not fully compatible with fetch types
-    global.fetch = mock(() => Promise.resolve(new Response(JSON.stringify({ success: true, data: [] }))));
+    global.fetch = mock(() =>
+      Promise.resolve(new Response(JSON.stringify({ success: true, data: [] }))),
+    );
   });
 
   afterEach(() => {
@@ -18,9 +20,7 @@ describe("calculationService", () => {
     const mockData = { id: "123", results: {}, timestamp: new Date().toISOString(), params: {} };
     // @ts-expect-error - Bun mock
     global.fetch = mock(() =>
-      Promise.resolve(
-        new Response(JSON.stringify({ success: true, data: mockData }))
-      )
+      Promise.resolve(new Response(JSON.stringify({ success: true, data: mockData }))),
     );
 
     const params = { initialPrice: 10, boardCount: 5, dailyReturn: 10 };
@@ -37,9 +37,7 @@ describe("calculationService", () => {
   it("should handle error when saving calculation fails", async () => {
     // @ts-expect-error - Bun mock
     global.fetch = mock(() =>
-      Promise.resolve(
-        new Response(JSON.stringify({ success: false, error: "Validation failed" }))
-      )
+      Promise.resolve(new Response(JSON.stringify({ success: false, error: "Validation failed" }))),
     );
 
     const params = { initialPrice: 10, boardCount: 5, dailyReturn: 10 };
@@ -50,9 +48,7 @@ describe("calculationService", () => {
     const mockHistory = [{ id: "1" }, { id: "2" }];
     // @ts-expect-error - Bun mock
     global.fetch = mock(() =>
-      Promise.resolve(
-        new Response(JSON.stringify({ success: true, data: mockHistory }))
-      )
+      Promise.resolve(new Response(JSON.stringify({ success: true, data: mockHistory }))),
     );
 
     const result = await calculationService.getAllHistory();
@@ -64,9 +60,7 @@ describe("calculationService", () => {
     const mockData = { data: [], pagination: {} };
     // @ts-expect-error - Bun mock
     global.fetch = mock(() =>
-      Promise.resolve(
-        new Response(JSON.stringify({ success: true, data: mockData }))
-      )
+      Promise.resolve(new Response(JSON.stringify({ success: true, data: mockData }))),
     );
 
     const result = await calculationService.getPaginatedHistory(1, 10);
@@ -81,6 +75,8 @@ describe("calculationService", () => {
     // In hook: const response = await ...; return response.data;
     // Let's check service again.
     expect(result).toEqual({ success: true, data: mockData } as any);
-    expect(global.fetch).toHaveBeenCalledWith(`${API_CONSTANTS.BASE_URL}/calculations?page=1&limit=10`);
+    expect(global.fetch).toHaveBeenCalledWith(
+      `${API_CONSTANTS.BASE_URL}/calculations?page=1&limit=10`,
+    );
   });
 });
