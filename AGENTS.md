@@ -132,7 +132,12 @@ const result = price.mul(new Decimal(dailyReturn).div(100));
 
 ```
 src/
-├── client/          # React 前端 (components, hooks, pages, theme)
+├── client/          # React 前端
+│   ├── components/  # UI 组件
+│   ├── hooks/       # 自定义 Hooks
+│   ├── services/    # 业务服务层 (API 交互)
+│   ├── pages/       # 页面组件
+│   └── theme/       # 主题配置
 ├── server/          # Bun 后端 (API, database, logic, __tests__)
 └── shared/          # 共享逻辑 (constants, schemas, types, utils)
 ```
@@ -144,6 +149,7 @@ src/
 - **文件操作**: 修改现有文件前，先读取内容；创建新文件前，检查目录是否存在
 - **配置保护**: 除非明确要求，不要修改 `package.json`, `tsconfig.json` 等配置文件
 - **上下文感知**: 在回答问题或编写代码前，先搜索相关代码 (grep/glob) 以保持一致性
+- **服务层模式**: 所有 API 请求必须封装在 `src/client/services` 中，禁止在组件或 Hooks 中直接调用 fetch
 
 ## ⚠️ 关键约束
 
@@ -154,6 +160,7 @@ src/
 - **禁止** `any` 类型 (使用 `unknown` + 类型守卫)
 - **必须** 所有 API 输入使用 Zod schema 验证
 - **必须** 每次提交前运行 `bun run lint` + `bun run format`
+- **必须** 在前端业务逻辑变更时更新或添加 `src/client/services/__tests__` 下的测试
 
 ## 🚀 开发流程
 

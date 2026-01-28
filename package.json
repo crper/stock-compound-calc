@@ -7,6 +7,8 @@
     "dev": "bun --hot src/server/index.ts",
     "start": "NODE_ENV=production bun src/server/index.ts",
     "build": "bun run lint && bun run build.ts",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
     "lint": "oxlint --type-aware src",
     "lint:fix": "oxlint --type-aware --fix src",
     "format": "oxfmt .",

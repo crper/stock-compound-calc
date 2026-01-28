@@ -127,11 +127,12 @@ src/
 │   │   ├── forms/       # 表单组件
 │   │   └── shared/      # 共享组件
 │   ├── hooks/           # 自定义 Hooks
+│   ├── services/        # 业务服务层
 │   ├── pages/           # 页面组件
 │   ├── theme/           # 主题配置
 │   └── App.tsx          # 根组件
 ├── server/              # Bun 后端
-│   ├── __tests__/       # 测试文件
+│   ├── __tests__/       # 后端测试文件
 │   ├── database.ts      # 数据库操作
 │   ├── calculations.ts  # API 路由
 │   ├── stockCalculator.ts # 计算逻辑

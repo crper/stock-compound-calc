@@ -4,14 +4,14 @@ import { Alert, Button, Card, Form, InputNumber, Slider, Space, Typography } fro
 import React, { useCallback, useState } from "react";
 import { useResponsiveConfig } from "@/client/hooks/useResponsiveConfig";
 import { getFieldErrorMessage } from "@/shared/utils/validator";
-import { PRESET_VALUES } from "@/shared/constants";
+import { FORM_CONFIG } from "@/shared/constants";
 
 const { Text, Title } = Typography;
 
 interface CalculationFormProps {
   form: FormInstance<CalculationParams>;
   onValuesChange: (changedValues: Partial<CalculationParams>, allValues: CalculationParams) => void;
-  isFieldValid: (value: any, fieldName: keyof CalculationParams) => boolean;
+  isFieldValid: (value: unknown, fieldName: keyof CalculationParams) => boolean;
   error?: string | null;
 }
 
@@ -20,28 +20,6 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
     const responsive = useResponsiveConfig();
     const isMobile = responsive.size === "large";
     const [hoveredPreset, setHoveredPreset] = useState<number | null>(null);
-
-    // 预设按钮配置
-    const presets = [
-      {
-        value: PRESET_VALUES.A_STOCK_MAIN_BOARD,
-        label: "A股主板",
-        subLabel: "10%",
-        color: "#1890ff",
-      },
-      {
-        value: PRESET_VALUES.STAR_MARKET,
-        label: "科创板",
-        subLabel: "20%",
-        color: "#52c41a",
-      },
-      {
-        value: PRESET_VALUES.BEIJING_STOCK_EXCHANGE,
-        label: "北交所",
-        subLabel: "30%",
-        color: "#fa8c16",
-      },
-    ];
 
     // 获取字段验证状态和帮助信息
     const getFieldValidation = useCallback(
@@ -91,8 +69,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
           <div className="flex items-center justify-between">
             <Title
               level={4}
-              className="!m-0 dark:text-gray-100"
-              style={{ fontSize: responsive.fontSize.large }}
+              className="!m-0 dark:text-gray-100 text-lg lg:text-base"
             >
               计算参数
             </Title>
@@ -141,15 +118,13 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 <Space size="small" className="whitespace-nowrap">
                   <Text
                     strong
-                    style={{ fontSize: responsive.fontSize.base }}
-                    className="dark:text-gray-200"
+                    className="dark:text-gray-200 text-base lg:text-sm"
                   >
                     初始股价
                   </Text>
                   <Text
                     type="secondary"
-                    style={{ fontSize: responsive.fontSize.small }}
-                    className="dark:text-gray-400"
+                    className="dark:text-gray-400 text-xs lg:text-[11px]"
                   >
                     (元)
                   </Text>
@@ -189,15 +164,13 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 <Space size="small" style={{ marginBottom: 8 }} className="whitespace-nowrap">
                   <Text
                     strong
-                    style={{ fontSize: responsive.fontSize.base }}
-                    className="dark:text-gray-200"
+                    className="dark:text-gray-200 text-base lg:text-sm"
                   >
                     涨跌幅度
                   </Text>
                   <Text
                     type="secondary"
-                    style={{ fontSize: responsive.fontSize.small }}
-                    className="dark:text-gray-400"
+                    className="dark:text-gray-400 text-xs lg:text-[11px]"
                   >
                     (%)
                   </Text>
@@ -206,13 +179,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   min={1}
                   max={30}
                   step={1}
-                  marks={{
-                    1: "1%",
-                    5: "5%",
-                    10: "10%",
-                    20: "20%",
-                    30: "30%",
-                  }}
+                  marks={FORM_CONFIG.RETURN_SLIDER_MARKS}
                   value={form.getFieldValue("dailyReturn") || 10}
                   tooltip={{
                     formatter: (val) => `${val}%`,
@@ -222,8 +189,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 />
                 <Text
                   type="secondary"
-                  style={{ fontSize: responsive.fontSize.small }}
-                  className="dark:text-gray-400 block mt-6"
+                  className="dark:text-gray-400 block mt-6 text-xs lg:text-[11px]"
                 >
                   拖动滑块设置每日涨跌幅百分比，范围1%-30%
                 </Text>
@@ -235,16 +201,15 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               <Text
                 strong
                 style={{
-                  fontSize: responsive.fontSize.base,
                   marginBottom: 8,
                   display: "block",
                 }}
-                className="text-gray-500 dark:text-gray-400"
+                className="text-gray-500 dark:text-gray-400 text-base lg:text-sm"
               >
                 快速设置：
               </Text>
               <Space wrap size={responsive.spacing}>
-                {presets.map((preset) => {
+                {FORM_CONFIG.PRESETS.map((preset) => {
                   const isActive = form.getFieldValue("dailyReturn") === preset.value;
                   const isHovered = hoveredPreset === preset.value;
 
@@ -273,11 +238,10 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                       <Text
                         type="secondary"
                         style={{
-                          fontSize: responsive.fontSize.small - 2,
                           marginLeft: 4,
                           opacity: 0.8,
                         }}
-                        className={isActive ? "text-white" : ""}
+                        className={`${isActive ? "text-white" : ""} text-xs lg:text-[11px]`}
                       >
                         ({preset.subLabel})
                       </Text>
@@ -297,15 +261,13 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 <Space size="small" style={{ marginBottom: 8 }} className="whitespace-nowrap">
                   <Text
                     strong
-                    style={{ fontSize: responsive.fontSize.base }}
-                    className="dark:text-gray-200"
+                    className="dark:text-gray-200 text-base lg:text-sm"
                   >
                     连板数量
                   </Text>
                   <Text
                     type="secondary"
-                    style={{ fontSize: responsive.fontSize.small }}
-                    className="dark:text-gray-400"
+                    className="dark:text-gray-400 text-xs lg:text-[11px]"
                   >
                     (天)
                   </Text>
@@ -314,20 +276,14 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   min={1}
                   max={15}
                   step={1}
-                  marks={{
-                    1: "1天",
-                    5: "5天",
-                    10: "10天",
-                    15: "15天",
-                  }}
+                  marks={FORM_CONFIG.BOARD_SLIDER_MARKS}
                   value={form.getFieldValue("boardCount") || 1}
                   onChange={(value) => handleFieldChange("boardCount", value)}
                   tooltip={{ formatter: (val) => `${val}天` }}
                 />
                 <Text
                   type="secondary"
-                  style={{ fontSize: responsive.fontSize.small }}
-                  className="dark:text-gray-400 block mt-6"
+                  className="dark:text-gray-400 block mt-6 text-xs lg:text-[11px]"
                 >
                   拖动滑块设置连续涨停/跌停天数，范围1-15天
                 </Text>

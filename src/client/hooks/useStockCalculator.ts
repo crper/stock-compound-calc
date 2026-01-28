@@ -5,63 +5,13 @@ import type { CalculationParams, CalculationResult, CalculationHistory } from "@
 import { ErrorHandler } from "@/shared/utils/errorHandler";
 import { isFieldValid, getFieldErrorMessage } from "@/shared/utils/validator";
 import { DEFAULT_VALUES, UI_CONSTANTS } from "@/shared/constants";
+import { calculationService } from "@/client/services/calculationService";
 import { debounce } from "es-toolkit";
 
 const DEFAULT_PARAMS: CalculationParams = {
   initialPrice: DEFAULT_VALUES.INITIAL_PRICE,
   boardCount: DEFAULT_VALUES.BOARD_COUNT,
   dailyReturn: DEFAULT_VALUES.DAILY_RETURN,
-};
-
-const saveCalculation = async (params: CalculationParams): Promise<CalculationHistory> => {
-  const response = await fetch("/api/calculations", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(params),
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-  }
-
-  const result = await response.json();
-  if (!result.success) {
-    throw new Error(result.error || "保存计算记录失败");
-  }
-
-  return result.data;
-};
-
-const clearHistory = async (): Promise<void> => {
-  const response = await fetch("/api/calculations", {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-  }
-
-  const result = await response.json();
-  if (!result.success) {
-    throw new Error(result.error || "清除历史记录失败");
-  }
-};
-
-const deleteHistory = async (ids: string[]): Promise<void> => {
-  const response = await fetch("/api/calculations", {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ids }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-  }
-
-  const result = await response.json();
-  if (!result.success) {
-    throw new Error(result.error || "删除历史记录失败");
-  }
 };
 
 export const useStockCalculator = () => {
@@ -77,17 +27,7 @@ export const useStockCalculator = () => {
   // 获取所有历史记录（用于向后兼容）
   const { data: allHistory = [], isLoading: isLoadingHistory } = useQuery({
     queryKey: ["allCalculations"],
-    queryFn: async () => {
-      const response = await fetch("/api/calculations"); // 不带分页参数，获取所有数据
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.error || "获取历史记录失败");
-      }
-      return Array.isArray(result.data) ? result.data : [];
-    },
+    queryFn: calculationService.getAllHistory,
     staleTime: 30000, // 30秒内不算作陈旧
   });
 
@@ -112,22 +52,15 @@ export const useStockCalculator = () => {
   } = useQuery({
     queryKey: ["paginatedCalculations", currentPage, pageSize],
     queryFn: async () => {
-      const response = await fetch(`/api/calculations?page=${currentPage}&limit=${pageSize}`);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.error || "获取历史记录失败");
-      }
-      return result;
+      const response = await calculationService.getPaginatedHistory(currentPage, pageSize);
+      return response.data; // 只返回data部分，包含 {data: [], pagination: ...}
     },
   });
 
-  const pagination = paginatedHistory.pagination;
+  const pagination = paginatedHistory?.pagination;
 
   const saveMutation = useMutation({
-    mutationFn: saveCalculation,
+    mutationFn: calculationService.saveCalculation,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["allCalculations"] });
       await queryClient.invalidateQueries({ queryKey: ["paginatedCalculations"] });
@@ -135,7 +68,7 @@ export const useStockCalculator = () => {
   });
 
   const clearMutation = useMutation({
-    mutationFn: clearHistory,
+    mutationFn: calculationService.clearHistory,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["allCalculations"] });
       await queryClient.invalidateQueries({ queryKey: ["paginatedCalculations"] });
@@ -143,7 +76,7 @@ export const useStockCalculator = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteHistory,
+    mutationFn: calculationService.deleteHistory,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["allCalculations"] });
       await queryClient.invalidateQueries({ queryKey: ["paginatedCalculations"] });

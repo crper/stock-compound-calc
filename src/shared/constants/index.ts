@@ -61,4 +61,54 @@ export const DECIMAL_CONFIG = {
   TO_EXP_POS: 21,
 } as const;
 
+/**
+ * 图表配置常量
+ */
+export const CHART_CONFIG = {
+  /** 最大数据点数 */
+  MAX_DATA_POINTS: 50,
+} as const;
+
+/**
+ * 表单配置常量
+ */
+export const FORM_CONFIG = {
+  /** 预设按钮配置 */
+  PRESETS: [
+    {
+      value: PRESET_VALUES.A_STOCK_MAIN_BOARD,
+      label: "A股主板",
+      subLabel: "10%",
+      color: "#1890ff",
+    },
+    {
+      value: PRESET_VALUES.STAR_MARKET,
+      label: "科创板",
+      subLabel: "20%",
+      color: "#52c41a",
+    },
+    {
+      value: PRESET_VALUES.BEIJING_STOCK_EXCHANGE,
+      label: "北交所",
+      subLabel: "30%",
+      color: "#fa8c16",
+    },
+  ],
+  /** 涨跌幅滑块刻度 */
+  RETURN_SLIDER_MARKS: {
+    1: "1%",
+    5: "5%",
+    10: "10%",
+    20: "20%",
+    30: "30%",
+  },
+  /** 连板天数滑块刻度 */
+  BOARD_SLIDER_MARKS: {
+    1: "1天",
+    5: "5天",
+    10: "10天",
+    15: "15天",
+  },
+} as const;
+
 export * from "./colors";

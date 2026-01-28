@@ -180,13 +180,15 @@ export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
     const doublePrice = initialPriceDecimal.mul(2);
     const tenXPrice = initialPriceDecimal.mul(10);
 
-    // 避免重复创建Decimal对象，提前转换为数字
-    const logDoubleRatio = Number(doublePrice.div(initialPriceDecimal).toString());
-    const logTenRatio = Number(tenXPrice.div(initialPriceDecimal).toString());
-    const multiplierValue = Number(multiplier.toString());
+    const multiplierLn = multiplier.ln();
 
-    doubleDays = Math.ceil(Math.log(logDoubleRatio) / Math.log(multiplierValue));
-    tenXDays = Math.ceil(Math.log(logTenRatio) / Math.log(multiplierValue));
+    // Double Days: ln(doublePrice / initialPrice) / ln(multiplier)
+    const doubleRatio = doublePrice.div(initialPriceDecimal);
+    doubleDays = doubleRatio.ln().div(multiplierLn).ceil().toNumber();
+
+    // TenX Days: ln(tenXPrice / initialPrice) / ln(multiplier)
+    const tenXRatio = tenXPrice.div(initialPriceDecimal);
+    tenXDays = tenXRatio.ln().div(multiplierLn).ceil().toNumber();
   }
 
   const currentPriceDecimal = initialPriceDecimal.mul(multiplier.pow(boardCount));
@@ -202,7 +204,7 @@ export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
   let annualizedReturn: number | null = null;
   if (boardCount > 0) {
     // 将天数转换为年份（按365天/年计算）
-    const years = boardCount / 365;
+    const years = new Decimal(boardCount).div(365).toNumber();
     if (years > 0) {
       // CAGR = (最终价值 ÷ 初始价值)^(1 ÷ 年数) - 1
       // 使用对数计算以避免大数计算问题
@@ -214,10 +216,10 @@ export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
         annualizedReturn = null;
       } else {
         // 使用对数形式计算以避免溢出
-        const logGrowthFactor = parseFloat(growthFactor.toString());
-        const cagrLog = Math.log(logGrowthFactor) / years;
-        const annualizedReturnDecimal = new Decimal(Math.exp(cagrLog)).minus(1).mul(100);
-        annualizedReturn = Number(annualizedReturnDecimal.toString());
+        // CAGR = exp(ln(growthFactor) / years) - 1
+        const yearsDecimal = new Decimal(boardCount).div(365);
+        const cagrDecimal = growthFactor.ln().div(yearsDecimal).exp().minus(1).mul(100);
+        annualizedReturn = Number(cagrDecimal.toString());
 
         // 检查是否为有限数
         if (!isFinite(annualizedReturn) || Math.abs(annualizedReturn) > 1000) {
