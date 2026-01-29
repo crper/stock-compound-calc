@@ -1,0 +1,34 @@
+/**
+ * 计算限制常量
+ * 集中管理所有计算相关的限制值
+ */
+
+export const CALCULATION_LIMITS = {
+  /** 最大连板天数（约10年） */
+  MAX_BOARD_COUNT: 3650,
+  /** 最大每日涨跌幅百分比 */
+  MAX_DAILY_RETURN: 100,
+  /** 最小每日涨跌幅百分比 */
+  MIN_DAILY_RETURN: -99,
+  /** 最大预估价格（1万亿） */
+  MAX_ESTIMATED_PRICE: 1e12,
+  /** 最大初始股价 */
+  MAX_INITIAL_PRICE: 1000000000,
+  /** 最小初始股价 */
+  MIN_INITIAL_PRICE: 0.01,
+  /** 最大年化收益率显示阈值 */
+  MAX_ANNUALIZED_RETURN: 1000,
+  /** 最大增长因子（用于年化计算） */
+  MAX_GROWTH_FACTOR: 1e6,
+} as const;
+
+export const API_LIMITS = {
+  /** 默认分页大小 */
+  DEFAULT_PAGE_SIZE: 50,
+  /** 最大分页大小 */
+  MAX_PAGE_SIZE: 100,
+  /** 不分页时最大返回记录数 */
+  MAX_HISTORY_WITHOUT_PAGINATION: 1000,
+  /** 请求超时时间（毫秒） */
+  REQUEST_TIMEOUT_MS: 10000,
+} as const;

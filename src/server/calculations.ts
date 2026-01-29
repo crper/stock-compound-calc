@@ -2,10 +2,11 @@
  * 计算记录 API 路由
  * 提供历史记录的增删改查功能
  */
-import { saveCalculation, getCalculations, clearCalculations, deleteCalculation } from "./database";
-import { calculateBidirectionalReturns } from "./stockCalculator";
-import { CalculationParamsSchema, BatchDeleteSchema } from "@/shared/schemas";
+import { API_LIMITS } from "@/shared/constants";
+import { BatchDeleteSchema, CalculationParamsSchema } from "@/shared/schemas";
 import { ErrorHandler } from "@/shared/utils/errorHandler";
+import { clearCalculations, deleteCalculation, getCalculations, saveCalculation } from "./database";
+import { calculateBidirectionalReturns } from "./stockCalculator";
 import { apiResponse } from "./utils/apiResponse";
 
 export const calculationsRoutes = {
@@ -24,7 +25,7 @@ export const calculationsRoutes = {
 
       if (hasPaginationParams) {
         // 如果提供了分页参数，则执行分页查询
-        const limit = parseInt(url.searchParams.get("limit") || "50");
+        const limit = parseInt(url.searchParams.get("limit") || String(API_LIMITS.DEFAULT_PAGE_SIZE));
         const offset = parseInt(url.searchParams.get("offset") || "0");
         const page = parseInt(url.searchParams.get("page") || "1");
 
@@ -32,7 +33,7 @@ export const calculationsRoutes = {
         const calculatedOffset = offset > 0 ? offset : (page - 1) * limit;
 
         // 设置限制范围
-        const normalizedLimit = Math.max(1, Math.min(limit, 100)); // 限制每页最多100条
+        const normalizedLimit = Math.max(1, Math.min(limit, API_LIMITS.MAX_PAGE_SIZE));
 
         const { data: calculations, totalCount } = getCalculations({
           limit: normalizedLimit,
@@ -58,7 +59,7 @@ export const calculationsRoutes = {
         });
       } else {
         // 如果没有提供分页参数，则返回所有数据（保持向后兼容）
-        const result = getCalculations({ limit: 1000 }); // 限制最大数量
+        const result = getCalculations({ limit: API_LIMITS.MAX_HISTORY_WITHOUT_PAGINATION });
         return apiResponse.success(result.data);
       }
     } catch (error) {

@@ -1,5 +1,5 @@
+import type { CalculationHistory, CalculationParams, CalculationResult } from "@/shared/types";
 import { Database } from "bun:sqlite";
-import type { CalculationParams, CalculationHistory, CalculationResult } from "@/shared/types";
 
 const safeJsonParse = <T>(json: string | null | undefined, defaultValue: T): T => {
   if (!json) return defaultValue;
@@ -64,11 +64,8 @@ const initializeDatabase = (database: Database): void => {
     )
   `);
 
-  // 添加更多索引以提高查询性能
-  database.run("CREATE INDEX IF NOT EXISTS idx_timestamp ON calculations(timestamp)");
-  database.run("CREATE INDEX IF NOT EXISTS idx_initial_price ON calculations(initial_price)");
-  database.run("CREATE INDEX IF NOT EXISTS idx_daily_return ON calculations(daily_return)");
-  database.run("CREATE INDEX IF NOT EXISTS idx_board_count ON calculations(board_count)");
+  // 添加索引以提高查询性能（仅保留最常用的）
+  database.run("CREATE INDEX IF NOT EXISTS idx_timestamp ON calculations(timestamp DESC)");
 };
 
 export const saveCalculation = (
@@ -136,8 +133,8 @@ export const getCalculations = (
 
   // 查询分页数据
   const query = database.prepare(`
-    SELECT * FROM calculations 
-    ORDER BY timestamp DESC 
+    SELECT * FROM calculations
+    ORDER BY timestamp DESC
     LIMIT ? OFFSET ?
   `);
 

@@ -1,8 +1,8 @@
-import Decimal from "decimal.js";
-import type { DailyDetail, CalculationResult, CalculationParams } from "@/shared/types";
+import { CALCULATION_LIMITS, DECIMAL_CONFIG } from "@/shared/constants";
+import type { CalculationParams, CalculationResult, DailyDetail } from "@/shared/types";
+import { ErrorFactory, ErrorHandler } from "@/shared/utils/errorHandler";
 import { validateCalculationParams as validateParams } from "@/shared/utils/validator";
-import { ErrorHandler, ErrorFactory } from "@/shared/utils/errorHandler";
-import { DECIMAL_CONFIG } from "@/shared/constants";
+import Decimal from "decimal.js";
 
 export interface KeyMetrics {
   doubleDays: number | null;
@@ -32,18 +32,20 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
   const { initialPrice, boardCount, dailyReturn } = params;
 
   // 对极端值进行早期检测，避免过度计算
-  if (boardCount > 3650) {
-    // 限制最大计算天数为10年
+  if (boardCount > CALCULATION_LIMITS.MAX_BOARD_COUNT) {
     throw ErrorFactory.validation(
-      "连板天数不能超过3650天(约10年)，请减少天数以提高性能",
+      `连板天数不能超过${CALCULATION_LIMITS.MAX_BOARD_COUNT}天(约10年)，请减少天数以提高性能`,
       "boardCount",
       boardCount,
     );
   }
 
-  if (Math.abs(dailyReturn) > 100) {
-    // 每日涨跌幅不能超过100%
-    throw ErrorFactory.validation("每日涨跌幅不能超过100%", "dailyReturn", dailyReturn);
+  if (Math.abs(dailyReturn) > CALCULATION_LIMITS.MAX_DAILY_RETURN) {
+    throw ErrorFactory.validation(
+      `每日涨跌幅不能超过${CALCULATION_LIMITS.MAX_DAILY_RETURN}%`,
+      "dailyReturn",
+      dailyReturn,
+    );
   }
 
   // 预测最终价格是否会超出合理范围
@@ -52,8 +54,7 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
     const finalMultiplier = dailyMultiplier.pow(boardCount);
     const estimatedFinalPrice = new Decimal(initialPrice).mul(finalMultiplier);
 
-    // 如果预计价格过大（超过1万亿），拒绝计算
-    if (estimatedFinalPrice.gt(1e12)) {
+    if (estimatedFinalPrice.gt(CALCULATION_LIMITS.MAX_ESTIMATED_PRICE)) {
       throw ErrorFactory.validation(
         `计算会导致价格过高(${estimatedFinalPrice.toString()}元)，请调整参数`,
         "dailyReturn",
@@ -211,8 +212,7 @@ export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
       const growthFactor = new Decimal(finalPrice).div(initialPrice);
 
       // 对于非常大的增长因子，我们需要特别处理
-      if (growthFactor.gt(1e6)) {
-        // 如果增长倍数超过100万倍，视为极端情况
+      if (growthFactor.gt(CALCULATION_LIMITS.MAX_GROWTH_FACTOR)) {
         annualizedReturn = null;
       } else {
         // 使用对数形式计算以避免溢出
@@ -222,8 +222,7 @@ export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
         annualizedReturn = Number(cagrDecimal.toString());
 
         // 检查是否为有限数
-        if (!isFinite(annualizedReturn) || Math.abs(annualizedReturn) > 1000) {
-          // 如果年化收益率超过1000%（即10倍），则置为null，避免显示不切实际的数字
+        if (!isFinite(annualizedReturn) || Math.abs(annualizedReturn) > CALCULATION_LIMITS.MAX_ANNUALIZED_RETURN) {
           annualizedReturn = null;
         }
       }
