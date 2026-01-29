@@ -91,7 +91,7 @@
   @keyframes slideIn {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(30px);
     }
     to {
       opacity: 1;
@@ -100,23 +100,23 @@
   }
 
   .slide-in {
-    animation: slideIn 0.3s ease-out;
+    animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   /* 数字动画 */
   @keyframes countUp {
     from {
       opacity: 0;
-      transform: scale(0.8);
+      transform: scale(0.85) translateY(10px);
     }
     to {
       opacity: 1;
-      transform: scale(1);
+      transform: scale(1) translateY(0);
     }
   }
 
   .count-up {
-    animation: countUp 0.5s ease-out;
+    animation: countUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   /* 错误震动动画 */
@@ -130,13 +130,13 @@
     50%,
     70%,
     90% {
-      transform: translateX(-5px);
+      transform: translateX(-6px);
     }
     20%,
     40%,
     60%,
     80% {
-      transform: translateX(5px);
+      transform: translateX(6px);
     }
   }
 
@@ -149,20 +149,22 @@
     0%,
     100% {
       opacity: 1;
+      transform: scale(1);
     }
     50% {
-      opacity: 0.5;
+      opacity: 0.7;
+      transform: scale(1.05);
     }
   }
 
   .animate-pulse {
-    animation: pulse 1.5s ease-in-out infinite;
+    animation: pulse 2s ease-in-out infinite;
   }
 
   /* 缩放动画 */
   @keyframes scaleIn {
     from {
-      transform: scale(0.95);
+      transform: scale(0.92);
       opacity: 0;
     }
     to {
@@ -172,7 +174,7 @@
   }
 
   .scale-in {
-    animation: scaleIn 0.3s ease-out;
+    animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   /* 淡入动画 */
@@ -185,24 +187,136 @@
     }
   }
 
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  /* 弹跳动画 */
+  @keyframes bounce {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .bounce {
+    animation: bounce 1s ease-in-out;
+  }
+
+  /* 发光效果 */
+  @keyframes glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 5px rgba(102, 126, 234, 0.4),
+        0 0 10px rgba(102, 126, 234, 0.2);
+    }
+    50% {
+      box-shadow:
+        0 0 20px rgba(102, 126, 234, 0.6),
+        0 0 30px rgba(102, 126, 234, 0.3);
+    }
+  }
+
+  .glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* 渐变边框动画 */
+  @keyframes gradientBorder {
+    0% {
+      border-color: #667eea;
+    }
+    50% {
+      border-color: #764ba2;
+    }
+    100% {
+      border-color: #667eea;
+    }
+  }
+
   /* 历史记录卡片悬停效果 */
   .history-card {
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .history-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
   }
 
   .history-card:active {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px) scale(1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Slider 样式增强 */
+  .ant-slider {
+    margin: 12px 0;
+  }
+
+  .ant-slider-track {
+    transition: all 0.3s ease;
+  }
+
+  .ant-slider-handle {
+    transition: all 0.3s ease;
+  }
+
+  .ant-slider-handle:hover,
+  .ant-slider-handle:focus {
+    transform: scale(1.2);
   }
 
   /* 修复 Slider 刻度挤压 */
   .ant-slider-mark-text {
     white-space: nowrap !important;
+  }
+
+/* 卡片悬停效果 */
+.ant-card {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ant-card:hover {
+  transform: translateY(-2px);
+}
+
+  /* 全局平滑滚动 */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* 选择文本样式 */
+  ::selection {
+    background: rgba(102, 126, 234, 0.3);
+    color: inherit;
+  }
+
+  /* 焦点可见性 */
+  :focus-visible {
+    outline: 2px solid rgba(102, 126, 234, 0.5);
+    outline-offset: 2px;
+  }
+
+  /* 响应式动画减少 */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }

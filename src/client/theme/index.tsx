@@ -34,30 +34,49 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const antThemeConfig: ThemeConfig = {
     algorithm: theme === "dark" ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
     token: {
-      colorPrimary: "#1890ff",
-      borderRadius: 6,
+      colorPrimary: "#667eea",
+      colorPrimaryHover: "#764ba2",
+      colorPrimaryActive: "#5a67d8",
+      borderRadius: 8,
       fontFamily: `-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif`,
       ...(theme === "dark"
         ? {
-            colorBgContainer: "#1f2937", // gray-800
-            colorBgElevated: "#374151", // gray-700
-            colorText: "#f3f4f6", // gray-100
-            colorTextSecondary: "#d1d5db", // gray-300
-            colorBorder: "#4b5563", // gray-600
+            colorBgContainer: "#1f2937",
+            colorBgElevated: "#374151",
+            colorText: "#f3f4f6",
+            colorTextSecondary: "#d1d5db",
+            colorBorder: "#4b5563",
           }
         : {}),
     },
     components: {
       Card: {
-        borderRadiusLG: 8,
+        borderRadiusLG: 12,
+        borderRadius: 12,
         boxShadow:
           theme === "dark" ? "0 4px 12px rgba(0, 0, 0, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.08)",
       },
       Button: {
-        borderRadius: 6,
+        borderRadius: 8,
+        borderRadiusLG: 10,
+        borderRadiusSM: 6,
       },
       Input: {
-        borderRadius: 6,
+        borderRadius: 8,
+      },
+      Slider: {
+        colorPrimary: "#667eea",
+        controlSize: 12,
+        dotSize: 8,
+      },
+      Tag: {
+        borderRadius: 12,
+      },
+      Alert: {
+        borderRadius: 12,
+      },
+      Drawer: {
+        borderRadius: 12,
       },
     },
   };

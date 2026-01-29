@@ -80,10 +80,11 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
         width: "100%",
         display: "flex",
         flexDirection: "column",
-        gap: "12px",
+        gap: "16px",
       }}
+      className="bg-gray-50 dark:bg-gray-700/30 rounded-2xl p-5 border border-gray-100 dark:border-gray-700"
     >
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap gap-3">
         <Title
           level={5}
           className="!m-0 text-gray-800 dark:text-gray-100 flex items-center gap-2"
@@ -91,7 +92,8 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
             fontWeight: 600,
           }}
         >
-          📊 数据可视化
+          <span className="text-xl">📊</span>
+          <span>数据可视化</span>
         </Title>
         <ChartTypeSelector value={chartType} onChange={setChartType} />
       </div>
@@ -102,7 +104,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
           description="无法加载图表数据，请检查输入参数"
           type="error"
           showIcon
-          className="shake"
+          className="shake rounded-xl"
         />
       )}
 

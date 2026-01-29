@@ -30,8 +30,16 @@ import {
   FloatButton,
   Tag,
   Badge,
+  Avatar,
+  Divider,
+  Tooltip,
 } from "antd";
-import { CalculatorOutlined, HistoryOutlined } from "@ant-design/icons";
+import {
+  HistoryOutlined,
+  LineChartOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+} from "@ant-design/icons";
 import { useStockCalculator } from "@/client/hooks/useStockCalculator";
 import { useResponsive } from "@/client/hooks/useResponsive";
 import {
@@ -71,72 +79,197 @@ export const StockCalculator: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen w-full bg-gradient-to-br from-[#667eea] to-[#764ba2] dark:from-gray-900 dark:to-gray-800 transition-colors duration-500">
-        <Layout className="min-h-screen w-full bg-transparent">
+      <div className="min-h-screen w-full bg-gradient-to-br from-[#667eea] via-[#7c6cd9] to-[#764ba2] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500 relative overflow-hidden">
+        {/* 背景装饰元素 */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/3 rounded-full blur-3xl" />
+        </div>
+
+        <Layout className="min-h-screen w-full bg-transparent relative z-10">
           <Layout.Content
-            className={`max-w-[1400px] mx-auto w-full ${isMobile ? "px-2 py-3" : "px-4 py-6"}`}
+            className={`max-w-[1400px] mx-auto w-full ${isMobile ? "px-3 py-4" : "px-6 py-8"}`}
           >
-            <Row gutter={[16, 16]}>
-              <Col span={24}>
-                {/* 标题区域 */}
-                <div className="mb-5 bg-white/95 backdrop-blur-md dark:bg-gray-800/95 rounded-xl p-5 sm:p-6 shadow-lg border border-white/20 dark:border-gray-700/50 transition-colors">
-                  <div className="flex justify-between items-start flex-wrap gap-3">
-                    <div className="flex-1 min-w-0">
-                      <Space size={isMobile ? "small" : "middle"} wrap>
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] dark:from-blue-600 dark:to-purple-700 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                          <CalculatorOutlined className="text-white text-[20px] sm:text-[24px]" />
-                        </div>
-                        <div>
-                          <Title
-                            level={isMobile ? 4 : 3}
-                            className="!m-0 !text-xl sm:!text-2xl !font-bold bg-gradient-to-br from-[#667eea] to-[#764ba2] dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent"
+            <Row gutter={[24, 24]}>
+            <Col span={24}>
+              {/* 全新设计的顶栏 - 现代简约风格 */}
+              <Card
+                className="mb-6 overflow-hidden"
+                styles={{
+                  body: {
+                    padding: 0,
+                  },
+                }}
+              >
+                <div className="relative">
+                  {/* 顶部渐变装饰条 */}
+                  <div
+                    className="h-1.5 w-full"
+                    style={{
+                      background: "linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)",
+                    }}
+                  />
+
+                  <div className="p-5 sm:p-6">
+                    <Row gutter={[16, 16]} align="middle" justify="space-between">
+                      <Col xs={24} sm={20} md={18} lg={16}>
+                        <Space size={isMobile ? "middle" : "large"} align="center">
+                          {/* Logo 区域 */}
+                          <Avatar
+                            size={isMobile ? 56 : 64}
+                            icon={<LineChartOutlined />}
+                            style={{
+                              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                            className="shadow-lg"
+                          />
+
+                          <div>
+                            {/* 主标题 */}
+                            <Space size="small" align="baseline">
+                              <Title
+                                level={isMobile ? 4 : 3}
+                                style={{
+                                  margin: 0,
+                                  fontSize: isMobile ? "1.25rem" : "1.75rem",
+                                  fontWeight: 700,
+                                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                                  WebkitBackgroundClip: "text",
+                                  WebkitTextFillColor: "transparent",
+                                }}
+                              >
+                                股价收益计算器
+                              </Title>
+                              <Tooltip title="支持涨停/跌停双向计算">
+                                <Tag
+                                  icon={<ArrowUpOutlined />}
+                                  color="success"
+                                  style={{
+                                    borderRadius: 12,
+                                    fontSize: "0.75rem",
+                                    display: isMobile ? "none" : "inline-flex",
+                                  }}
+                                >
+                                  涨停
+                                </Tag>
+                                <Tag
+                                  icon={<ArrowDownOutlined />}
+                                  color="error"
+                                  style={{
+                                    borderRadius: 12,
+                                    fontSize: "0.75rem",
+                                    display: isMobile ? "none" : "inline-flex",
+                                  }}
+                                >
+                                  跌停
+                                </Tag>
+                              </Tooltip>
+                            </Space>
+
+                            {/* 副标题 */}
+                            <div className="mt-1">
+                              <Typography.Text
+                                type="secondary"
+                                style={{
+                                  fontSize: isMobile ? "0.75rem" : "0.875rem",
+                                }}
+                              >
+                                智能分析连板收益，实时计算投资回报
+                              </Typography.Text>
+                            </div>
+
+                            {/* 特性标签 */}
+                            <Space
+                              size="small"
+                              style={{ marginTop: 8 }}
+                              className={isMobile ? "hidden" : "flex"}
+                            >
+                              <Tag
+                                color="blue"
+                                style={{
+                                  borderRadius: 12,
+                                  fontSize: "0.7rem",
+                                  background: "rgba(102, 126, 234, 0.1)",
+                                  border: "1px solid rgba(102, 126, 234, 0.2)",
+                                }}
+                              >
+                                实时计算
+                              </Tag>
+                              <Tag
+                                color="purple"
+                                style={{
+                                  borderRadius: 12,
+                                  fontSize: "0.7rem",
+                                  background: "rgba(118, 75, 162, 0.1)",
+                                  border: "1px solid rgba(118, 75, 162, 0.2)",
+                                }}
+                              >
+                                历史记录
+                              </Tag>
+                              <Tag
+                                color="cyan"
+                                style={{
+                                  borderRadius: 12,
+                                  fontSize: "0.7rem",
+                                  background: "rgba(6, 182, 212, 0.1)",
+                                  border: "1px solid rgba(6, 182, 212, 0.2)",
+                                }}
+                              >
+                                数据可视化
+                              </Tag>
+                            </Space>
+                          </div>
+                        </Space>
+                      </Col>
+
+                      <Col
+                        xs={24}
+                        sm={4}
+                        md={6}
+                        lg={8}
+                        style={{
+                          textAlign: isMobile ? "left" : "right",
+                        }}
+                      >
+                        <Space size="small">
+                          <ThemeToggle />
+                          <Divider orientation="vertical" style={{ height: 24 }} />
+                          <Badge
+                            count={history.length}
+                            showZero={false}
+                            size="small"
+                            offset={[-5, 5]}
                           >
-                            股价收益计算器
-                          </Title>
-                          <Space size="small" className={isMobile ? "mt-1" : "mt-1.5"}>
-                            <Tag color="blue" className="m-0 rounded">
-                              智能计算
-                            </Tag>
-                            <span className="text-gray-500 dark:text-gray-400 text-xs sm:text-[13px] max-w-[400px] truncate block">
-                              快速计算股票连板收益，助您把握投资机会
-                            </span>
-                          </Space>
-                        </div>
-                      </Space>
-                    </div>
-                    <Space size="small">
-                      <ThemeToggle />
-                      <Badge count={history.length} showZero={false} size="small" offset={[-5, 5]}>
-                        <Button
-                          type="primary"
-                          icon={<HistoryOutlined className="text-[14px] sm:text-[16px]" />}
-                          onClick={openHistoryDrawer}
-                          disabled={history.length === 0}
-                          size={isMobile ? "middle" : "large"}
-                          style={{
-                            borderRadius: "8px",
-                            background:
-                              history.length > 0
-                                ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                                : undefined,
-                            border: history.length > 0 ? "none" : undefined,
-                            height: isMobile ? "36px" : "40px",
-                            paddingLeft: isMobile ? "16px" : "20px",
-                            paddingRight: isMobile ? "16px" : "20px",
-                          }}
-                        >
-                          {isMobile ? "历史" : "历史记录"}
-                        </Button>
-                      </Badge>
-                    </Space>
+                            <Button
+                              type={history.length > 0 ? "primary" : "default"}
+                              icon={<HistoryOutlined />}
+                              onClick={openHistoryDrawer}
+                              disabled={history.length === 0}
+                              size={isMobile ? "middle" : "large"}
+                              style={{
+                                borderRadius: 10,
+                                boxShadow: history.length > 0 ? "0 2px 8px rgba(102, 126, 234, 0.3)" : undefined,
+                              }}
+                            >
+                                历史记录
+                            </Button>
+                          </Badge>
+                        </Space>
+                      </Col>
+                    </Row>
                   </div>
                 </div>
+              </Card>
 
                 <Card
-                  className={`flex flex-col ${isMobile ? "" : "min-h-[calc(100vh-120px)]"}`}
+                  className={`flex flex-col rounded-2xl border-0 shadow-xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-md ${isMobile ? "" : "min-h-[calc(100vh-140px)]"}`}
                   styles={{
                     body: {
-                      padding: isMobile ? "16px" : "24px",
+                      padding: isMobile ? "20px" : "28px",
                       display: "flex",
                       flexDirection: "column",
                       flex: 1,
@@ -145,32 +278,39 @@ export const StockCalculator: React.FC = () => {
                 >
                   {error && (
                     <Alert
-                      title="输入错误"
+                      message="输入错误"
                       description={error}
                       type="error"
                       showIcon
                       closable
                       onClose={() => setError(null)}
-                      className="mb-4"
+                      className="mb-6 rounded-xl shadow-sm"
+                      style={{
+                        animation: "shake 0.5s ease-in-out",
+                      }}
                     />
                   )}
 
-                  <Row gutter={[24, 24]} className="flex-1 items-start">
+                  <Row gutter={[32, 32]} className="flex-1 items-start">
                     <Col xs={24} lg={12} xl={10} xxl={9}>
-                      <CalculationForm
-                        form={form}
-                        onValuesChange={handleValuesChange}
-                        isFieldValid={isFieldValid}
-                        error={error}
-                      />
+                      <div className="h-full animate-[slideIn_0.4s_ease-out]">
+                        <CalculationForm
+                          form={form}
+                          onValuesChange={handleValuesChange}
+                          isFieldValid={isFieldValid}
+                          error={error}
+                        />
+                      </div>
                     </Col>
 
                     <Col xs={24} lg={12} xl={14} xxl={15}>
-                      <ResultsDisplay
-                        results={results}
-                        isMobile={isMobile}
-                        params={currentParams}
-                      />
+                      <div className="h-full animate-[slideIn_0.4s_ease-out_0.1s_both]">
+                        <ResultsDisplay
+                          results={results}
+                          isMobile={isMobile}
+                          params={currentParams}
+                        />
+                      </div>
                     </Col>
                   </Row>
                 </Card>
@@ -196,7 +336,11 @@ export const StockCalculator: React.FC = () => {
           icon={<HistoryOutlined />}
           onClick={openHistoryDrawer}
           badge={{ count: history.length }}
-          style={{ right: 24, bottom: 24 }}
+          style={{
+            right: 24,
+            bottom: 24,
+            boxShadow: "0 4px 14px rgba(102, 126, 234, 0.4)",
+          }}
           tooltip="查看历史记录"
         />
       )}

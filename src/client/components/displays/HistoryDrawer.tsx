@@ -53,7 +53,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
     const [clearing, setClearing] = useState(false);
     const [searchValue, setSearchValue] = useState("");
     const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([null, null]);
-    const [dailyReturnFilter, setDailyReturnFilter] = useState<number | null>(null);
+    const [dailyReturnFilter, setDailyReturnFilter] = useState<number | undefined>(undefined);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
     const handleClearHistory = async () => {
@@ -118,8 +118,8 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
           (itemDate.isAfter(dateRange[0].startOf("day").subtract(1, "second")) &&
             itemDate.isBefore(dateRange[1].endOf("day").add(1, "second")));
 
-        const matchesDailyReturn =
-          dailyReturnFilter === null || item.params.dailyReturn === dailyReturnFilter;
+const matchesDailyReturn =
+        dailyReturnFilter === undefined || item.params.dailyReturn === dailyReturnFilter;
 
         return matchesSearch && matchesDateRange && matchesDailyReturn;
       });
@@ -138,23 +138,33 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
     return (
       <Drawer
         title={
-          <Space>
-            <HistoryOutlined />
-            <span>计算历史</span>
-            {filteredHistory.length > 0 && (
-              <Tag color="blue" style={{ marginLeft: 8 }}>
-                {filteredHistory.length} 条记录
-              </Tag>
-            )}
+          <Space size="middle">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
+              <HistoryOutlined className="text-white text-lg" />
+            </div>
+            <div>
+              <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                计算历史
+              </span>
+              {filteredHistory.length > 0 && (
+                <Tag
+                  color="blue"
+                  className="ml-3 rounded-full px-3 py-0.5 text-xs font-medium bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800"
+                >
+                  {filteredHistory.length} 条记录
+                </Tag>
+              )}
+            </div>
           </Space>
         }
         placement={isMobile ? "bottom" : "right"}
         onClose={onClose}
         open={visible}
         size={isMobile ? "large" : "default"}
-        className={isMobile ? "history-drawer-mobile" : ""}
+        className={`${isMobile ? "history-drawer-mobile" : ""} backdrop-blur-sm`}
         styles={{
-          body: { padding: "16px" },
+          body: { padding: "20px" },
+          header: { borderBottom: "1px solid #f0f0f0", padding: "16px 20px" },
         }}
         extra={
           selectedIds.size > 0 ? (
@@ -168,11 +178,11 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
                 cancelText="取消"
                 okButtonProps={{ danger: true }}
               >
-                <Button size="small" danger icon={<DeleteOutlined />}>
+                <Button size="small" danger icon={<DeleteOutlined />} className="rounded-lg">
                   批量删除
                 </Button>
               </Popconfirm>
-              <Button size="small" onClick={() => setSelectedIds(new Set())}>
+              <Button size="small" onClick={() => setSelectedIds(new Set())} className="rounded-lg">
                 取消选择
               </Button>
             </Space>
@@ -190,7 +200,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
                   size="small"
                   danger
                   icon={<ClearOutlined />}
-                  style={{ transition: "all 0.3s ease" }}
+                  className="rounded-lg transition-all duration-300 hover:scale-105"
                 >
                   清空历史
                 </Button>
@@ -199,48 +209,56 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
           )
         }
       >
-        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-          {history.length > 0 && (
-            <Card size="small" className="dark:bg-gray-800">
-              <Space direction="vertical" size="small" style={{ width: "100%" }}>
+      <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 16 }}>
+      {history.length > 0 && (
+        <Card
+          size="small"
+          className="dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm"
+        >
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 12 }}>
                 <Input
                   placeholder="搜索初始股价"
-                  prefix={<SearchOutlined />}
+                  prefix={<SearchOutlined className="text-gray-400" />}
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   allowClear
+                  className="rounded-lg"
+                  size="middle"
                 />
-                <Space size="small" wrap>
+                <Space size="small" wrap className="w-full">
                   <RangePicker
                     placeholder={["开始日期", "结束日期"]}
                     value={dateRange}
                     onChange={(dates) => setDateRange([dates?.[0] ?? null, dates?.[1] ?? null])}
-                    size="small"
+                    size="middle"
+                    className="rounded-lg"
                     style={{ width: isMobile ? "100%" : "auto" }}
                   />
                   <Select
                     placeholder="涨跌幅"
                     value={dailyReturnFilter}
                     onChange={setDailyReturnFilter}
-                    options={[{ label: "全部", value: null }, ...DailyReturnOptions]}
+                    options={[{ label: "全部", value: undefined }, ...DailyReturnOptions]}
                     allowClear
-                    style={{ width: 120 }}
-                    size="small"
+                    style={{ width: isMobile ? "100%" : 140 }}
+                    size="middle"
+                    className="rounded-lg"
                   />
                 </Space>
                 {filteredHistory.length > 0 && (
                   <Checkbox
                     checked={selectedIds.size === filteredHistory.length}
                     onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="rounded-lg"
                   >
-                    全选
+                    全选 ({filteredHistory.length} 条)
                   </Checkbox>
                 )}
-              </Space>
-            </Card>
-          )}
+          </div>
+        </Card>
+      )}
 
-          {filteredHistory.length === 0 ? (
+      {filteredHistory.length === 0 ? (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
               description={
@@ -281,10 +299,10 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
                   }
                 }}
               />
-            ))
-          )}
-        </Space>
-      </Drawer>
+        ))
+      )}
+    </div>
+  </Drawer>
     );
   },
 );

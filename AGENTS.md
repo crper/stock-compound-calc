@@ -1,7 +1,7 @@
 # AGENTS.md - AI 编码指南
 
 **项目:** 股票计算器 (Bun + React 19 + TypeScript + SQLite + React Query + Tailwind v4 + Ant Design v6)
-**最后更新:** 2026-01-29
+**最后更新:** 2026-01-30
 
 ## 🛠 核心命令
 
@@ -193,6 +193,36 @@ src/
 - **必须** 每次提交前运行 `bun run lint` + `bun run format`
 - **必须** 在前端业务逻辑变更时更新或添加 `src/client/services/__tests__` 下的测试
 - **必须** 视觉变更保持深色/浅色模式兼容性
+
+## 🎨 Ant Design 主题配置最佳实践
+
+### 主题配置原则
+
+- **统一主色**: 在 `src/client/theme/index.tsx` 中配置 `colorPrimary: "#667eea"`，确保全站颜色一致
+- **使用 ConfigProvider**: 所有 Ant Design 组件的样式配置应通过 `ConfigProvider` 的 `components` Token 配置，而非 CSS 覆盖
+- **避免内联样式**: 尽可能使用 Ant Design 的 `type="primary"` 等预设样式，避免硬编码渐变或颜色
+- **废弃 API 迁移**: 及时更新废弃的 API，如：
+  - `Space direction="vertical"` → 使用 `Flex` 组件或 `div` + flex 布局
+  - `Divider type="vertical"` → `Divider orientation="vertical"`
+  - `Select options` 中的 `value: null` → `value: undefined`
+
+### 配置示例
+
+```typescript
+const antThemeConfig: ThemeConfig = {
+  algorithm: theme === "dark" ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
+  token: {
+    colorPrimary: "#667eea",
+    colorPrimaryHover: "#764ba2",
+    borderRadius: 8,
+  },
+  components: {
+    Card: { borderRadiusLG: 12 },
+    Button: { borderRadius: 8 },
+    Slider: { colorPrimary: "#667eea" },
+  },
+};
+```
 
 ## 🚀 开发流程
 

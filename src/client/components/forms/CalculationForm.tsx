@@ -67,18 +67,20 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
         size={responsive.cardSize}
         title={
           <div className="flex items-center justify-between">
-            <Title level={4} className="!m-0 dark:text-gray-100 text-lg lg:text-base">
+            <Title level={4} className="!m-0 dark:text-gray-100 text-lg lg:text-base font-semibold">
               计算参数
             </Title>
           </div>
         }
         className="w-full lg:min-w-[400px]"
         style={{
-          borderRadius: isMobile ? "8px" : "6px",
+          borderRadius: "16px",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
         }}
         classNames={{
-          header: "bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700",
-          body: "flex flex-col p-4 md:p-5 dark:bg-gray-800",
+          header:
+            "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700/50 border-b dark:border-gray-700 rounded-t-2xl",
+          body: "flex flex-col p-5 md:p-6 dark:bg-gray-800 rounded-b-2xl",
         }}
       >
         {error && (
@@ -88,8 +90,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
             type="error"
             showIcon
             closable
+            className="rounded-xl mb-5"
             style={{
-              marginBottom: 16,
               animation: "shake 0.5s ease-in-out",
             }}
           />
@@ -123,10 +125,13 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               }
               tooltip="请输入股票的起始价格，最大支持10亿"
               {...getFieldValidation("initialPrice")}
-              style={{ marginBottom: isMobile ? 20 : 24 }}
+              style={{ marginBottom: isMobile ? 24 : 28 }}
             >
               <InputNumber
-                style={{ width: "100%" }}
+                style={{
+                  width: "100%",
+                  borderRadius: "10px",
+                }}
                 min={0.01}
                 max={1000000000}
                 step={0.01}
@@ -136,6 +141,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 size={responsive.size}
                 prefix="¥"
                 suffix="元"
+                className="hover:border-blue-400 focus:border-blue-500 transition-colors duration-300"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 parser={(value: string | undefined): number => {
                   const parsed = value ? Number(value.replace(/¥\s?|元|(,*)/g, "")) : 0.01;
@@ -149,10 +155,10 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
             <Form.Item
               name="dailyReturn"
               {...getFieldValidation("dailyReturn")}
-              style={{ marginBottom: 24 }}
+              style={{ marginBottom: 28 }}
             >
-              <div>
-                <Space size="small" style={{ marginBottom: 8 }} className="whitespace-nowrap">
+              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
+                <Space size="small" style={{ marginBottom: 12 }} className="whitespace-nowrap">
                   <Text strong className="dark:text-gray-200 text-base lg:text-sm">
                     涨跌幅度
                   </Text>
@@ -169,12 +175,22 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   tooltip={{
                     formatter: (val) => `${val}%`,
                     placement: "top",
+                    className: "rounded-lg",
                   }}
                   onChange={handlePresetChange}
+                  className="custom-slider"
+                  trackStyle={{
+                    background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+                    borderRadius: "4px",
+                  }}
+                  handleStyle={{
+                    borderColor: "#667eea",
+                    boxShadow: "0 2px 8px rgba(102, 126, 234, 0.4)",
+                  }}
                 />
                 <Text
                   type="secondary"
-                  className="dark:text-gray-400 block mt-6 text-xs lg:text-[11px]"
+                  className="dark:text-gray-400 block mt-4 text-xs lg:text-[11px]"
                 >
                   拖动滑块设置每日涨跌幅百分比，范围1%-30%
                 </Text>
@@ -182,11 +198,11 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
             </Form.Item>
 
             {/* 预设按钮 */}
-            <div style={{ marginBottom: 16 }}>
+            <div style={{ marginBottom: 20 }}>
               <Text
                 strong
                 style={{
-                  marginBottom: 8,
+                  marginBottom: 12,
                   display: "block",
                 }}
                 className="text-gray-500 dark:text-gray-400 text-base lg:text-sm"
@@ -203,17 +219,23 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                       key={preset.value}
                       size={responsive.buttonSize}
                       type={isActive ? "primary" : "default"}
+                      className="rounded-xl transition-all duration-300"
                       style={{
                         borderColor: isActive ? preset.color : isHovered ? preset.color : undefined,
                         backgroundColor: isActive ? preset.color : undefined,
-                        fontWeight: isActive ? "bold" : "normal",
+                        backgroundImage: isActive ? "none" : undefined,
+                        fontWeight: isActive ? "600" : "normal",
                         boxShadow: isActive
-                          ? `0 4px 12px ${preset.color}40`
+                          ? `0 4px 14px ${preset.color}50`
                           : isHovered
-                            ? `0 2px 8px ${preset.color}20`
-                            : "none",
-                        transform: isHovered && !isActive ? "translateY(-2px)" : "translateY(0)",
-                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                            ? `0 4px 12px ${preset.color}25`
+                            : "0 2px 6px rgba(0, 0, 0, 0.05)",
+                        transform: isHovered
+                          ? "translateY(-3px) scale(1.02)"
+                          : "translateY(0) scale(1)",
+                        borderRadius: "12px",
+                        padding: "0 16px",
+                        height: isMobile ? "36px" : "40px",
                       }}
                       onClick={() => handlePresetChange(preset.value)}
                       onMouseEnter={() => setHoveredPreset(preset.value)}
@@ -223,10 +245,10 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                       <Text
                         type="secondary"
                         style={{
-                          marginLeft: 4,
-                          opacity: 0.8,
+                          marginLeft: 6,
+                          opacity: 0.85,
                         }}
-                        className={`${isActive ? "text-white" : ""} text-xs lg:text-[11px]`}
+                        className={`${isActive ? "!text-white/90" : ""} text-xs lg:text-[11px]`}
                       >
                         ({preset.subLabel})
                       </Text>
@@ -242,8 +264,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               {...getFieldValidation("boardCount")}
               style={{ marginBottom: 8 }}
             >
-              <div>
-                <Space size="small" style={{ marginBottom: 8 }} className="whitespace-nowrap">
+              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
+                <Space size="small" style={{ marginBottom: 12 }} className="whitespace-nowrap">
                   <Text strong className="dark:text-gray-200 text-base lg:text-sm">
                     连板数量
                   </Text>
@@ -258,11 +280,23 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   marks={FORM_CONFIG.BOARD_SLIDER_MARKS}
                   value={form.getFieldValue("boardCount") || 1}
                   onChange={(value) => handleFieldChange("boardCount", value)}
-                  tooltip={{ formatter: (val) => `${val}天` }}
+                  tooltip={{
+                    formatter: (val) => `${val}天`,
+                    className: "rounded-lg",
+                  }}
+                  className="custom-slider"
+                  trackStyle={{
+                    background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+                    borderRadius: "4px",
+                  }}
+                  handleStyle={{
+                    borderColor: "#667eea",
+                    boxShadow: "0 2px 8px rgba(102, 126, 234, 0.4)",
+                  }}
                 />
                 <Text
                   type="secondary"
-                  className="dark:text-gray-400 block mt-6 text-xs lg:text-[11px]"
+                  className="dark:text-gray-400 block mt-4 text-xs lg:text-[11px]"
                 >
                   拖动滑块设置连续涨停/跌停天数，范围1-15天
                 </Text>

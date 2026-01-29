@@ -36,22 +36,31 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
         title={
           <div className="flex items-center justify-between text-base">
             <div className="flex items-center gap-2">
-              <IconComponent />
+              <div
+                className={`w-7 h-7 rounded-lg ${isUp ? "bg-red-100 dark:bg-red-900/30" : "bg-green-100 dark:bg-green-900/30"} flex items-center justify-center`}
+              >
+                <IconComponent
+                  className={`${isUp ? "text-red-500 dark:text-red-400" : "text-green-500 dark:text-green-400"}`}
+                />
+              </div>
               <span className="font-semibold text-gray-800 dark:text-gray-100">{title}</span>
             </div>
             {params && (
-              <Tag color={isUp ? "success" : "error"} className="m-0 text-xs font-medium border-0">
+              <Tag
+                color={isUp ? "success" : "error"}
+                className="m-0 text-xs font-medium rounded-full px-3 py-0.5"
+              >
                 {params.boardCount} 天
               </Tag>
             )}
           </div>
         }
         classNames={{
-          header: `${colors.bg} ${colors.border} border-b px-5 py-2.5`,
-          body: `p-5 md:p-6 bg-white dark:bg-gray-800`,
+          header: `${colors.bg} ${colors.border} border-b px-5 py-3 rounded-t-xl`,
+          body: `p-5 md:p-6 bg-white dark:bg-gray-800 rounded-b-xl`,
         }}
         hoverable
-        className={`scale-in rounded-lg border-2 ${colors.border} overflow-hidden`}
+        className={`rounded-xl border-2 ${colors.border} overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}
       >
         {/* 最终股价 - 核心数据 */}
         <div className={`text-center mb-6 p-5 rounded-lg border ${colors.bg} ${colors.border}`}>

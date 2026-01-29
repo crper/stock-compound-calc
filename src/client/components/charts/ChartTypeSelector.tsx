@@ -31,13 +31,25 @@ export const ChartTypeSelector: React.FC<ChartTypeSelectorProps> = React.memo(
     ];
 
     return (
-      <Space.Compact size={responsive.size === "large" ? "small" : "middle"}>
+      <Space.Compact
+        size={responsive.size === "large" ? "small" : "middle"}
+        className="rounded-xl overflow-hidden"
+      >
         {options.map((option) => (
           <Button
             key={option.value}
             type={value === option.value ? "primary" : "default"}
             icon={option.icon}
             onClick={() => onChange(option.value)}
+            className="transition-all duration-300"
+            style={{
+              borderRadius: 0,
+              backgroundColor: value === option.value ? undefined : undefined,
+              backgroundImage:
+                value === option.value
+                  ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                  : undefined,
+            }}
           >
             {option.label}
           </Button>

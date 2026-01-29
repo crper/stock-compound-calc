@@ -48,7 +48,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
           size={isMobile ? "default" : "small"}
           style={{
             height: "100%",
-            borderRadius: isMobile ? "8px" : "6px",
+            borderRadius: "16px",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
             transition: "all 0.3s ease",
           }}
           styles={{
@@ -56,22 +57,29 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              minHeight: "200px",
+              minHeight: "400px",
+              padding: isMobile ? "24px" : "32px",
             },
           }}
-          className="dark:bg-gray-800 dark:border-gray-700"
+          className="dark:bg-gray-800 dark:border-gray-700 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md"
         >
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             styles={{
               image: {
-                height: isMobile ? 80 : 60,
+                height: isMobile ? 100 : 80,
+                opacity: 0.6,
               },
             }}
             description={
-              <span className="text-gray-400 dark:text-gray-500 text-sm transition-all duration-300">
-                输入参数后自动显示计算结果
-              </span>
+              <div className="text-center">
+                <span className="text-gray-500 dark:text-gray-400 text-base block mb-2 transition-all duration-300">
+                  输入参数后自动显示计算结果
+                </span>
+                <span className="text-gray-400 dark:text-gray-500 text-sm">
+                  调整表单中的参数开始计算
+                </span>
+              </div>
             }
           />
         </Card>
@@ -86,7 +94,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
           minHeight: isMobile ? "auto" : "400px",
           display: "flex",
           flexDirection: "column",
-          borderRadius: isMobile ? "8px" : "6px",
+          borderRadius: "16px",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
           transition: "all 0.3s ease",
         }}
         styles={{
@@ -94,37 +103,44 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            gap: isMobile ? "16px" : "20px",
-            padding: isMobile ? "16px" : "20px",
+            gap: isMobile ? "20px" : "24px",
+            padding: isMobile ? "20px" : "28px",
             transition: "all 0.3s ease",
           },
         }}
-        className="scale-in dark:bg-gray-800 dark:border-gray-700"
+        className="scale-in dark:bg-gray-800 dark:border-gray-700 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md"
       >
         {/* 概览卡片区域 */}
         <div style={{ flex: "0 0 auto" }}>
-          <Row gutter={[isMobile ? 12 : 16, isMobile ? 12 : 16]}>
+          <Row gutter={[isMobile ? 16 : 20, isMobile ? 16 : 20]}>
             <Col xs={24} sm={12} md={12} lg={12} xl={12}>
-              <ResultOverviewCard
-                result={results.up}
-                type="up"
-                isMobile={isMobile}
-                params={params}
-              />
+              <div className="animate-[slideIn_0.4s_ease-out_0.05s_both]">
+                <ResultOverviewCard
+                  result={results.up}
+                  type="up"
+                  isMobile={isMobile}
+                  params={params}
+                />
+              </div>
             </Col>
             <Col xs={24} sm={12} md={12} lg={12} xl={12}>
-              <ResultOverviewCard
-                result={results.down}
-                type="down"
-                isMobile={isMobile}
-                params={params}
-              />
+              <div className="animate-[slideIn_0.4s_ease-out_0.1s_both]">
+                <ResultOverviewCard
+                  result={results.down}
+                  type="down"
+                  isMobile={isMobile}
+                  params={params}
+                />
+              </div>
             </Col>
           </Row>
         </div>
 
         {/* 图表区域 */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <div
+          style={{ flex: 1, display: "flex", flexDirection: "column" }}
+          className="animate-[slideIn_0.4s_ease-out_0.15s_both]"
+        >
           <ChartContainer results={results} isMobile={isMobile} />
         </div>
       </Card>
