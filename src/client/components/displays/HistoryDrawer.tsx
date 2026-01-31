@@ -32,7 +32,7 @@ import {
 } from "antd";
 import React, { useState, useMemo } from "react";
 import type { CalculationHistory } from "@/shared/types";
-import { CARD_COLORS } from "@/shared/constants";
+import { TREND_COLORS } from "@/shared/constants";
 import { formatCurrency, formatDate, formatPercentage } from "@/shared/utils/formatters";
 
 const { Text } = Typography;
@@ -406,11 +406,11 @@ const HistoryResultCard: React.FC<HistoryResultCardProps> = React.memo(({ result
   const isUp = type === "up";
   const IconComponent = isUp ? RiseOutlined : FallOutlined;
   const title = isUp ? "涨停收益" : "跌停收益";
-  const colors = isUp ? CARD_COLORS.up : CARD_COLORS.down;
+  const colors = isUp ? TREND_COLORS.up : TREND_COLORS.down;
 
   return (
     <div
-      className={`text-center p-3 rounded-lg ${colors.bg} border ${colors.border} ${colors.darkBg} ${colors.darkBorder}`}
+      className={`text-center p-3 rounded-lg ${colors.bg} border ${colors.border}`}
     >
       <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-1 flex items-center justify-center">
         <IconComponent style={{ fontSize: 12 }} className={`${colors.iconColor} mr-1`} />

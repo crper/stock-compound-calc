@@ -1,13 +1,9 @@
 /**
  * 统一 API 响应格式
  */
+import type { ApiResponse } from "@/shared/types";
 
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  timestamp?: string;
-}
+export type { ApiResponse } from "@/shared/types";
 
 export interface ApiErrorResponse {
   success: false;

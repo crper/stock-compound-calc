@@ -1,5 +1,8 @@
 import type { CalculationHistory, CalculationParams, CalculationResult } from "@/shared/types";
 import { Database } from "bun:sqlite";
+import type { DatabaseRow, PaginationOptions } from "./types/database";
+
+export type { PaginationOptions } from "./types/database";
 
 const safeJsonParse = <T>(json: string | null | undefined, defaultValue: T): T => {
   if (!json) return defaultValue;
@@ -8,26 +11,6 @@ const safeJsonParse = <T>(json: string | null | undefined, defaultValue: T): T =
   } catch {
     return defaultValue;
   }
-};
-
-interface DatabaseRow {
-  id: string;
-  timestamp: number;
-  initial_price: number;
-  board_count: number;
-  daily_return: number;
-  final_price_up: number;
-  total_return_up: number;
-  total_gain_up: number;
-  details_up: string;
-  daily_details_up: string;
-  final_price_down: number;
-  total_return_down: number;
-  total_gain_down: number;
-  details_down: string;
-  daily_details_down: string;
-  key_metrics_up: string;
-  key_metrics_down: string;
 }
 
 let db: Database | null = null;
@@ -115,11 +98,6 @@ export const saveCalculation = (
 
   return history;
 };
-
-export interface PaginationOptions {
-  limit?: number;
-  offset?: number;
-}
 
 export const getCalculations = (
   options: PaginationOptions = {},

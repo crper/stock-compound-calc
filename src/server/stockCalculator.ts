@@ -1,15 +1,8 @@
 import { CALCULATION_LIMITS, DECIMAL_CONFIG } from "@/shared/constants";
-import type { CalculationParams, CalculationResult, DailyDetail } from "@/shared/types";
+import type { CalculationParams, CalculationResult, DailyDetail, KeyMetrics } from "@/shared/types";
 import { ErrorFactory, ErrorHandler } from "@/shared/utils/errorHandler";
 import { validateCalculationParams as validateParams } from "@/shared/utils/validator";
 import Decimal from "decimal.js";
-
-export interface KeyMetrics {
-  doubleDays: number | null;
-  tenXDays: number | null;
-  breakEvenReturn: number | null;
-  annualizedReturn: number | null;
-}
 
 // 配置Decimal全局精度
 Decimal.set({

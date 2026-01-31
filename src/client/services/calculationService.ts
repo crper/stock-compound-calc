@@ -1,5 +1,10 @@
 import { API_CONSTANTS } from "@/shared/constants";
-import type { CalculationHistory, CalculationParams, PaginatedResponse } from "@/shared/types";
+import type {
+  CalculationHistory,
+  CalculationParams,
+  CalculationResult,
+  PaginatedResponse,
+} from "@/shared/types";
 
 /** 请求超时时间（毫秒） */
 const DEFAULT_TIMEOUT_MS = 10000;
@@ -48,6 +53,22 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 };
 
 export const calculationService = {
+  /**
+   * 执行计算（涨停和跌停）
+   */
+  calculate: async (params: CalculationParams): Promise<{ up: CalculationResult; down: CalculationResult }> => {
+    const response = await fetchWithTimeout(
+      `${API_CONSTANTS.BASE_URL}/calculations/calculate`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params),
+      },
+    );
+
+    return handleResponse<{ up: CalculationResult; down: CalculationResult }>(response);
+  },
+
   /**
    * 保存计算结果
    */

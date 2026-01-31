@@ -170,13 +170,20 @@ const result = CalculationParamsSchema.safeParse(input);
 
 #### GET /api/calculations
 
-获取历史记录，返回最新的 50 条
+获取历史记录，支持分页参数 (`?page=1&limit=50`)
 
 #### POST /api/calculations
 
-创建新的计算记录
+创建新的计算记录并保存到历史
 
 - Body: `{ initialPrice, boardCount, dailyReturn }`
+
+#### POST /api/calculations/calculate
+
+仅执行计算，不保存到历史记录
+
+- Body: `{ initialPrice, boardCount, dailyReturn }`
+- Response: `{ up: CalculationResult, down: CalculationResult }`
 
 #### DELETE /api/calculations
 

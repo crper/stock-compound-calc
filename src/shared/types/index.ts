@@ -6,6 +6,13 @@ export type {
   KeyMetrics,
 } from "@/shared/schemas";
 
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  timestamp?: string;
+}
+
 export interface PaginationMeta {
   currentPage: number;
   pageSize: number;
@@ -22,10 +29,3 @@ export interface PaginatedData<T> {
 }
 
 export type PaginatedResponse<T> = ApiResponse<PaginatedData<T>>;
-
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}

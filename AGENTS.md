@@ -1,7 +1,7 @@
 # AGENTS.md - AI 编码指南
 
 **项目:** 股票计算器 (Bun + React 19 + TypeScript + SQLite + React Query + Tailwind v4 + Ant Design v6)
-**最后更新:** 2026-01-30
+**最后更新:** 2026-01-31
 
 ## 🛠 核心命令
 
@@ -181,6 +181,14 @@ src/
 - **上下文感知**: 在回答问题或编写代码前，先搜索相关代码 (grep/glob) 以保持一致性
 - **服务层模式**: 所有 API 请求必须封装在 `src/client/services` 中，禁止在组件或 Hooks 中直接调用 fetch
 - **视觉一致性**: 任何 UI/UX 变更都必须遵循设计系统规范
+
+### 架构最佳实践
+
+- **前后端分离**: 前端不直接导入服务端模块，通过 API 调用 (`calculationService`)
+- **类型统一**: 共享类型定义在 `shared/types` 和 `shared/schemas`，避免重复定义
+- **常量集中**: 所有配置常量放在 `shared/constants`，禁止硬编码魔法数字
+- **性能优化**: 深色模式通过 `useTheme` Context 获取，避免 DOM 查询
+- **代码精简**: 删除冗余文件和重复配置，不保留 `@deprecated` 兼容代码
 
 ## ⚠️ 关键约束
 

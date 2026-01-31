@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { calculateBidirectionalReturns } from "@/server/stockCalculator";
 import type { CalculationParams, CalculationResult, CalculationHistory } from "@/shared/types";
 import { ErrorHandler } from "@/shared/utils/errorHandler";
 import { isFieldValid, getFieldErrorMessage } from "@/shared/utils/validator";
@@ -83,18 +82,23 @@ export const useStockCalculator = () => {
     },
   });
 
-  const calculate = (params: CalculationParams) => {
-    setError(null);
-    setCurrentParams(params);
-
-    try {
-      const calculationResults = calculateBidirectionalReturns(params);
+  const calculateMutation = useMutation({
+    mutationFn: calculationService.calculate,
+    onSuccess: (calculationResults) => {
       setResults(calculationResults);
-      saveMutation.mutate(params);
-    } catch (err) {
+      // 保存计算结果到历史记录
+      saveMutation.mutate(currentParams);
+    },
+    onError: (err) => {
       const appError = ErrorHandler.handleUnknown(err);
       setError(appError.toUserMessage());
-    }
+    },
+  });
+
+  const calculate = async (params: CalculationParams) => {
+    setError(null);
+    setCurrentParams(params);
+    calculateMutation.mutate(params);
   };
 
   const handleValuesChange = useMemo(
@@ -107,7 +111,7 @@ export const useStockCalculator = () => {
           isFieldValid(allValues.boardCount, "boardCount") &&
           isFieldValid(allValues.dailyReturn, "dailyReturn")
         ) {
-          calculate({
+          void calculate({
             initialPrice: Number(allValues.initialPrice),
             boardCount: Number(allValues.boardCount),
             dailyReturn: Number(allValues.dailyReturn),
@@ -164,6 +168,7 @@ export const useStockCalculator = () => {
     currentParams,
     isSaving: saveMutation.isPending,
     isClearing: clearMutation.isPending,
+    isCalculating: calculateMutation.isPending,
     // 分页相关
     pagination,
     currentPage,

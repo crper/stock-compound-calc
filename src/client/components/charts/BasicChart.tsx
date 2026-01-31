@@ -16,8 +16,10 @@ import {
   YAxis,
 } from "recharts";
 import React, { useMemo } from "react";
+import { CHART_CONFIG } from "@/shared/constants";
 import type { CalculationResult } from "@/shared/types";
 import { formatCurrency } from "@/shared/utils/formatters";
+import { useTheme } from "@/client/theme";
 import type { ChartType } from "./ChartTypeSelector";
 
 interface ChartDataType {
@@ -32,8 +34,6 @@ interface BasicChartProps {
   chartType?: ChartType;
 }
 
-const MAX_DATA_POINTS = 50;
-
 const getChartData = (
   results: { up: CalculationResult; down: CalculationResult } | undefined,
 ): ChartDataType[] => {
@@ -44,7 +44,7 @@ const getChartData = (
   const maxLength = Math.max(results.up.dailyDetails.length, results.down.dailyDetails.length);
   const data: ChartDataType[] = [];
 
-  for (let i = 0; i < Math.min(maxLength, MAX_DATA_POINTS); i++) {
+  for (let i = 0; i < Math.min(maxLength, CHART_CONFIG.MAX_DATA_POINTS); i++) {
     const upDetail = results.up.dailyDetails[i];
     const downDetail = results.down.dailyDetails[i];
 
@@ -67,13 +67,9 @@ const getChartConfig = (isMobile: boolean) => ({
 
 export const BasicChart: React.FC<BasicChartProps> = React.memo(
   ({ results, isMobile, chartType = "BAR" }) => {
+    const { theme } = useTheme();
+    const isDarkMode = theme === "dark";
     const chartData = useMemo(() => getChartData(results), [results]);
-    const isDarkMode = useMemo(() => {
-      if (typeof window !== "undefined") {
-        return document.documentElement.classList.contains("dark");
-      }
-      return false;
-    }, []);
     const config = useMemo(() => getChartConfig(isMobile), [isMobile]);
 
     const colors = useMemo(

@@ -2,7 +2,7 @@ import type { FormInstance } from "antd/es/form";
 import type { CalculationParams } from "@/shared/types";
 import { Alert, Button, Card, Form, InputNumber, Slider, Space, Typography } from "antd";
 import React, { useCallback, useState } from "react";
-import { useResponsiveConfig } from "@/client/hooks/useResponsiveConfig";
+import { useResponsive } from "@/client/hooks/useResponsive";
 import { getFieldErrorMessage } from "@/shared/utils/validator";
 import { FORM_CONFIG } from "@/shared/constants";
 
@@ -17,8 +17,13 @@ interface CalculationFormProps {
 
 export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
   ({ form, onValuesChange, isFieldValid, error = null }) => {
-    const responsive = useResponsiveConfig();
-    const isMobile = responsive.size === "large";
+    const {
+      isMobile,
+      size: responsiveSize,
+      cardSize,
+      spacing,
+      buttonSize,
+    } = useResponsive();
     const [hoveredPreset, setHoveredPreset] = useState<number | null>(null);
 
     // 获取字段验证状态和帮助信息
@@ -64,7 +69,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
 
     return (
       <Card
-        size={responsive.cardSize}
+        size={cardSize}
         title={
           <div className="flex items-center justify-between">
             <Title level={4} className="!m-0 dark:text-gray-100 text-lg lg:text-base font-semibold">
@@ -85,7 +90,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
       >
         {error && (
           <Alert
-            title="计算错误"
+            message="计算错误"
             description={error}
             type="error"
             showIcon
@@ -138,7 +143,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 precision={2}
                 placeholder="请输入初始股价"
                 controls
-                size={responsive.size}
+                size={responsiveSize}
                 prefix="¥"
                 suffix="元"
                 className="hover:border-blue-400 focus:border-blue-500 transition-colors duration-300"
@@ -209,7 +214,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               >
                 快速设置：
               </Text>
-              <Space wrap size={responsive.spacing}>
+              <Space wrap size={spacing}>
                 {FORM_CONFIG.PRESETS.map((preset) => {
                   const isActive = form.getFieldValue("dailyReturn") === preset.value;
                   const isHovered = hoveredPreset === preset.value;
@@ -217,7 +222,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   return (
                     <Button
                       key={preset.value}
-                      size={responsive.buttonSize}
+                      size={buttonSize}
                       type={isActive ? "primary" : "default"}
                       className="rounded-xl transition-all duration-300"
                       style={{

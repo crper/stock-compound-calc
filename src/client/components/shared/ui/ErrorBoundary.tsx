@@ -27,7 +27,7 @@ interface State {
 const DefaultErrorFallback: React.FC<{ error: Error; retry: () => void }> = ({ error, retry }) => (
   <div style={{ padding: "20px", textAlign: "center" }}>
     <Alert
-      title="应用程序遇到错误"
+      message="应用程序遇到错误"
       description={
         <div>
           <p>很抱歉，应用程序遇到了一个意外错误。</p>

@@ -4,7 +4,7 @@
 import { BarChartOutlined, LineChartOutlined } from "@ant-design/icons";
 import { Button, Space } from "antd";
 import React from "react";
-import { useResponsiveConfig } from "@/client/hooks/useResponsiveConfig";
+import { useResponsive } from "@/client/hooks/useResponsive";
 
 type ChartType = "BAR" | "LINE";
 
@@ -15,7 +15,7 @@ interface ChartTypeSelectorProps {
 
 export const ChartTypeSelector: React.FC<ChartTypeSelectorProps> = React.memo(
   ({ value, onChange }) => {
-    const responsive = useResponsiveConfig();
+    const { isMobile } = useResponsive();
 
     const options = [
       {
@@ -32,7 +32,7 @@ export const ChartTypeSelector: React.FC<ChartTypeSelectorProps> = React.memo(
 
     return (
       <Space.Compact
-        size={responsive.size === "large" ? "small" : "middle"}
+        size={isMobile ? "small" : "middle"}
         className="rounded-xl overflow-hidden"
       >
         {options.map((option) => (
