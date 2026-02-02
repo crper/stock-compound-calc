@@ -48,6 +48,7 @@ import {
   HistoryDrawer,
   ErrorBoundary,
   ThemeToggle,
+  NavMenu,
 } from "@/client/components";
 
 const { Title } = Typography;
@@ -265,8 +266,10 @@ export const StockCalculator: React.FC = () => {
                 </div>
               </Card>
 
-                <Card
-                  className={`flex flex-col rounded-2xl border-0 shadow-xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-md ${isMobile ? "" : "min-h-[calc(100vh-140px)]"}`}
+              <NavMenu isMobile={isMobile} />
+
+              <Card
+                className={`mt-6 flex flex-col rounded-2xl border-0 shadow-xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-md ${isMobile ? "" : "min-h-[calc(100vh-140px)]"}`}
                   styles={{
                     body: {
                       padding: isMobile ? "20px" : "28px",

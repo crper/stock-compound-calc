@@ -1,7 +1,7 @@
 # AGENTS.md - AI 编码指南
 
-**项目:** 股票计算器 (Bun + React 19 + TypeScript + SQLite + React Query + Tailwind v4 + Ant Design v6)
-**最后更新:** 2026-01-31
+**项目:** 股票计算器 (Bun + React 19 + TypeScript + SQLite + React Query + React Router + Tailwind v4 + Ant Design v6)
+**最后更新:** 2026-02-02
 
 ## 🛠 核心命令
 
@@ -39,12 +39,14 @@ bun test:coverage        # 运行测试并生成覆盖率报告
 
 ### 组件交互模式
 
+- **路由导航**: 使用 React Router 实现页面切换，导航组件位于 `src/client/components/navigation/NavMenu.tsx`
 - **响应式布局**: 使用 Ant Design 的 `Row`/`Col` 组件实现响应式网格
 - **渐进式反馈**: 表单验证采用实时反馈，错误提示使用 Ant Design `Alert`
 - **加载状态**: 计算过程中显示加载指示器
 - **主题切换**: 支持通过 `ThemeToggle` 组件无缝切换深浅色主题
 - **历史记录**: 使用 `Drawer` 组件展示历史记录，配备浮动按钮增强移动端体验
 - **数据可视化**: 使用 Recharts 库展示收益趋势图表
+- **防抖优化**: 滑动条等高频交互组件使用防抖，避免频繁保存历史记录
 
 ### 视觉层次结构
 
