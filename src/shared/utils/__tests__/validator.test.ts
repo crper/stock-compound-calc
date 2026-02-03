@@ -72,12 +72,13 @@ describe("Validator", () => {
       expect(isFieldValid(1, "boardCount")).toBe(true);
       expect(isFieldValid(10, "boardCount")).toBe(true);
       expect(isFieldValid(365, "boardCount")).toBe(true);
+      expect(isFieldValid(3650, "boardCount")).toBe(true);
     });
 
     it("should return false for invalid board count", () => {
       expect(isFieldValid(0, "boardCount")).toBe(false);
       expect(isFieldValid(-1, "boardCount")).toBe(false);
-      expect(isFieldValid(366, "boardCount")).toBe(false);
+      expect(isFieldValid(3651, "boardCount")).toBe(false);
       expect(isFieldValid(1.5, "boardCount")).toBe(false);
     });
 

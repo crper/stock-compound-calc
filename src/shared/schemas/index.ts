@@ -7,7 +7,7 @@ export const CalculationParamsSchema = z
       .number()
       .int("连板数量必须为整数")
       .min(1, "连板数量至少为1天")
-      .max(365, "连板数量最多为365天"),
+      .max(3650, "连板数量最多为3650天"),
     dailyReturn: z.number().min(-99, "涨跌幅不能小于-99%").max(100, "涨跌幅不能大于100%"),
   })
   .refine((data) => !(data.dailyReturn <= -99 && data.initialPrice > 0), {

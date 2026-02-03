@@ -274,5 +274,38 @@ describe("Stock Calculator", () => {
 
       expect(metrics.breakEvenReturn).toBeCloseTo(9.09, 2);
     });
+
+    it("should handle 3650 days (10 years) extreme scenario", () => {
+      const params: CalculationParams = {
+        initialPrice: 10,
+        boardCount: 3650,
+        dailyReturn: 1,
+      };
+
+      const result = calculateStockReturns(params);
+
+      expect(result.finalPrice).toBeGreaterThan(0);
+      expect(result.dailyDetails).toHaveLength(3650);
+      expect(result.totalReturn).toBeGreaterThan(0);
+      expect(result.keyMetrics?.doubleDays).toBeLessThan(3650);
+      // 3650天长周期情况下，增长因子超过限制，年化收益率为null
+      expect(result.keyMetrics?.annualizedReturn).toBeNull();
+    });
+
+    it("should handle 99% daily return extreme boundary", () => {
+      const params: CalculationParams = {
+        initialPrice: 10,
+        boardCount: 5,
+        dailyReturn: 99,
+      };
+
+      const result = calculateStockReturns(params);
+
+      expect(result.finalPrice).toBeGreaterThan(0);
+      expect(result.finalPrice).toBeGreaterThan(100);
+      expect(result.totalReturn).toBeGreaterThan(900);
+      expect(result.keyMetrics?.doubleDays).toBeLessThanOrEqual(2);
+      expect(result.keyMetrics?.breakEvenReturn).toBeGreaterThan(90);
+    });
   });
 });
