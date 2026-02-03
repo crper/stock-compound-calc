@@ -114,10 +114,6 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
     },
   ];
 
-  const _scrollToIndex = Math.max(0, Math.min(97, Math.floor(currentValue) - 5));
-  // _scrollToIndex 预留用于自动滚动定位功能
-  void _scrollToIndex;
-
   return (
     <Card
       size="default"

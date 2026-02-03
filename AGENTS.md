@@ -1,6 +1,6 @@
 # AGENTS.md - AI 编码指南
 
-**项目:** 股票计算器 (Bun + React 19 + TypeScript + SQLite + React Query + React Router + Tailwind v4 + Ant Design v6)
+**项目:** 股票计算器 (Bun + React 19 + TypeScript + IndexedDB + Dexie + React Router + Tailwind v4 + Ant Design v6)
 **最后更新:** 2026-02-04
 
 ## 🛠 核心命令
@@ -67,8 +67,8 @@ bun test:coverage        # 运行测试并生成覆盖率报告
 // ✅ 正确
 import React from "react";
 import { Button, Form } from "antd";
-import { useQuery } from "@tanstack/react-query";
-import { CalculationService } from "@/server/services/CalculationService";
+import { useLiveQuery } from "dexie-react-hooks";
+import { calculationRepository } from "@/client/db/calculationRepository";
 import { AppError } from "@/shared/utils/errorHandler";
 import type { CalculationParams } from "@/shared/types";
 ```
@@ -124,7 +124,7 @@ ResultCard.displayName = 'ResultCard';
 ### Hooks 规范
 
 - **自定义 Hook**: 以 `use` 开头，使用 PascalCase (`useStockCalculator`)
-- **状态管理**: 服务端状态用 React Query，本地状态用 useState/useReducer
+- **状态管理**: 本地状态用 useState/useReducer，数据用 `useLiveQuery` (Dexie)
 - **副作用**: useEffect 依赖数组必须完整，或通过 eslint-disable 注释说明
 - **性能**: 大计算使用 useMemo，稳定回调使用 useCallback
 - **UI 相关**: 交互逻辑封装到 hooks 中，如 `useResponsive`, `useStockCalculator`
@@ -165,12 +165,17 @@ const result = price.mul(new Decimal(dailyReturn).div(100));
 src/
 ├── client/          # React 前端
 │   ├── components/  # UI 组件
+│   ├── db/         # IndexedDB 数据库层 (Dexie)
+│   │   ├── dexie.ts                    # 数据库配置
+│   │   ├── calculationRepository.ts     # 数据访问层
+│   │   └── __tests__/                  # 数据库测试
 │   ├── hooks/       # 自定义 Hooks
-│   ├── services/    # 业务服务层 (API 交互)
+│   ├── services/    # 业务服务层
+│   ├── utils/       # 工具函数 (含客户端计算逻辑)
 │   ├── pages/       # 页面组件
 │   ├── theme/       # 主题配置
 │   └── index.css    # 全局样式和 Tailwind 配置
-├── server/          # Bun 后端 (API, database, logic, __tests__)
+├── server/          # Bun 静态服务器 (仅入口)
 └── shared/          # 共享逻辑 (constants, schemas, types, utils)
 ```
 
@@ -181,15 +186,16 @@ src/
 - **文件操作**: 修改现有文件前，先读取内容；创建新文件前，检查目录是否存在
 - **配置保护**: 除非明确要求，不要修改 `package.json`, `tsconfig.json` 等配置文件
 - **上下文感知**: 在回答问题或编写代码前，先搜索相关代码 (grep/glob) 以保持一致性
-- **服务层模式**: 所有 API 请求必须封装在 `src/client/services` 中，禁止在组件或 Hooks 中直接调用 fetch
+- **数据层模式**: 使用 Dexie + Repository 模式进行数据访问
+- **响应式查询**: 使用 `useLiveQuery` 而非 React Query
 - **视觉一致性**: 任何 UI/UX 变更都必须遵循设计系统规范
 
 ### 架构最佳实践
 
-- **前后端分离**: 前端不直接导入服务端模块，通过 API 调用 (`calculationService`)
+- **纯前端存储**: 所有数据存储在 IndexedDB，无需服务器端数据库
 - **类型统一**: 共享类型定义在 `shared/types` 和 `shared/schemas`，避免重复定义
 - **常量集中**: 所有配置常量放在 `shared/constants`，禁止硬编码魔法数字
-- **性能优化**: 深色模式通过 `useTheme` Context 获取，避免 DOM 查询
+- **性能优化**: `useLiveQuery` 自动响应数据变化，无需手动缓存失效
 - **代码精简**: 删除冗余文件和重复配置，不保留 `@deprecated` 兼容代码
 
 ## ⚠️ 关键约束

@@ -8,7 +8,7 @@
 - **双向计算**：同时计算涨停和跌停的收益情况
 - **高精度计算**：使用 Decimal.js 确保计算精度
 - **年化收益率**：计算投资的复合年增长率（CAGR）以评估长期表现
-- **数据可视化**：多种图表类型展示（柱状图、曲线图、双Y轴图）
+- **数据可视化**：多种图表类型展示（柱状图、曲线图，双Y轴图）
 - **实时响应**：参数变化自动触发计算
 - **历史记录**：保存和查询历史计算记录
 
@@ -33,14 +33,14 @@
 - **React Router 7.13.0** - 路由管理
 - **Ant Design 6.2.0** - UI 组件库
 - **Tailwind CSS 4.1.18** - 样式方案
-- **React Query 5.90.17** - 状态管理和数据获取
+- **Dexie.js 4.3.0** - IndexedDB 客户端
+- **Dexie React Hooks 4.2.0** - 响应式数据查询
 - **Recharts 3.6.0** - 数据可视化
 - **Day.js 1.11.19** - 日期处理
 
-### 后端
+### 后端（简化）
 
-- **Bun 1.3.8** - JavaScript 运行时和服务器
-- **SQLite (bun:sqlite)** - 嵌入式数据库
+- **Bun 1.3.8** - JavaScript 运行时和静态文件服务器
 - **Zod 4.3.6** - Schema 验证
 - **Decimal.js 10.6.0** - 高精度计算
 - **es-toolkit 1.44.0** - 现代工具库
@@ -48,7 +48,7 @@
 ### 开发工具
 
 - **TypeScript** - 类型安全
-- **oxlint** - 快速代码检查（类型感知）
+- - 快速代码检查（类型感知 **oxlint**）
 - **oxfmt** - 代码格式化
 
 ## 快速开始
@@ -137,22 +137,26 @@ src/
 │   │   ├── displays/    # 展示组件
 │   │   ├── forms/       # 表单组件
 │   │   ├── navigation/  # 导航组件
-│   │   └── shared/      # 共享组件
+│   │   └── shared/       # 共享组件
+│   ├── db/              # IndexedDB 数据库层 (Dexie)
+│   │   ├── dexie.ts                    # 数据库配置
+│   │   ├── calculationRepository.ts     # 数据访问层
+│   │   └── __tests__/                   # 数据库测试
 │   ├── hooks/           # 自定义 Hooks
 │   │   ├── useLossRecovery.ts    # 亏损回本计算
 │   │   └── useStockCalculator.ts # 连板收益计算
 │   ├── services/        # 业务服务层
+│   │   ├── calculationService.ts # 计算服务
+│   │   └── __tests__/             # 服务测试
+│   ├── utils/           # 工具函数
+│   │   └── stockCalculator.ts    # 客户端计算逻辑
 │   ├── pages/           # 页面组件
 │   │   ├── StockCalculator.tsx      # 连板计算器页面
 │   │   └── LossRecoveryCalculator.tsx # 回本计算器页面
 │   ├── theme/           # 主题配置
 │   └── App.tsx          # 根组件
-├── server/              # Bun 后端
-│   ├── __tests__/       # 后端测试文件
-│   ├── database.ts      # 数据库操作
-│   ├── calculations.ts  # API 路由
-│   ├── stockCalculator.ts # 计算逻辑
-│   └── index.ts         # 服务器入口
+├── server/              # Bun 静态服务器
+│   └── index.ts         # 服务器入口 (仅静态文件服务)
 └── shared/              # 前后端共享
     ├── constants/       # 常量定义
     ├── schemas/         # Zod schemas
@@ -182,34 +186,33 @@ import { CalculationParamsSchema } from "@/shared/schemas";
 const result = CalculationParamsSchema.safeParse(input);
 ```
 
-### API 接口
+### 本地数据存储
 
-#### GET /api/calculations
+使用 IndexedDB (Dexie.js) 进行本地数据持久化：
 
-获取历史记录，支持分页参数 (`?page=1&limit=50`)
+```typescript
+import { db } from "@/client/db/dexie";
 
-#### POST /api/calculations
+await db.calculations.put({
+  id: Date.now().toString(),
+  timestamp: Date.now(),
+  initialPrice: params.initialPrice,
+  // ...
+});
+```
 
-创建新的计算记录并保存到历史
+### 响应式数据查询
 
-- Body: `{ initialPrice, boardCount, dailyReturn }`
+使用 Dexie React Hooks 实现自动数据更新：
 
-#### POST /api/calculations/calculate
+```typescript
+import { useLiveQuery } from "dexie-react-hooks";
 
-仅执行计算，不保存到历史记录
-
-- Body: `{ initialPrice, boardCount, dailyReturn }`
-- Response: `{ up: CalculationResult, down: CalculationResult }`
-
-#### DELETE /api/calculations
-
-清除所有历史记录
-
-#### PATCH /api/calculations
-
-批量删除历史记录
-
-- Body: `{ ids: string[] }`
+const history = useLiveQuery(
+  () => calculationRepository.getAll({ limit: 50 }),
+  []
+);
+```
 
 ## 部署
 
@@ -235,43 +238,46 @@ bun run build
 3. 运行
 
 ```bash
-NODE_ENV=production bun start
+bun start
 ```
 
 ### 环境变量
 
-当前版本使用默认配置，未来版本将支持以下环境变量：
-
 ```bash
 PORT=3000
 NODE_ENV=production
-DB_PATH=./calculations.db
-LOG_LEVEL=info
 ```
+
+### 数据存储
+
+所有数据存储在浏览器的 IndexedDB 中，无需服务器端数据库。历史记录在客户端本地持久化。
 
 ## 更新日志
 
-### 2025-02-04
+### 2026-02-04
 
-#### 代码优化与质量改进
+#### 架构重构 - 迁移到纯前端存储
 
-**性能优化**
-- 提取内联样式为常量，减少渲染时对象创建
-- 修复 `useCallback` 依赖问题，防抖功能正常工作
-- 优化 React Query 缓存策略
+**数据层重构**
+- 移除 SQLite 和 React Query
+- 集成 Dexie.js + IndexedDB 实现本地数据持久化
+- 使用 `useLiveQuery` 实现响应式数据查询
+- 新增 `db/` 目录，包含数据库配置、数据访问层和测试
 
-**Bug 修复**
-- 修复 Ant Design 废弃 API 警告：
-  - `Space direction` → `Flex vertical`
-  - `Statistic valueStyle` → `Statistic styles.content`
-  - `Alert message` → `Alert title`
-- 修复 `useForm` 未连接警告：使用 `Form.useWatch` 替代直接调用 `form.getFieldValue`
-- 添加分页参数边界处理，防止 `NaN` 导致的异常
+**代码优化**
+- 修复防抖函数稳定性问题，使用 `useRef` 保持函数引用
+- 优化 `useCallback` 依赖数组，减少不必要的重渲染
+- 删除死代码（未使用的 `_scrollToIndex` 变量）
 
-**代码质量**
-- 简化类型导出，使用通配符导出避免重复定义
-- 完善错误处理边界
-- 提升测试覆盖率
+**性能改进**
+- 包体积减少约 30KB（移除 React Query）
+- 构建时间优化
+- 防抖功能更稳定可靠
+
+**测试覆盖**
+- 新增 `calculationRepository.test.ts` 测试数据访问层
+- 完善 `calculationService.test.ts` 测试服务层
+- 所有测试通过（41 tests, 0 failures）
 
 ## 开发贡献
 
