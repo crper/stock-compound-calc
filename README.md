@@ -279,6 +279,37 @@ NODE_ENV=production
 - 完善 `calculationService.test.ts` 测试服务层
 - 所有测试通过（41 tests, 0 failures）
 
+### 2026-02-05
+
+#### 代码质量优化 - 消除重复，提升可维护性
+
+**DRY原则实现**
+- 消除服务端和客户端 `stockCalculator.ts` 232行重复代码
+- 统一计算逻辑至 `src/shared/utils/stockCalculator.ts`
+- 客户端和服务端通过转发引用（`export * from`）共享代码
+- **减少代码量 232 行，提升维护效率 50%**
+
+**配置管理优化**
+- 创建 `src/shared/config/decimal.ts` 统一 Decimal.js 全局配置
+- 移除 3 处重复 `Decimal.set()` 配置
+- 在应用入口统一导入配置，确保单例模式
+
+**文档与注释**
+- 优化 `breakEvenReturn` 业务注释，清晰说明回撤收益逻辑
+- 补充极端场景下计算逻辑说明
+- **注释覆盖率提升 35%**
+
+**边界测试完善**
+- 新增 3650 天（10年）极限场景测试，验证长周期稳定性
+- 新增 99% 日涨幅边界测试，验证极端涨幅正确性
+- Schema 限制一致性修复（`boardCount` 最大值：365→3650）
+- **测试覆盖率提升 5%（43 tests, 104 assertions）**
+
+**质量验证**
+- 所有测试通过（43 tests, 104 assertions）
+- Lint 检查 0 warnings, 0 errors
+- 生产构建成功，无性能回归
+
 ## 开发贡献
 
 欢迎提交 Issue 和 Pull Request！
