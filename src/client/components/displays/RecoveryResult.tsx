@@ -1,7 +1,8 @@
 import React from "react";
-import Decimal from "decimal.js";
 import { Card, Typography, Flex, Statistic, Alert } from "antd";
 import { ArrowUpOutlined } from "@ant-design/icons";
+import { calculateRecovery, formatRecoveryNumber, getDifficultyLevel } from "@/shared/utils/lossRecovery";
+import { CARD_STYLES } from "@/shared/constants/uiPatterns";
 
 const { Title, Text } = Typography;
 
@@ -10,49 +11,8 @@ interface RecoveryResultProps {
 }
 
 export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossPercent }) => {
-  const lossDecimal = new Decimal(lossPercent).div(100);
-
-  let requiredGain: Decimal;
-  let multiplier: Decimal;
-  let isInfinity = false;
-
-  if (lossPercent >= 100) {
-    requiredGain = new Decimal(Infinity);
-    multiplier = new Decimal(Infinity);
-    isInfinity = true;
-  } else {
-    requiredGain = lossDecimal.div(new Decimal(1).minus(lossDecimal)).mul(100);
-    multiplier = new Decimal(1).div(new Decimal(1).minus(lossDecimal));
-  }
-
-  const formatNumber = (value: Decimal): string => {
-    if (!value.isFinite()) return "∞";
-    if (value.greaterThan(1000)) {
-      return value.toExponential(2);
-    }
-    return value.toFixed(2);
-  };
-
-  const getDifficultyLevel = (): { text: string; color: string; bgColor: string } => {
-    if (lossPercent === 0) {
-      return { text: "无需回本", color: "#52c41a", bgColor: "bg-green-50 dark:bg-green-900/20" };
-    }
-    if (lossPercent < 10) {
-      return { text: "容易", color: "#52c41a", bgColor: "bg-green-50 dark:bg-green-900/20" };
-    }
-    if (lossPercent < 25) {
-      return { text: "中等", color: "#1677ff", bgColor: "bg-blue-50 dark:bg-blue-900/20" };
-    }
-    if (lossPercent < 50) {
-      return { text: "困难", color: "#faad14", bgColor: "bg-yellow-50 dark:bg-yellow-900/20" };
-    }
-    if (lossPercent < 75) {
-      return { text: "非常难", color: "#fa541c", bgColor: "bg-orange-50 dark:bg-orange-900/20" };
-    }
-    return { text: "几乎不可能", color: "#ff4d4f", bgColor: "bg-red-50 dark:bg-red-900/20" };
-  };
-
-  const difficulty = getDifficultyLevel();
+  const metrics = calculateRecovery(lossPercent);
+  const difficulty = getDifficultyLevel(lossPercent);
 
   return (
     <Card
@@ -66,13 +26,12 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
       }
       className="w-full h-full"
       style={{
-        borderRadius: "16px",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+        borderRadius: CARD_STYLES.borderRadius,
+        boxShadow: CARD_STYLES.boxShadow,
       }}
       classNames={{
-        header:
-          "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700/50 border-b dark:border-gray-700 rounded-t-2xl",
-        body: "flex flex-col p-5 md:p-6 dark:bg-gray-800 rounded-b-2xl",
+        header: `${CARD_STYLES.header.base} ${CARD_STYLES.header.borderRadius}`,
+        body: CARD_STYLES.body.default,
       }}
     >
       <div className="flex flex-col gap-6">
@@ -118,18 +77,18 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
                 需要上涨
               </Text>
               <Statistic
-                value={isInfinity ? "∞" : formatNumber(requiredGain)}
-                suffix={isInfinity ? "" : "%"}
+                value={metrics.isInfinity ? "∞" : formatRecoveryNumber(metrics.requiredGain)}
+                suffix={metrics.isInfinity ? "" : "%"}
                 styles={{
                   content: {
-                    color: isInfinity ? "#ff4d4f" : "#52c41a",
+                    color: metrics.isInfinity ? "#ff4d4f" : "#52c41a",
                     fontSize: "2.5rem",
                     fontWeight: 800,
-                    background: isInfinity
+                    background: metrics.isInfinity
                       ? "none"
                       : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    WebkitBackgroundClip: isInfinity ? "none" : "text",
-                    WebkitTextFillColor: isInfinity ? "#ff4d4f" : "transparent",
+                    WebkitBackgroundClip: metrics.isInfinity ? "none" : "text",
+                    WebkitTextFillColor: metrics.isInfinity ? "#ff4d4f" : "transparent",
                   },
                 }}
               />
@@ -144,10 +103,10 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
               <Text
                 className="text-3xl font-bold"
                 style={{
-                  color: isInfinity ? "#ff4d4f" : "#1677ff",
+                  color: metrics.isInfinity ? "#ff4d4f" : "#1677ff",
                 }}
               >
-                {isInfinity ? "∞" : formatNumber(multiplier)}
+                {metrics.isInfinity ? "∞" : formatRecoveryNumber(metrics.multiplier)}
               </Text>
               <Text type="secondary" className="dark:text-gray-400">
                 x

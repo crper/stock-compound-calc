@@ -5,19 +5,9 @@ import React, { useCallback, useState } from "react";
 import { useResponsive } from "@/client/hooks/useResponsive";
 import { getFieldErrorMessage } from "@/shared/utils/validator";
 import { FORM_CONFIG } from "@/shared/constants";
+import { CARD_STYLES, SLIDER_STYLES } from "@/shared/constants/uiPatterns";
 
 const { Text, Title } = Typography;
-
-// Slider 样式常量 - 避免每次渲染创建新对象
-const SLIDER_TRACK_STYLE = {
-  background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
-  borderRadius: "4px",
-} as const;
-
-const SLIDER_HANDLE_STYLE = {
-  borderColor: "#667eea",
-  boxShadow: "0 2px 8px rgba(102, 126, 234, 0.4)",
-} as const;
 
 interface CalculationFormProps {
   form: FormInstance<CalculationParams>;
@@ -112,13 +102,12 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
         }
         className="w-full lg:min-w-[400px]"
         style={{
-          borderRadius: "16px",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+          borderRadius: CARD_STYLES.borderRadius,
+          boxShadow: CARD_STYLES.boxShadow,
         }}
         classNames={{
-          header:
-            "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700/50 border-b dark:border-gray-700 rounded-t-2xl",
-          body: "flex flex-col p-5 md:p-6 dark:bg-gray-800 rounded-b-2xl",
+          header: `${CARD_STYLES.header.base} ${CARD_STYLES.header.borderRadius}`,
+          body: CARD_STYLES.body.default,
         }}
       >
         {error && (
@@ -217,8 +206,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   }}
                   onChange={handlePresetChange}
                   className="custom-slider"
-                  trackStyle={SLIDER_TRACK_STYLE}
-                  handleStyle={SLIDER_HANDLE_STYLE}
+                  trackStyle={SLIDER_STYLES.primary.track}
+                  handleStyle={SLIDER_STYLES.primary.handle}
                 />
                 <Text
                   type="secondary"
@@ -317,8 +306,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                     className: "rounded-lg",
                   }}
                   className="custom-slider"
-                  trackStyle={SLIDER_TRACK_STYLE}
-                  handleStyle={SLIDER_HANDLE_STYLE}
+                  trackStyle={SLIDER_STYLES.primary.track}
+                  handleStyle={SLIDER_STYLES.primary.handle}
                 />
                 <Text
                   type="secondary"

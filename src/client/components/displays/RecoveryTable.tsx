@@ -3,6 +3,8 @@ import Decimal from "decimal.js";
 import { Table, Card, Typography, Space } from "antd";
 import { useResponsive } from "@/client/hooks/useResponsive";
 import type { ColumnsType } from "antd/es/table";
+import { calculateRecovery, formatRecoveryNumber } from "@/shared/utils/lossRecovery";
+import { CARD_STYLES } from "@/shared/constants/uiPatterns";
 
 const { Text, Title } = Typography;
 
@@ -23,25 +25,12 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
   const generateData = (): TableData[] => {
     const data: TableData[] = [];
     for (let i = 1; i <= 100; i++) {
-      const lossPercent = i;
-      const lossDecimal = new Decimal(lossPercent).div(100);
-
-      let requiredGain: Decimal;
-      let multiplier: Decimal;
-
-      if (lossPercent >= 100) {
-        requiredGain = new Decimal(Infinity);
-        multiplier = new Decimal(Infinity);
-      } else {
-        requiredGain = lossDecimal.div(new Decimal(1).minus(lossDecimal)).mul(100);
-        multiplier = new Decimal(1).div(new Decimal(1).minus(lossDecimal));
-      }
-
+      const metrics = calculateRecovery(i);
       data.push({
         key: i.toString(),
-        lossPercent,
-        requiredGain,
-        multiplier,
+        lossPercent: metrics.lossPercent,
+        requiredGain: metrics.requiredGain,
+        multiplier: metrics.multiplier,
       });
     }
     return data;
@@ -55,11 +44,6 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       return "bg-gradient-to-r from-[#667eea]/20 to-[#764ba2]/20 dark:from-[#667eea]/30 dark:to-[#764ba2]/30 font-semibold";
     }
     return "";
-  };
-
-  const formatNumber = (value: Decimal): string => {
-    if (!value.isFinite()) return "∞";
-    return value.toFixed(2);
   };
 
   const columns: ColumnsType<TableData> = [
@@ -81,14 +65,14 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       key: "requiredGain",
       width: isMobile ? 100 : 120,
       align: "center",
-      render: (value: Decimal, record: TableData) => {
+        render: (value: Decimal, record: TableData) => {
         const isHighlighted = Math.abs(record.lossPercent - currentValue) <= 1;
         return (
           <Text
             strong
             className={isHighlighted ? "text-[#52c41a] dark:text-[#73d13d]" : ""}
           >
-            {formatNumber(value)}%
+            {formatRecoveryNumber(value)}%
           </Text>
         );
       },
@@ -101,7 +85,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       align: "center",
       render: (value: Decimal, record: TableData) => {
         const isHighlighted = Math.abs(record.lossPercent - currentValue) <= 1;
-        const displayValue = formatNumber(value);
+        const displayValue = formatRecoveryNumber(value);
         return (
           <Text
             type={displayValue === "∞" ? "danger" : "secondary"}
@@ -131,13 +115,12 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       }
       className="w-full"
       style={{
-        borderRadius: "16px",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+        borderRadius: CARD_STYLES.borderRadius,
+        boxShadow: CARD_STYLES.boxShadow,
       }}
       classNames={{
-        header:
-          "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700/50 border-b dark:border-gray-700 rounded-t-2xl",
-        body: "flex flex-col p-0 dark:bg-gray-800 rounded-b-2xl",
+        header: `${CARD_STYLES.header.base} ${CARD_STYLES.header.borderRadius}`,
+        body: CARD_STYLES.body.compact,
       }}
     >
       <div

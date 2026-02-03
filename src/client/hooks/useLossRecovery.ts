@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import Decimal from "decimal.js";
+import { calculateRecovery } from "@/shared/utils/lossRecovery";
 
 const STORAGE_KEY = "loss-recovery-history";
 const MAX_HISTORY_ITEMS = 50;
@@ -57,26 +58,13 @@ export const useLossRecovery = () => {
       const clampedValue = Math.max(0, Math.min(99.9, value));
       setLossPercent(clampedValue);
 
-      // 清除之前的定时器
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
 
-      // 设置新的防抖定时器，用户停止操作后才保存
       debounceTimerRef.current = setTimeout(() => {
-        const lossDecimal = new Decimal(clampedValue).div(100);
-        let requiredGain: Decimal;
-        let multiplier: Decimal;
-
-        if (clampedValue >= 100) {
-          requiredGain = new Decimal(Infinity);
-          multiplier = new Decimal(Infinity);
-        } else {
-          requiredGain = lossDecimal.div(new Decimal(1).minus(lossDecimal)).mul(100);
-          multiplier = new Decimal(1).div(new Decimal(1).minus(lossDecimal));
-        }
-
-        saveHistory(clampedValue, requiredGain, multiplier);
+        const metrics = calculateRecovery(clampedValue);
+        saveHistory(clampedValue, metrics.requiredGain, metrics.multiplier);
       }, DEBOUNCE_DELAY);
     },
     [saveHistory],

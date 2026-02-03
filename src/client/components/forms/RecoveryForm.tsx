@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { Card, Form, Slider, Typography, Space } from "antd";
 import { useResponsive } from "@/client/hooks/useResponsive";
+import { CARD_STYLES, SLIDER_STYLES } from "@/shared/constants/uiPatterns";
 
 const { Text, Title } = Typography;
 
@@ -55,13 +56,12 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
       }
       className="w-full"
       style={{
-        borderRadius: "16px",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+        borderRadius: CARD_STYLES.borderRadius,
+        boxShadow: CARD_STYLES.boxShadow,
       }}
       classNames={{
-        header:
-          "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700/50 border-b dark:border-gray-700 rounded-t-2xl",
-        body: "flex flex-col p-5 md:p-6 dark:bg-gray-800 rounded-b-2xl",
+        header: `${CARD_STYLES.header.base} ${CARD_STYLES.header.borderRadius}`,
+        body: CARD_STYLES.body.default,
       }}
     >
       <Form layout="vertical" className="flex-1 flex flex-col">
@@ -100,9 +100,7 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
                 }}
                 className="custom-slider"
                 styles={{
-                  track: {
-                    background: "linear-gradient(90deg, #52c41a 0%, #1677ff 33%, #faad14 66%, #ff4d4f 100%)",
-                  },
+                  track: SLIDER_STYLES.rainbow.track,
                 }}
               />
               <Text
