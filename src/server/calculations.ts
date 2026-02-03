@@ -24,10 +24,16 @@ export const calculationsRoutes = {
         url.searchParams.has("offset");
 
       if (hasPaginationParams) {
+        // 安全解析分页参数，防止 NaN 导致的问题
+        const parsePositiveInt = (value: string | null, defaultValue: number): number => {
+          const parsed = parseInt(value || "", 10);
+          return Number.isNaN(parsed) || parsed < 0 ? defaultValue : parsed;
+        };
+
         // 如果提供了分页参数，则执行分页查询
-        const limit = parseInt(url.searchParams.get("limit") || String(API_LIMITS.DEFAULT_PAGE_SIZE));
-        const offset = parseInt(url.searchParams.get("offset") || "0");
-        const page = parseInt(url.searchParams.get("page") || "1");
+        const limit = parsePositiveInt(url.searchParams.get("limit"), API_LIMITS.DEFAULT_PAGE_SIZE);
+        const offset = parsePositiveInt(url.searchParams.get("offset"), 0);
+        const page = parsePositiveInt(url.searchParams.get("page"), 1);
 
         // 使用页面参数计算偏移量
         const calculatedOffset = offset > 0 ? offset : (page - 1) * limit;

@@ -1,7 +1,7 @@
 # AGENTS.md - AI 编码指南
 
 **项目:** 股票计算器 (Bun + React 19 + TypeScript + SQLite + React Query + React Router + Tailwind v4 + Ant Design v6)
-**最后更新:** 2026-02-02
+**最后更新:** 2026-02-04
 
 ## 🛠 核心命令
 
@@ -212,9 +212,32 @@ src/
 - **使用 ConfigProvider**: 所有 Ant Design 组件的样式配置应通过 `ConfigProvider` 的 `components` Token 配置，而非 CSS 覆盖
 - **避免内联样式**: 尽可能使用 Ant Design 的 `type="primary"` 等预设样式，避免硬编码渐变或颜色
 - **废弃 API 迁移**: 及时更新废弃的 API，如：
-  - `Space direction="vertical"` → 使用 `Flex` 组件或 `div` + flex 布局
+  - `Space direction="vertical"` → 使用 `Flex` 组件
   - `Divider type="vertical"` → `Divider orientation="vertical"`
   - `Select options` 中的 `value: null` → `value: undefined`
+  - `Statistic valueStyle` → `Statistic styles.content`
+  - `Alert message` → `Alert title`
+
+### Form 使用规范
+
+**避免 useForm 警告**
+
+不要在组件渲染期间直接调用 `form.getFieldValue()` 或 `form.getFieldsValue()`，这会导致 "Instance created by `useForm` is not connected" 警告。
+
+```typescript
+// ❌ 错误：在渲染期间直接调用
+const value = form.getFieldValue("dailyReturn");
+<Slider value={form.getFieldValue("dailyReturn")} />
+
+// ✅ 正确：使用 Form.useWatch 监听值
+const dailyReturnValue = Form.useWatch("dailyReturn", form);
+<Slider value={dailyReturnValue} />
+```
+
+**useWatch 使用场景**
+- 需要在组件渲染期间读取表单值时
+- 需要根据表单值动态更新 UI 时
+- 需要在依赖数组中使用表单值时
 
 ### 配置示例
 
@@ -242,3 +265,34 @@ const antThemeConfig: ThemeConfig = {
 4. **视觉优化**: 实现 UI 组件时遵循设计系统规范
 5. **本地验证**: `bun test -t "功能"` → `bun run lint` → `bun run format`
 6. **最终构建**: `bun run build` 确保生产构建成功
+
+## 📋 代码审查清单 (Review Checklist)
+
+### 提交前必查项
+
+- [ ] **测试通过**: `bun test` 全部通过，无失败用例
+- [ ] **Lint 通过**: `bun run lint` 0 warnings, 0 errors
+- [ ] **格式正确**: `bun run format:check` 通过
+- [ ] **构建成功**: `bun run build` 无错误
+
+### Ant Design 规范检查
+
+- [ ] 无废弃 API 使用（查看浏览器控制台警告）
+- [ ] `Space direction` 已替换为 `Flex vertical`
+- [ ] `Statistic valueStyle` 已替换为 `styles.content`
+- [ ] `Alert message` 已替换为 `title`
+- [ ] 使用 `Form.useWatch` 而非 `form.getFieldValue`
+
+### 性能检查
+
+- [ ] 内联样式提取为常量（Slider、Card 等）
+- [ ] useCallback 依赖数组完整且正确
+- [ ] useMemo 用于昂贵的计算
+- [ ] 防抖/节流功能正常工作
+
+### 健壮性检查
+
+- [ ] 边界参数处理（分页、输入验证）
+- [ ] 错误处理完善（try-catch + ErrorHandler）
+- [ ] 类型安全（无 any，使用 unknown + 类型守卫）
+- [ ] Decimal.js 用于所有金融计算

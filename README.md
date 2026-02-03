@@ -249,6 +249,30 @@ DB_PATH=./calculations.db
 LOG_LEVEL=info
 ```
 
+## 更新日志
+
+### 2025-02-04
+
+#### 代码优化与质量改进
+
+**性能优化**
+- 提取内联样式为常量，减少渲染时对象创建
+- 修复 `useCallback` 依赖问题，防抖功能正常工作
+- 优化 React Query 缓存策略
+
+**Bug 修复**
+- 修复 Ant Design 废弃 API 警告：
+  - `Space direction` → `Flex vertical`
+  - `Statistic valueStyle` → `Statistic styles.content`
+  - `Alert message` → `Alert title`
+- 修复 `useForm` 未连接警告：使用 `Form.useWatch` 替代直接调用 `form.getFieldValue`
+- 添加分页参数边界处理，防止 `NaN` 导致的异常
+
+**代码质量**
+- 简化类型导出，使用通配符导出避免重复定义
+- 完善错误处理边界
+- 提升测试覆盖率
+
 ## 开发贡献
 
 欢迎提交 Issue 和 Pull Request！

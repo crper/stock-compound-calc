@@ -1,10 +1,6 @@
-export type {
-  CalculationParams,
-  CalculationResult,
-  CalculationHistory,
-  DailyDetail,
-  KeyMetrics,
-} from "@/shared/schemas";
+// 从 schemas 重新导出所有类型，保持单一数据源
+// 从 schemas 重新导出所有类型，避免重复定义
+export type * from "@/shared/schemas";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;

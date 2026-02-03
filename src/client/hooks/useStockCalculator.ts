@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CalculationParams, CalculationResult, CalculationHistory } from "@/shared/types";
 import { ErrorHandler } from "@/shared/utils/errorHandler";
@@ -95,11 +95,15 @@ export const useStockCalculator = () => {
     },
   });
 
-  const calculate = async (params: CalculationParams) => {
-    setError(null);
-    setCurrentParams(params);
-    calculateMutation.mutate(params);
-  };
+  // 使用 useCallback 稳定 calculate 函数，确保防抖效果正常工作
+  const calculate = useCallback(
+    async (params: CalculationParams) => {
+      setError(null);
+      setCurrentParams(params);
+      calculateMutation.mutate(params);
+    },
+    [calculateMutation],
+  );
 
   const handleValuesChange = useMemo(
     () =>

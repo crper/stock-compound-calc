@@ -281,7 +281,7 @@ export const StockCalculator: React.FC = () => {
                 >
                   {error && (
                     <Alert
-                      message="输入错误"
+                      title="输入错误"
                       description={error}
                       type="error"
                       showIcon

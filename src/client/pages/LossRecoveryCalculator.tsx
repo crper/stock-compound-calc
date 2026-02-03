@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Card, Typography, Row, Col, Button, Badge, Divider, Space, Avatar, Tag, Tooltip, FloatButton } from "antd";
+import { Layout, Card, Typography, Row, Col, Button, Badge, Divider, Space, Flex, Avatar, Tag, Tooltip, FloatButton } from "antd";
 import { HistoryOutlined, CalculatorOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useLossRecovery } from "@/client/hooks/useLossRecovery";
 import { useResponsive } from "@/client/hooks/useResponsive";
@@ -243,10 +243,10 @@ export const LossRecoveryCalculator: React.FC = () => {
           <div className="overflow-y-auto" style={{ height: "calc(100% - 60px)" }}>
             {history.length === 0 ? (
               <div className="flex items-center justify-center h-full text-gray-400">
-                <Space direction="vertical" align="center">
+                <Flex vertical align="center" gap="middle">
                   <HistoryOutlined style={{ fontSize: 48 }} />
                   <Text>暂无历史记录</Text>
-                </Space>
+                </Flex>
               </div>
             ) : (
               <div className="p-4 space-y-3">
@@ -258,7 +258,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                     onClick={() => loadFromHistory(item)}
                   >
                     <div className="flex items-center justify-between">
-                      <Space direction="vertical" size="small">
+                      <Flex vertical gap="small">
                         <Text strong className="dark:text-gray-200">
                           亏损 {item.lossPercent}%
                         </Text>
@@ -267,8 +267,8 @@ export const LossRecoveryCalculator: React.FC = () => {
                         </Text>
                         <Text type="secondary" className="text-xs">
                           {item.createdAt}
-                        </Text>
-                      </Space>
+                         </Text>
+                      </Flex>
                       <Button
                         type="text"
                         danger

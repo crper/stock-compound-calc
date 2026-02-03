@@ -8,6 +8,17 @@ import { FORM_CONFIG } from "@/shared/constants";
 
 const { Text, Title } = Typography;
 
+// Slider 样式常量 - 避免每次渲染创建新对象
+const SLIDER_TRACK_STYLE = {
+  background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+  borderRadius: "4px",
+} as const;
+
+const SLIDER_HANDLE_STYLE = {
+  borderColor: "#667eea",
+  boxShadow: "0 2px 8px rgba(102, 126, 234, 0.4)",
+} as const;
+
 interface CalculationFormProps {
   form: FormInstance<CalculationParams>;
   onValuesChange: (changedValues: Partial<CalculationParams>, allValues: CalculationParams) => void;
@@ -26,10 +37,27 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
     } = useResponsive();
     const [hoveredPreset, setHoveredPreset] = useState<number | null>(null);
 
+    // 使用 Form.useWatch 监听表单值，避免在渲染期间直接调用 form.getFieldValue
+    const dailyReturnValue = Form.useWatch("dailyReturn", form) ?? 10;
+    const boardCountValue = Form.useWatch("boardCount", form) ?? 1;
+    const initialPriceValue = Form.useWatch("initialPrice", form);
+
     // 获取字段验证状态和帮助信息
     const getFieldValidation = useCallback(
       (fieldName: keyof CalculationParams) => {
-        const value = form.getFieldValue(fieldName);
+        // 从 useWatch 获取的值判断验证状态
+        let value: number | undefined;
+        switch (fieldName) {
+          case "dailyReturn":
+            value = dailyReturnValue;
+            break;
+          case "boardCount":
+            value = boardCountValue;
+            break;
+          case "initialPrice":
+            value = initialPriceValue;
+            break;
+        }
         const isValid = isFieldValid(value, fieldName);
 
         if (value === undefined) {
@@ -44,7 +72,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
           help: isValid ? "" : getFieldErrorMessage(fieldName),
         };
       },
-      [form, isFieldValid],
+      [isFieldValid, dailyReturnValue, boardCountValue, initialPriceValue],
     );
 
     // 处理值变化并触发计算
@@ -52,11 +80,16 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
       (fieldName: keyof CalculationParams, value: number | null) => {
         if (value !== null) {
           form.setFieldsValue({ [fieldName]: value });
-          const allValues = form.getFieldsValue();
+          // 使用 useWatch 获取的最新值构建 allValues
+          const allValues: CalculationParams = {
+            initialPrice: fieldName === "initialPrice" ? value : (initialPriceValue ?? 10),
+            boardCount: fieldName === "boardCount" ? value : (boardCountValue ?? 1),
+            dailyReturn: fieldName === "dailyReturn" ? value : (dailyReturnValue ?? 10),
+          };
           onValuesChange({ [fieldName]: value }, allValues);
         }
       },
-      [form, onValuesChange],
+      [form, onValuesChange, initialPriceValue, boardCountValue, dailyReturnValue],
     );
 
     // 处理预设按钮点击
@@ -90,7 +123,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
       >
         {error && (
           <Alert
-            message="计算错误"
+            title="计算错误"
             description={error}
             type="error"
             showIcon
@@ -176,7 +209,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   max={30}
                   step={1}
                   marks={FORM_CONFIG.RETURN_SLIDER_MARKS}
-                  value={form.getFieldValue("dailyReturn") || 10}
+                  value={dailyReturnValue}
                   tooltip={{
                     formatter: (val) => `${val}%`,
                     placement: "top",
@@ -184,14 +217,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   }}
                   onChange={handlePresetChange}
                   className="custom-slider"
-                  trackStyle={{
-                    background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
-                    borderRadius: "4px",
-                  }}
-                  handleStyle={{
-                    borderColor: "#667eea",
-                    boxShadow: "0 2px 8px rgba(102, 126, 234, 0.4)",
-                  }}
+                  trackStyle={SLIDER_TRACK_STYLE}
+                  handleStyle={SLIDER_HANDLE_STYLE}
                 />
                 <Text
                   type="secondary"
@@ -216,7 +243,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               </Text>
               <Space wrap size={spacing}>
                 {FORM_CONFIG.PRESETS.map((preset) => {
-                  const isActive = form.getFieldValue("dailyReturn") === preset.value;
+                  const isActive = dailyReturnValue === preset.value;
                   const isHovered = hoveredPreset === preset.value;
 
                   return (
@@ -283,21 +310,15 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   max={15}
                   step={1}
                   marks={FORM_CONFIG.BOARD_SLIDER_MARKS}
-                  value={form.getFieldValue("boardCount") || 1}
+                  value={boardCountValue}
                   onChange={(value) => handleFieldChange("boardCount", value)}
                   tooltip={{
                     formatter: (val) => `${val}天`,
                     className: "rounded-lg",
                   }}
                   className="custom-slider"
-                  trackStyle={{
-                    background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
-                    borderRadius: "4px",
-                  }}
-                  handleStyle={{
-                    borderColor: "#667eea",
-                    boxShadow: "0 2px 8px rgba(102, 126, 234, 0.4)",
-                  }}
+                  trackStyle={SLIDER_TRACK_STYLE}
+                  handleStyle={SLIDER_HANDLE_STYLE}
                 />
                 <Text
                   type="secondary"

@@ -1,6 +1,6 @@
 import React from "react";
 import Decimal from "decimal.js";
-import { Card, Typography, Space, Statistic, Alert } from "antd";
+import { Card, Typography, Flex, Statistic, Alert } from "antd";
 import { ArrowUpOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
@@ -77,7 +77,7 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
     >
       <div className="flex flex-col gap-6">
         <div className={`p-4 rounded-xl ${difficulty.bgColor} border border-gray-200 dark:border-gray-700`}>
-          <Space direction="vertical" size="small" className="w-full">
+          <Flex vertical gap="small" className="w-full">
             <Text className="dark:text-gray-300 text-sm">回本难度</Text>
             <div className="flex items-center gap-3">
               <div
@@ -90,27 +90,29 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
                 {difficulty.text}
               </div>
             </div>
-          </Space>
+          </Flex>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-200 dark:border-gray-700">
-            <Space direction="vertical" size="small" className="w-full">
+            <Flex vertical gap="small" className="w-full">
               <Text className="dark:text-gray-300 text-sm">当前亏损</Text>
               <Statistic
                 value={lossPercent.toFixed(1)}
                 suffix="%"
-                valueStyle={{
-                  color: "#ff4d4f",
-                  fontSize: "2rem",
-                  fontWeight: 700,
+                styles={{
+                  content: {
+                    color: "#ff4d4f",
+                    fontSize: "2rem",
+                    fontWeight: 700,
+                  },
                 }}
               />
-            </Space>
+            </Flex>
           </div>
 
           <div className="p-4 bg-gradient-to-br from-[#667eea]/10 to-[#764ba2]/10 dark:from-[#667eea]/20 dark:to-[#764ba2]/20 rounded-xl border border-[#667eea]/20 dark:border-[#667eea]/30">
-            <Space direction="vertical" size="small" className="w-full">
+            <Flex vertical gap="small" className="w-full">
               <Text className="dark:text-gray-300 text-sm flex items-center gap-1">
                 <ArrowUpOutlined className="text-green-500" />
                 需要上涨
@@ -118,23 +120,25 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
               <Statistic
                 value={isInfinity ? "∞" : formatNumber(requiredGain)}
                 suffix={isInfinity ? "" : "%"}
-                valueStyle={{
-                  color: isInfinity ? "#ff4d4f" : "#52c41a",
-                  fontSize: "2.5rem",
-                  fontWeight: 800,
-                  background: isInfinity
-                    ? "none"
-                    : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                  WebkitBackgroundClip: isInfinity ? "none" : "text",
-                  WebkitTextFillColor: isInfinity ? "#ff4d4f" : "transparent",
+                styles={{
+                  content: {
+                    color: isInfinity ? "#ff4d4f" : "#52c41a",
+                    fontSize: "2.5rem",
+                    fontWeight: 800,
+                    background: isInfinity
+                      ? "none"
+                      : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    WebkitBackgroundClip: isInfinity ? "none" : "text",
+                    WebkitTextFillColor: isInfinity ? "#ff4d4f" : "transparent",
+                  },
                 }}
               />
-            </Space>
+            </Flex>
           </div>
         </div>
 
         <div className="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-200 dark:border-gray-700">
-          <Space direction="vertical" size="small" className="w-full">
+          <Flex vertical gap="small" className="w-full">
             <Text className="dark:text-gray-300 text-sm">回本倍数</Text>
             <div className="flex items-baseline gap-2">
               <Text
@@ -152,12 +156,12 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
             <Text type="secondary" className="dark:text-gray-400 text-xs">
               当前市值需上涨此倍数才能回本
             </Text>
-          </Space>
+          </Flex>
         </div>
 
         {lossPercent >= 50 && (
           <Alert
-            message="高风险提醒"
+            title="高风险提醒"
             description="当亏损超过50%时，回本需要翻倍以上的涨幅，投资风险极高。建议合理控制仓位，设置止损线。"
             type="warning"
             showIcon
@@ -167,7 +171,7 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
 
         {lossPercent >= 80 && (
           <Alert
-            message="严重警告"
+            title="严重警告"
             description="亏损超过80%后，回本需要400%以上的涨幅，实际操作中几乎不可能实现。请务必重视风险管理。"
             type="error"
             showIcon
