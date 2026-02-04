@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback, useRef } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 export interface ResponsiveConfig {
   isMobile: boolean;
@@ -13,18 +13,32 @@ export interface ResponsiveConfig {
   buttonSize: "middle" | "small";
 }
 
+// 常量缓存，避免每次渲染重新创建
+const MOBILE_CONFIG: ResponsiveConfig = {
+  isMobile: true,
+  size: "large",
+  fontSize: { base: 16, small: 12, large: 18 },
+  spacing: 12,
+  cardSize: "default",
+  buttonSize: "middle",
+};
+
+const DESKTOP_CONFIG: ResponsiveConfig = {
+  isMobile: false,
+  size: "middle",
+  fontSize: { base: 14, small: 11, large: 16 },
+  spacing: 16,
+  cardSize: "small",
+  buttonSize: "small",
+};
+
+// 节流延迟常量
+const RESIZE_THROTTLE_MS = 100;
+
 export const useResponsive = (breakpoint: number = 768): ResponsiveConfig => {
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.innerWidth < breakpoint;
-  });
-
-  const breakpointRef = useRef(breakpoint);
-  breakpointRef.current = breakpoint;
-
-  const checkMobile = useCallback(() => {
-    setIsMobile(window.innerWidth < breakpointRef.current);
-  }, []);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window === "undefined" ? false : window.innerWidth < breakpoint
+  );
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -32,33 +46,21 @@ export const useResponsive = (breakpoint: number = 768): ResponsiveConfig => {
     const throttledCheck = () => {
       if (timer) return;
       timer = setTimeout(() => {
-        checkMobile();
+        setIsMobile(window.innerWidth < breakpoint);
         timer = null;
-      }, 100);
+      }, RESIZE_THROTTLE_MS);
     };
 
-    checkMobile();
+    // 立即检查一次
+    setIsMobile(window.innerWidth < breakpoint);
+
     window.addEventListener("resize", throttledCheck);
 
     return () => {
       window.removeEventListener("resize", throttledCheck);
       if (timer) clearTimeout(timer);
     };
-  }, [checkMobile]);
+  }, [breakpoint]);
 
-  return useMemo(
-    () => ({
-      isMobile,
-      size: isMobile ? "large" : "middle",
-      fontSize: {
-        base: isMobile ? 16 : 14,
-        small: isMobile ? 12 : 11,
-        large: isMobile ? 18 : 16,
-      },
-      spacing: isMobile ? 12 : 16,
-      cardSize: isMobile ? "default" : "small",
-      buttonSize: isMobile ? "middle" : "small",
-    }),
-    [isMobile],
-  );
-};
+  return useMemo(() => (isMobile ? MOBILE_CONFIG : DESKTOP_CONFIG), [isMobile]);
+}
