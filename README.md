@@ -5,6 +5,7 @@
 ## 功能特性
 
 ### 📈 股价连板计算器
+
 - **双向计算**：同时计算涨停和跌停的收益情况
 - **高精度计算**：使用 Decimal.js 确保计算精度
 - **年化收益率**：计算投资的复合年增长率（CAGR）以评估长期表现
@@ -13,6 +14,7 @@
 - **历史记录**：保存和查询历史计算记录
 
 ### 📉 亏损回本计算器
+
 - **回本计算**：输入亏损百分比，自动计算回本所需涨幅
 - **回本倍数**：显示当前市值需上涨倍数才能回本
 - **速查表**：1%-100% 完整回本数据速查表
@@ -20,6 +22,7 @@
 - **防抖优化**：用户停止操作后才保存历史记录
 
 ### 🎨 通用特性
+
 - **路由导航**：使用 React Router 实现多页面切换
 - **深色模式**：支持主题切换
 - **响应式设计**：适配手机和桌面端
@@ -208,10 +211,7 @@ await db.calculations.put({
 ```typescript
 import { useLiveQuery } from "dexie-react-hooks";
 
-const history = useLiveQuery(
-  () => calculationRepository.getAll({ limit: 50 }),
-  []
-);
+const history = useLiveQuery(() => calculationRepository.getAll({ limit: 50 }), []);
 ```
 
 ## 部署
@@ -259,22 +259,26 @@ NODE_ENV=production
 #### 架构重构 - 迁移到纯前端存储
 
 **数据层重构**
+
 - 移除 SQLite 和 React Query
 - 集成 Dexie.js + IndexedDB 实现本地数据持久化
 - 使用 `useLiveQuery` 实现响应式数据查询
 - 新增 `db/` 目录，包含数据库配置、数据访问层和测试
 
 **代码优化**
+
 - 修复防抖函数稳定性问题，使用 `useRef` 保持函数引用
 - 优化 `useCallback` 依赖数组，减少不必要的重渲染
 - 删除死代码（未使用的 `_scrollToIndex` 变量）
 
 **性能改进**
+
 - 包体积减少约 30KB（移除 React Query）
 - 构建时间优化
 - 防抖功能更稳定可靠
 
 **测试覆盖**
+
 - 新增 `calculationRepository.test.ts` 测试数据访问层
 - 完善 `calculationService.test.ts` 测试服务层
 - 所有测试通过（41 tests, 0 failures）
@@ -284,28 +288,33 @@ NODE_ENV=production
 #### 代码质量优化 - 消除重复，提升可维护性
 
 **DRY原则实现**
+
 - 消除服务端和客户端 `stockCalculator.ts` 232行重复代码
 - 统一计算逻辑至 `src/shared/utils/stockCalculator.ts`
 - 客户端和服务端通过转发引用（`export * from`）共享代码
 - **减少代码量 232 行，提升维护效率 50%**
 
 **配置管理优化**
+
 - 创建 `src/shared/config/decimal.ts` 统一 Decimal.js 全局配置
 - 移除 3 处重复 `Decimal.set()` 配置
 - 在应用入口统一导入配置，确保单例模式
 
 **文档与注释**
+
 - 优化 `breakEvenReturn` 业务注释，清晰说明回撤收益逻辑
 - 补充极端场景下计算逻辑说明
 - **注释覆盖率提升 35%**
 
 **边界测试完善**
+
 - 新增 3650 天（10年）极限场景测试，验证长周期稳定性
 - 新增 99% 日涨幅边界测试，验证极端涨幅正确性
 - Schema 限制一致性修复（`boardCount` 最大值：365→3650）
 - **测试覆盖率提升 5%（43 tests, 104 assertions）**
 
 **质量验证**
+
 - 所有测试通过（43 tests, 104 assertions）
 - Lint 检查 0 warnings, 0 errors
 - 生产构建成功，无性能回归

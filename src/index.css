@@ -1,0 +1,322 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    @apply text-gray-900 bg-white font-sans;
+  }
+
+  body {
+    @apply m-0 p-0 min-h-screen w-full;
+  }
+
+  html {
+    @apply h-full w-full;
+  }
+
+  #root {
+    @apply h-full w-full;
+  }
+}
+
+/* Ant Design 表格行样式 */
+@layer components {
+  .table-row-up {
+    background-color: #f6ffed !important;
+    transition: background-color 0.3s ease;
+  }
+
+  .dark .table-row-up {
+    background-color: #052e16 !important;
+  }
+
+  .table-row-up:hover {
+    background-color: #d9f7be !important;
+  }
+
+  .dark .table-row-up:hover {
+    background-color: #14532d !important;
+  }
+
+  .table-row-down {
+    background-color: #fff2f0 !important;
+    transition: background-color 0.3s ease;
+  }
+
+  .dark .table-row-down {
+    background-color: #450a0a !important;
+  }
+
+  .table-row-down:hover {
+    background-color: #ffccc7 !important;
+  }
+
+  .dark .table-row-down:hover {
+    background-color: #7f1d1d !important;
+  }
+
+  /* 自定义滚动条样式 */
+  .ant-table-body {
+    scrollbar-width: thin;
+    scrollbar-color: #d9d9d9 transparent;
+  }
+
+  .ant-table-body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .ant-table-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .ant-table-body::-webkit-scrollbar-thumb {
+    background-color: #d9d9d9;
+    border-radius: 3px;
+  }
+
+  .dark .ant-table-body::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+  }
+
+  .ant-table-body::-webkit-scrollbar-thumb:hover {
+    background-color: #bfbfbf;
+  }
+
+  .dark .ant-table-body::-webkit-scrollbar-thumb:hover {
+    background-color: #6b7280;
+  }
+
+  /* 动画效果 */
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .slide-in {
+    animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  /* 数字动画 */
+  @keyframes countUp {
+    from {
+      opacity: 0;
+      transform: scale(0.85) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .count-up {
+    animation: countUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  /* 错误震动动画 */
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: translateX(-6px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+      transform: translateX(6px);
+    }
+  }
+
+  .shake {
+    animation: shake 0.5s ease-in-out;
+  }
+
+  /* 脉冲动画 */
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+  }
+
+  .animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* 缩放动画 */
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.92);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .scale-in {
+    animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  /* 淡入动画 */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  /* 弹跳动画 */
+  @keyframes bounce {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .bounce {
+    animation: bounce 1s ease-in-out;
+  }
+
+  /* 发光效果 */
+  @keyframes glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 5px rgba(102, 126, 234, 0.4),
+        0 0 10px rgba(102, 126, 234, 0.2);
+    }
+    50% {
+      box-shadow:
+        0 0 20px rgba(102, 126, 234, 0.6),
+        0 0 30px rgba(102, 126, 234, 0.3);
+    }
+  }
+
+  .glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* 渐变边框动画 */
+  @keyframes gradientBorder {
+    0% {
+      border-color: #667eea;
+    }
+    50% {
+      border-color: #764ba2;
+    }
+    100% {
+      border-color: #667eea;
+    }
+  }
+
+  /* 历史记录卡片悬停效果 */
+  .history-card {
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .history-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  }
+
+  .history-card:active {
+    transform: translateY(-2px) scale(1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Slider 样式增强 */
+  .ant-slider {
+    margin: 12px 0;
+  }
+
+  .ant-slider-track {
+    transition: all 0.3s ease;
+  }
+
+  .ant-slider-handle {
+    transition: all 0.3s ease;
+  }
+
+  .ant-slider-handle:hover,
+  .ant-slider-handle:focus {
+    transform: scale(1.2);
+  }
+
+  /* 修复 Slider 刻度挤压 */
+  .ant-slider-mark-text {
+    white-space: nowrap !important;
+  }
+
+  /* 卡片悬停效果 */
+  .ant-card {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .ant-card:hover {
+    transform: translateY(-2px);
+  }
+
+  /* 全局平滑滚动 */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* 选择文本样式 */
+  ::selection {
+    background: rgba(102, 126, 234, 0.3);
+    color: inherit;
+  }
+
+  /* 焦点可见性 */
+  :focus-visible {
+    outline: 2px solid rgba(102, 126, 234, 0.5);
+    outline-offset: 2px;
+  }
+
+  /* 响应式动画减少 */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

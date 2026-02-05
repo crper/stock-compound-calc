@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun --hot src/server/index.ts",
-    "start": "NODE_ENV=production bun src/server/index.ts",
+    "dev": "bun --hot src/index.html",
+    "start": "NODE_ENV=production bun run build.ts && bun run serve",
+    "serve": "bun -e \"const { serve } = require('bun'); serve({ static: { '/': './dist/index.html' }, fetch(req) { return new Response('Not Found', { status: 404 }); }, port: 3000 });\"",
     "build": "bun run lint && bun run build.ts",
     "test": "bun test",
     "test:coverage": "bun test --coverage",
