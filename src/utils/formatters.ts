@@ -88,7 +88,7 @@ export const formatNumber = (
     return "--";
   }
 
-  const { decimals = 2, useGrouping = true, showPlus = false, suffix = "", prefix = "" } = options;
+  const { decimals = 4, useGrouping = true, showPlus = false, suffix = "", prefix = "" } = options;
 
   // 格式化数字
   let formatted = numValue.toFixed(decimals);
@@ -125,7 +125,7 @@ export const formatCurrency = (
   const {
     symbol = "¥",
     symbolPosition = "before",
-    decimals = 2,
+    decimals = 4,
     compact = false,
     ...numberOptions
   } = options;
