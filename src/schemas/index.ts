@@ -13,7 +13,7 @@ export const CalculationParamsSchema = z
       .number()
       .int("股票数量必须为整数")
       .min(1, "股票数量至少为1股")
-      .max(1000000, "股票数量最多为100万股")
+      .max(10000000000, "股票数量最多为100亿股")
       .optional(),
   })
   .refine((data) => !(data.dailyReturn <= -99 && data.initialPrice > 0), {

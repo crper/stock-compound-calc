@@ -200,8 +200,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   borderRadius: "10px",
                 }}
                 min={1}
-                max={1000000}
-                step={100}
+                max={10000000000}
+                step={1000}
                 precision={0}
                 placeholder="选填，默认为100股"
                 controls

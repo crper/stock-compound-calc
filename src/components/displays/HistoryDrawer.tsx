@@ -336,63 +336,61 @@ const HistoryCard: React.FC<HistoryCardProps> = React.memo(
 
     return (
       <Card
-        size={isMobile ? "default" : "small"}
+        size={isMobile ? "default" : "default"}
         hoverable
         style={{
           animation: `slideIn 0.3s ease-out ${index * 0.05}s both`,
-          border: selected ? "2px solid #1890ff" : undefined,
+          border: selected ? "2px solid #1890ff" : "1px solid #e8e8e8",
         }}
         onClick={handleCardClick}
         styles={{
-          body: { padding: isMobile ? "16px" : "12px" },
+          body: { padding: isMobile ? 16 : 20 },
         }}
-        className="history-card mb-2 sm:mb-3 transition-all duration-300 dark:bg-gray-800"
+        className="history-card mb-3 transition-all duration-300 dark:bg-gray-800 dark:border-gray-700"
       >
-        <div className={`${isMobile ? "" : "grid grid-cols-[1fr_1fr_1fr_120px] gap-3"}`}>
+        <div className={isMobile ? "flex flex-col gap-4" : "grid grid-cols-4 gap-6 items-center"}>
           {onSelect && (
-            <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+            <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
               <Checkbox checked={selected} onChange={handleCheckboxChange} />
             </div>
           )}
 
-          <div className="flex flex-col">
-            <Text type="secondary" className="text-[10px] uppercase tracking-wider mb-1">
-              参数
+          <div className="flex flex-col gap-1.5 min-w-0">
+            <Text type="secondary" className="text-xs font-medium uppercase tracking-wider dark:text-gray-400">
+              初始参数
             </Text>
-            <div className="flex items-center gap-1 flex-wrap">
-              <span className="font-semibold text-[13px] sm:text-[14px] dark:text-gray-200">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-base dark:text-gray-100">
                 {formatCurrency(item.params.initialPrice, {
                   compact: item.params.initialPrice >= 1000000,
                 })}
               </span>
               <span className="text-gray-400">×</span>
-              <span className="text-gray-600 dark:text-gray-400 text-[13px]">
-                {item.params.boardCount}天
+              <span className="text-gray-600 dark:text-gray-300 text-sm">
+                {item.params.boardCount} 天
               </span>
-              <span className="text-gray-400">@</span>
-              <span className="text-gray-600 dark:text-gray-400 text-[13px]">
+              <Tag color="blue" className="text-xs m-0">
                 {item.params.dailyReturn}%
-              </span>
+              </Tag>
             </div>
             {hasStockQuantity && (
-              <Text type="secondary" className="text-[11px] mt-0.5">
-                持仓 {item.params.stockQuantity} 股
+              <Text type="secondary" className="text-sm dark:text-gray-400">
+                持仓 <Text strong className="dark:text-gray-200">{item.params.stockQuantity.toLocaleString()}</Text> 股
               </Text>
             )}
           </div>
 
           <HistoryResultCell result={item.results.up} type="up" hasStockQuantity={hasStockQuantity} />
 
-          <div className="flex flex-row items-center gap-2">
-            <HistoryOutlined className="text-gray-400 text-xs" />
+          <HistoryResultCell result={item.results.down} type="down" hasStockQuantity={hasStockQuantity} />
+
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <HistoryOutlined className="text-gray-400 text-lg" />
             <div className="flex flex-col">
-              <Text type="secondary" className="text-[10px] uppercase tracking-wider">
-                时间
-              </Text>
-              <Text className="text-[11px] dark:text-gray-400 leading-tight">
+              <Text className="text-sm dark:text-gray-200">
                 {formattedTimestamp.split(" ")[0]}
               </Text>
-              <Text type="secondary" className="text-[10px] leading-tight">
+              <Text type="secondary" className="text-xs dark:text-gray-500">
                 {formattedTimestamp.split(" ")[1]}
               </Text>
             </div>
@@ -421,25 +419,25 @@ const HistoryResultCell: React.FC<HistoryResultCellProps> = React.memo(({ result
   const colors = isUp ? TREND_COLORS.up : TREND_COLORS.down;
 
   return (
-    <div className={`p-2 rounded-lg ${colors.bg} border ${colors.border}`}>
-      <div className="flex items-center gap-1 mb-1">
+    <div className={`rounded-lg ${colors.bg} border ${colors.border} p-3`}>
+      <div className="flex items-center gap-1.5 mb-2">
         {isUp ? (
-          <RiseOutlined className={`${colors.iconColor} text-xs`} />
+          <RiseOutlined className={`${colors.iconColor} text-sm`} />
         ) : (
-          <FallOutlined className={`${colors.iconColor} text-xs`} />
+          <FallOutlined className={`${colors.iconColor} text-sm`} />
         )}
-        <Text type="secondary" className="text-[10px] uppercase tracking-wider">
-          {isUp ? "涨停" : "跌停"}
+        <Text type="secondary" className="text-xs font-medium uppercase tracking-wider dark:text-gray-400">
+          {isUp ? "涨停收益" : "跌停收益"}
         </Text>
       </div>
-      <div className="font-bold text-[14px] dark:text-gray-200">
+      <div className="font-bold text-lg dark:text-gray-100 mb-1">
         {formatCurrency(result.finalPrice, { compact: result.finalPrice >= 1000000 })}
       </div>
-      <div className={`text-[12px] ${colors.iconColor}`}>
+      <div className={`text-sm ${colors.iconColor} font-medium mb-1`}>
         {formatPercentage(result.totalReturn, { multiply: false })}
       </div>
       {hasStockQuantity && result.positionGain !== undefined && (
-        <div className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 truncate">
+        <div className={`text-sm ${colors.iconColor} truncate`}>
           {result.positionGain >= 0 ? "+" : ""}
           {formatCurrency(result.positionGain, { compact: Math.abs(result.positionGain) >= 1000000 })}
         </div>
