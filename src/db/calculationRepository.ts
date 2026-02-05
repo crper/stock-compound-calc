@@ -17,6 +17,7 @@ const entityToHistory = (row: CalculationEntity): CalculationHistory => ({
     initialPrice: row.initialPrice,
     boardCount: row.boardCount,
     dailyReturn: row.dailyReturn,
+    stockQuantity: row.stockQuantity,
   },
   results: {
     up: {
@@ -26,6 +27,8 @@ const entityToHistory = (row: CalculationEntity): CalculationHistory => ({
       details: safeJsonParse(row.detailsUp, []),
       dailyDetails: safeJsonParse(row.dailyDetailsUp, []),
       keyMetrics: safeJsonParse(row.keyMetricsUp, undefined),
+      positionValue: safeJsonParse(row.positionValueUp, undefined),
+      positionGain: row.positionGainUp,
     },
     down: {
       finalPrice: row.finalPriceDown,
@@ -34,6 +37,8 @@ const entityToHistory = (row: CalculationEntity): CalculationHistory => ({
       details: safeJsonParse(row.detailsDown, []),
       dailyDetails: safeJsonParse(row.dailyDetailsDown, []),
       keyMetrics: safeJsonParse(row.keyMetricsDown, undefined),
+      positionValue: safeJsonParse(row.positionValueDown, undefined),
+      positionGain: row.positionGainDown,
     },
   },
 });
@@ -52,11 +57,14 @@ export const calculationRepository = {
       initialPrice: params.initialPrice,
       boardCount: params.boardCount,
       dailyReturn: params.dailyReturn,
+      stockQuantity: params.stockQuantity,
       finalPriceUp: results.up.finalPrice,
       totalReturnUp: results.up.totalReturn,
       totalGainUp: results.up.totalGain,
       detailsUp: JSON.stringify(results.up.details),
       dailyDetailsUp: JSON.stringify(results.up.dailyDetails),
+      positionValueUp: JSON.stringify(results.up.positionValue),
+      positionGainUp: results.up.positionGain,
       finalPriceDown: results.down.finalPrice,
       totalReturnDown: results.down.totalReturn,
       totalGainDown: results.down.totalGain,
@@ -64,6 +72,8 @@ export const calculationRepository = {
       dailyDetailsDown: JSON.stringify(results.down.dailyDetails),
       keyMetricsUp: JSON.stringify(results.up.keyMetrics),
       keyMetricsDown: JSON.stringify(results.down.keyMetrics),
+      positionValueDown: JSON.stringify(results.down.positionValue),
+      positionGainDown: results.down.positionGain,
     });
 
     return {

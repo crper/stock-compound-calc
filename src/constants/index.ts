@@ -23,6 +23,8 @@ export const DEFAULT_VALUES = {
   BOARD_COUNT: 1,
   /** 默认涨跌幅 */
   DAILY_RETURN: 10,
+  /** 默认股票数量 */
+  STOCK_QUANTITY: 100,
 } as const;
 
 /**

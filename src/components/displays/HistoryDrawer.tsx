@@ -5,7 +5,6 @@
 import {
   FallOutlined,
   RiseOutlined,
-  CalculatorOutlined,
   ClearOutlined,
   HistoryOutlined,
   DeleteOutlined,
@@ -22,7 +21,6 @@ import {
   Popconfirm,
   Space,
   Tag,
-  Tooltip,
   Typography,
   Input,
   Select,
@@ -321,6 +319,7 @@ interface HistoryCardProps {
 const HistoryCard: React.FC<HistoryCardProps> = React.memo(
   ({ item, isMobile, index, selected = false, onSelect, onClick }) => {
     const formattedTimestamp = formatDate(item.timestamp);
+    const hasStockQuantity = item.params.stockQuantity && item.params.stockQuantity > 0;
 
     const handleCardClick = () => {
       onClick();
@@ -349,45 +348,54 @@ const HistoryCard: React.FC<HistoryCardProps> = React.memo(
         }}
         className="history-card mb-2 sm:mb-3 transition-all duration-300 dark:bg-gray-800"
       >
-        <div className="text-[13px] sm:text-sm">
-          <div className="flex justify-between items-start mb-3">
-            <div className="flex items-center gap-2 overflow-hidden" style={{ flex: 1 }}>
-              {onSelect && (
-                <Checkbox
-                  checked={selected}
-                  onChange={handleCheckboxChange}
-                  style={{ marginRight: 4 }}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              )}
-              <CalculatorOutlined style={{ color: "#1890ff" }} />
-              <span className="font-semibold text-[14px] sm:text-[15px] dark:text-gray-200 truncate">
+        <div className={`${isMobile ? "" : "grid grid-cols-[1fr_1fr_1fr_120px] gap-3"}`}>
+          {onSelect && (
+            <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+              <Checkbox checked={selected} onChange={handleCheckboxChange} />
+            </div>
+          )}
+
+          <div className="flex flex-col">
+            <Text type="secondary" className="text-[10px] uppercase tracking-wider mb-1">
+              参数
+            </Text>
+            <div className="flex items-center gap-1 flex-wrap">
+              <span className="font-semibold text-[13px] sm:text-[14px] dark:text-gray-200">
                 {formatCurrency(item.params.initialPrice, {
                   compact: item.params.initialPrice >= 1000000,
                 })}
               </span>
-              <span className="text-gray-400 flex-shrink-0">×</span>
-              <span className="text-gray-500 dark:text-gray-400 flex-shrink-0">
+              <span className="text-gray-400">×</span>
+              <span className="text-gray-600 dark:text-gray-400 text-[13px]">
                 {item.params.boardCount}天
               </span>
+              <span className="text-gray-400">@</span>
+              <span className="text-gray-600 dark:text-gray-400 text-[13px]">
+                {item.params.dailyReturn}%
+              </span>
             </div>
-            <Tooltip title={`涨跌幅: ${item.params.dailyReturn}%`}>
-              <Tag color="blue" style={{ margin: 0 }}>
-                {formatPercentage(item.params.dailyReturn)}
-              </Tag>
-            </Tooltip>
+            {hasStockQuantity && (
+              <Text type="secondary" className="text-[11px] mt-0.5">
+                持仓 {item.params.stockQuantity} 股
+              </Text>
+            )}
           </div>
 
-          <div className="text-center mb-4">
-            <Text type="secondary" className="text-xs">
-              <HistoryOutlined style={{ fontSize: 12, marginRight: 4 }} />
-              {formattedTimestamp}
-            </Text>
-          </div>
+          <HistoryResultCell result={item.results.up} type="up" hasStockQuantity={hasStockQuantity} />
 
-          <div className="grid grid-cols-2 gap-3">
-            <HistoryResultCard result={item.results.up} type="up" />
-            <HistoryResultCard result={item.results.down} type="down" />
+          <div className="flex flex-row items-center gap-2">
+            <HistoryOutlined className="text-gray-400 text-xs" />
+            <div className="flex flex-col">
+              <Text type="secondary" className="text-[10px] uppercase tracking-wider">
+                时间
+              </Text>
+              <Text className="text-[11px] dark:text-gray-400 leading-tight">
+                {formattedTimestamp.split(" ")[0]}
+              </Text>
+              <Text type="secondary" className="text-[10px] leading-tight">
+                {formattedTimestamp.split(" ")[1]}
+              </Text>
+            </div>
           </div>
         </div>
       </Card>
@@ -397,41 +405,47 @@ const HistoryCard: React.FC<HistoryCardProps> = React.memo(
 
 HistoryCard.displayName = "HistoryCard";
 
-interface HistoryResultCardProps {
-  result: { finalPrice: number; totalReturn: number; totalGain: number };
+interface HistoryResultCellProps {
+  result: {
+    finalPrice: number;
+    totalReturn: number;
+    totalGain: number;
+    positionGain?: number;
+  };
   type: "up" | "down";
+  hasStockQuantity: boolean;
 }
 
-const HistoryResultCard: React.FC<HistoryResultCardProps> = React.memo(({ result, type }) => {
+const HistoryResultCell: React.FC<HistoryResultCellProps> = React.memo(({ result, type, hasStockQuantity }) => {
   const isUp = type === "up";
-  const IconComponent = isUp ? RiseOutlined : FallOutlined;
-  const title = isUp ? "涨停收益" : "跌停收益";
   const colors = isUp ? TREND_COLORS.up : TREND_COLORS.down;
 
   return (
-    <div
-      className={`text-center p-3 rounded-lg ${colors.bg} border ${colors.border}`}
-    >
-      <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-1 flex items-center justify-center">
-        <IconComponent style={{ fontSize: 12 }} className={`${colors.iconColor} mr-1`} />
-        {title}
+    <div className={`p-2 rounded-lg ${colors.bg} border ${colors.border}`}>
+      <div className="flex items-center gap-1 mb-1">
+        {isUp ? (
+          <RiseOutlined className={`${colors.iconColor} text-xs`} />
+        ) : (
+          <FallOutlined className={`${colors.iconColor} text-xs`} />
+        )}
+        <Text type="secondary" className="text-[10px] uppercase tracking-wider">
+          {isUp ? "涨停" : "跌停"}
+        </Text>
       </div>
-      <div
-        className={`font-bold ${colors.iconColor} ${
-          result.finalPrice >= 1000000 ? "text-sm sm:text-base" : "text-base sm:text-lg"
-        }`}
-      >
+      <div className="font-bold text-[14px] dark:text-gray-200">
         {formatCurrency(result.finalPrice, { compact: result.finalPrice >= 1000000 })}
       </div>
-      <div className={`text-[13px] ${colors.iconColor}`}>
+      <div className={`text-[12px] ${colors.iconColor}`}>
         {formatPercentage(result.totalReturn, { multiply: false })}
       </div>
-      <div className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 truncate">
-        {isUp ? "+" : ""}
-        {formatCurrency(result.totalGain, { compact: Math.abs(result.totalGain) >= 1000000 })}
-      </div>
+      {hasStockQuantity && result.positionGain !== undefined && (
+        <div className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 truncate">
+          {result.positionGain >= 0 ? "+" : ""}
+          {formatCurrency(result.positionGain, { compact: Math.abs(result.positionGain) >= 1000000 })}
+        </div>
+      )}
     </div>
   );
 });
 
-HistoryResultCard.displayName = "HistoryResultCard";
+HistoryResultCell.displayName = "HistoryResultCell";

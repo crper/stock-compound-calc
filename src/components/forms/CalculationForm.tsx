@@ -25,6 +25,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
     const dailyReturnValue = Form.useWatch("dailyReturn", form) ?? 10;
     const boardCountValue = Form.useWatch("boardCount", form) ?? 1;
     const initialPriceValue = Form.useWatch("initialPrice", form);
+    const stockQuantityValue = Form.useWatch("stockQuantity", form);
 
     // 获取字段验证状态和帮助信息
     const getFieldValidation = useCallback(
@@ -41,6 +42,9 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
           case "initialPrice":
             value = initialPriceValue;
             break;
+          case "stockQuantity":
+            value = stockQuantityValue;
+            break;
         }
         const isValid = isFieldValid(value, fieldName);
 
@@ -56,7 +60,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
           help: isValid ? "" : getFieldErrorMessage(fieldName),
         };
       },
-      [isFieldValid, dailyReturnValue, boardCountValue, initialPriceValue],
+      [isFieldValid, dailyReturnValue, boardCountValue, initialPriceValue, stockQuantityValue],
     );
 
     // 处理值变化并触发计算
@@ -69,11 +73,12 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
             initialPrice: fieldName === "initialPrice" ? value : (initialPriceValue ?? 10),
             boardCount: fieldName === "boardCount" ? value : (boardCountValue ?? 1),
             dailyReturn: fieldName === "dailyReturn" ? value : (dailyReturnValue ?? 10),
+            stockQuantity: fieldName === "stockQuantity" ? value : stockQuantityValue,
           };
           onValuesChange({ [fieldName]: value }, allValues);
         }
       },
-      [form, onValuesChange, initialPriceValue, boardCountValue, dailyReturnValue],
+      [form, onValuesChange, initialPriceValue, boardCountValue, dailyReturnValue, stockQuantityValue],
     );
 
     // 处理预设按钮点击
@@ -146,7 +151,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               }
               tooltip="请输入股票的起始价格，最大支持10亿"
               {...getFieldValidation("initialPrice")}
-              style={{ marginBottom: isMobile ? 24 : 28 }}
+              style={{ marginBottom: isMobile ? 16 : 20 }}
             >
               <InputNumber
                 style={{
@@ -171,6 +176,59 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 onChange={(value) => handleFieldChange("initialPrice", value)}
               />
             </Form.Item>
+
+            {/* 股票数量输入 */}
+            <Form.Item
+              name="stockQuantity"
+              label={
+                <Space size="small" className="whitespace-nowrap">
+                  <Text strong className="dark:text-gray-200 text-base lg:text-sm">
+                    股票数量
+                  </Text>
+                  <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
+                    (股)
+                  </Text>
+                </Space>
+              }
+              tooltip="请输入持有的股票数量，选填"
+              {...getFieldValidation("stockQuantity")}
+              style={{ marginBottom: isMobile ? 16 : 20 }}
+            >
+              <InputNumber
+                style={{
+                  width: "100%",
+                  borderRadius: "10px",
+                }}
+                min={1}
+                max={1000000}
+                step={100}
+                precision={0}
+                placeholder="选填，默认为100股"
+                controls
+                size={responsiveSize}
+                suffix="股"
+                className="hover:border-blue-400 focus:border-blue-500 transition-colors duration-300"
+                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                parser={(value: string | undefined): number | undefined => {
+                  if (!value) return undefined;
+                  const parsed = Number(value.replace(/,/g, ""));
+                  return isNaN(parsed) ? undefined : parsed;
+                }}
+                onChange={(value) => handleFieldChange("stockQuantity", value)}
+              />
+            </Form.Item>
+
+            {/* 初始市值显示（当有数量时） */}
+            {initialPriceValue && stockQuantityValue && (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-3 border border-blue-200 dark:border-blue-800 mb-5">
+                <div className="flex justify-between items-center">
+                  <Text className="text-sm text-gray-600 dark:text-gray-400">初始持仓市值</Text>
+                  <Text strong className="text-base text-blue-600 dark:text-blue-400">
+                    ¥{(initialPriceValue * stockQuantityValue).toLocaleString("zh-CN", { maximumFractionDigits: 2 })}
+                  </Text>
+                </div>
+              </div>
+            )}
 
             {/* 涨跌幅滑动条 */}
             <Form.Item

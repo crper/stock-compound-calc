@@ -108,6 +108,7 @@ export const useStockCalculator = () => {
         initialPrice: Number(allValues.initialPrice),
         boardCount: Number(allValues.boardCount),
         dailyReturn: Number(allValues.dailyReturn),
+        stockQuantity: allValues.stockQuantity ? Number(allValues.stockQuantity) : undefined,
       };
 
       if (

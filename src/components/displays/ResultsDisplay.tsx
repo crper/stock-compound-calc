@@ -120,6 +120,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
                   type="up"
                   isMobile={isMobile}
                   params={params}
+                  defaultExpanded={!isMobile} // 桌面端默认展开，移动端默认折叠
                 />
               </div>
             </Col>
@@ -130,6 +131,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
                   type="down"
                   isMobile={isMobile}
                   params={params}
+                  defaultExpanded={!isMobile} // 桌面端默认展开，移动端默认折叠
                 />
               </div>
             </Col>

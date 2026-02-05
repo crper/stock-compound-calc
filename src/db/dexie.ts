@@ -6,11 +6,14 @@ interface CalculationEntity {
   initialPrice: number;
   boardCount: number;
   dailyReturn: number;
+  stockQuantity?: number;
   finalPriceUp: number;
   totalReturnUp: number;
   totalGainUp: number;
   detailsUp: string;
   dailyDetailsUp: string;
+  positionValueUp?: string;
+  positionGainUp?: number;
   finalPriceDown: number;
   totalReturnDown: number;
   totalGainDown: number;
@@ -18,6 +21,8 @@ interface CalculationEntity {
   dailyDetailsDown: string;
   keyMetricsUp?: string;
   keyMetricsDown?: string;
+  positionValueDown?: string;
+  positionGainDown?: number;
 }
 
 type CalculationDB = EntityTable<CalculationEntity, "id">;

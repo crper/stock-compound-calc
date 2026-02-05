@@ -9,6 +9,12 @@ export const CalculationParamsSchema = z
       .min(1, "连板数量至少为1天")
       .max(3650, "连板数量最多为3650天"),
     dailyReturn: z.number().min(-99, "涨跌幅不能小于-99%").max(100, "涨跌幅不能大于100%"),
+    stockQuantity: z
+      .number()
+      .int("股票数量必须为整数")
+      .min(1, "股票数量至少为1股")
+      .max(1000000, "股票数量最多为100万股")
+      .optional(),
   })
   .refine((data) => !(data.dailyReturn <= -99 && data.initialPrice > 0), {
     message: "涨跌幅不能导致股价为零或负数",
@@ -33,6 +39,13 @@ export const KeyMetricsSchema = z.object({
   annualizedReturn: z.number().nullable(),
 });
 
+export const PositionValueSchema = z.object({
+  initial: z.number(),
+  final: z.number(),
+});
+
+export type PositionValue = z.infer<typeof PositionValueSchema>;
+
 export const CalculationResultSchema = z.object({
   finalPrice: z.number(),
   totalReturn: z.number(),
@@ -40,6 +53,8 @@ export const CalculationResultSchema = z.object({
   details: z.array(z.string()),
   dailyDetails: z.array(DailyDetailSchema),
   keyMetrics: KeyMetricsSchema.optional(),
+  positionValue: PositionValueSchema.optional(),
+  positionGain: z.number().optional(),
 });
 
 export type CalculationResult = z.infer<typeof CalculationResultSchema>;

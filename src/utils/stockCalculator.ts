@@ -16,7 +16,7 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
     throw ErrorHandler.handleUnknown(error);
   }
 
-  const { initialPrice, boardCount, dailyReturn } = params;
+  const { initialPrice, boardCount, dailyReturn, stockQuantity } = params;
 
   // 对极端值进行早期检测，避免过度计算
   if (boardCount > CALCULATION_LIMITS.MAX_BOARD_COUNT) {
@@ -107,7 +107,25 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
     initialPrice,
     boardCount, // 使用实际的 boardCount 而不是固定的 1
     dailyReturn,
+    stockQuantity,
   });
+
+  // 计算持仓相关数据（如果有股票数量）
+  let positionValue: { initial: number; final: number } | undefined;
+  let positionGain: number | undefined;
+
+  if (stockQuantity && stockQuantity > 0) {
+    const quantityDecimal = new Decimal(stockQuantity);
+    const initialPositionDecimal = initialPriceDecimal.mul(quantityDecimal);
+    const finalPositionDecimal = currentPriceDecimal.mul(quantityDecimal);
+    const positionGainDecimal = finalPositionDecimal.minus(initialPositionDecimal);
+
+    positionValue = {
+      initial: Number(initialPositionDecimal.toString()),
+      final: Number(finalPositionDecimal.toString()),
+    };
+    positionGain = Number(positionGainDecimal.toString());
+  }
 
   return {
     finalPrice,
@@ -116,6 +134,8 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
     details,
     dailyDetails,
     keyMetrics,
+    positionValue,
+    positionGain,
   };
 };
 
