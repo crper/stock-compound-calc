@@ -1,6 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
-import { message } from "antd";
+import { App } from "antd";
 import type { CalculationParams, CalculationResult, CalculationHistory } from "@/types";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { isFieldValid, getFieldErrorMessage } from "@/utils/validator";
@@ -38,6 +38,9 @@ export const useStockCalculator = () => {
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
+
+  // 使用 App.useApp() 获取带上下文的消息实例
+  const { message } = App.useApp();
 
   // 获取全部历史记录
   const allHistoryResult = useLiveQuery(() => calculationRepository.getAll({ limit: 1000 }), []);
@@ -98,7 +101,7 @@ export const useStockCalculator = () => {
     } finally {
       setIsClearing(false);
     }
-  }, []);
+  }, [message]);
 
   // 删除历史
   const handleDeleteHistory = useCallback(async (ids: string[]) => {

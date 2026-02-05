@@ -26,7 +26,7 @@ import {
   Select,
   DatePicker,
   Checkbox,
-  message,
+  App,
 } from "antd";
 import React, { useState, useMemo } from "react";
 import type { CalculationHistory } from "@/types";
@@ -53,6 +53,9 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
     const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([null, null]);
     const [dailyReturnFilter, setDailyReturnFilter] = useState<number | undefined>(undefined);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+    // 使用 App.useApp() 获取带上下文的消息实例
+    const { message } = App.useApp();
 
     const handleClearHistory = async () => {
       setClearing(true);

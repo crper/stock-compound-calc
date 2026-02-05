@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
-import { theme as antTheme, type ThemeConfig, ConfigProvider } from "antd";
+import { theme as antTheme, type ThemeConfig, ConfigProvider, App } from "antd";
 
 // 主题类型
 export type ThemeMode = "light" | "dark";
@@ -113,7 +113,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo
 
   return (
     <ThemeContext.Provider value={contextValue}>
-      <ConfigProvider theme={antThemeConfig}>{children}</ConfigProvider>
+      <ConfigProvider theme={antThemeConfig}>
+        <App>{children}</App>
+      </ConfigProvider>
     </ThemeContext.Provider>
   );
 });
