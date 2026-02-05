@@ -134,37 +134,37 @@ bun test --watch
 
 ```
 src/
-├── client/              # React 前端
-│   ├── components/      # UI 组件
-│   │   ├── charts/      # 图表组件
-│   │   ├── displays/    # 展示组件
-│   │   ├── forms/       # 表单组件
-│   │   ├── navigation/  # 导航组件
-│   │   └── shared/       # 共享组件
-│   ├── db/              # IndexedDB 数据库层 (Dexie)
-│   │   ├── dexie.ts                    # 数据库配置
-│   │   ├── calculationRepository.ts     # 数据访问层
-│   │   └── __tests__/                   # 数据库测试
-│   ├── hooks/           # 自定义 Hooks
-│   │   ├── useLossRecovery.ts    # 亏损回本计算
-│   │   └── useStockCalculator.ts # 连板收益计算
-│   ├── services/        # 业务服务层
-│   │   ├── calculationService.ts # 计算服务
-│   │   └── __tests__/             # 服务测试
-│   ├── utils/           # 工具函数
-│   │   └── stockCalculator.ts    # 客户端计算逻辑
-│   ├── pages/           # 页面组件
-│   │   ├── StockCalculator.tsx      # 连板计算器页面
-│   │   └── LossRecoveryCalculator.tsx # 回本计算器页面
-│   ├── theme/           # 主题配置
-│   └── App.tsx          # 根组件
-├── server/              # Bun 静态服务器
-│   └── index.ts         # 服务器入口 (仅静态文件服务)
-└── shared/              # 前后端共享
-    ├── constants/       # 常量定义
-    ├── schemas/         # Zod schemas
-    ├── types/           # TypeScript 类型
-    └── utils/           # 工具函数
+├── components/      # UI 组件
+│   ├── charts/      # 图表组件
+│   ├── displays/    # 展示组件
+│   ├── forms/       # 表单组件
+│   ├── navigation/  # 导航组件
+│   └── shared/      # 共享组件
+├── db/              # IndexedDB 数据库层 (Dexie)
+│   ├── dexie.ts                    # 数据库配置
+│   ├── calculationRepository.ts     # 数据访问层
+│   └── __tests__/                  # 数据库测试
+├── hooks/           # 自定义 Hooks
+│   ├── useLossRecovery.ts    # 亏损回本计算
+│   └── useStockCalculator.ts # 连板收益计算
+├── services/        # 业务服务层
+│   ├── calculationService.ts # 计算服务
+│   └── __tests__/            # 服务测试
+├── utils/           # 工具函数
+│   ├── stockCalculator.ts    # 连板计算逻辑
+│   ├── lossRecovery.ts       # 亏损回本计算
+│   ├── formatters.ts         # 数据格式化
+│   ├── idGenerator.ts        # ID 生成工具
+│   └── errorHandler.ts       # 错误处理
+├── constants/       # 常量定义
+├── schemas/         # Zod schemas
+├── types/           # TypeScript 类型
+├── pages/           # 页面组件
+│   ├── StockCalculator.tsx      # 连板计算器页面
+│   └── LossRecoveryCalculator.tsx # 回本计算器页面
+├── theme/           # 主题配置
+├── App.tsx          # 根组件
+└── main.tsx         # 应用入口
 ```
 
 ## 核心特性说明
@@ -184,7 +184,7 @@ const result = new Decimal(initialPrice).mul(new Decimal(1).plus(dailyReturn.div
 前后端共享 TypeScript 类型定义，通过 Zod schema 进行运行时验证：
 
 ```typescript
-import { CalculationParamsSchema } from "@/shared/schemas";
+import { CalculationParamsSchema } from "@/schemas";
 
 const result = CalculationParamsSchema.safeParse(input);
 ```
@@ -194,7 +194,7 @@ const result = CalculationParamsSchema.safeParse(input);
 使用 IndexedDB (Dexie.js) 进行本地数据持久化：
 
 ```typescript
-import { db } from "@/client/db/dexie";
+import { db } from "@/db/dexie";
 
 await db.calculations.put({
   id: Date.now().toString(),

@@ -1,5 +1,6 @@
 import { db, type CalculationEntity } from "./dexie";
-import type { CalculationHistory, CalculationParams, PaginatedData } from "@/types";
+import type { CalculationHistory, CalculationParams, CalculationResult, PaginatedData } from "@/types";
+import { generateId } from "@/utils/idGenerator";
 
 const safeJsonParse = <T>(json: string | undefined, defaultValue: T): T => {
   if (!json) return defaultValue;
@@ -46,9 +47,9 @@ const entityToHistory = (row: CalculationEntity): CalculationHistory => ({
 export const calculationRepository = {
   async save(
     params: CalculationParams,
-    results: { up: any; down: any },
+    results: { up: CalculationResult; down: CalculationResult },
   ): Promise<CalculationHistory> {
-    const id = Date.now().toString();
+    const id = generateId();
     const timestamp = Date.now();
 
     await db.calculations.put({

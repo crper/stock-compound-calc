@@ -1,5 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import { message } from "antd";
 import type { CalculationParams, CalculationResult, CalculationHistory } from "@/types";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { isFieldValid, getFieldErrorMessage } from "@/utils/validator";
@@ -89,6 +90,11 @@ export const useStockCalculator = () => {
     setIsClearing(true);
     try {
       await calculationService.clearHistory();
+      message.success("历史记录已清空");
+    } catch (error) {
+      const appError = ErrorHandler.handleUnknown(error);
+      ErrorHandler.log(appError);
+      message.error("清空历史记录失败");
     } finally {
       setIsClearing(false);
     }

@@ -68,9 +68,9 @@ bun test:coverage        # 运行测试并生成覆盖率报告
 import React from "react";
 import { Button, Form } from "antd";
 import { useLiveQuery } from "dexie-react-hooks";
-import { calculationRepository } from "@/client/db/calculationRepository";
-import { AppError } from "@/shared/utils/errorHandler";
-import type { CalculationParams } from "@/shared/types";
+import { calculationRepository } from "@/db/calculationRepository";
+import { AppError } from "@/utils/errorHandler";
+import type { CalculationParams } from "@/types";
 ```
 
 ### 命名约定
@@ -149,7 +149,7 @@ try {
 ### 高精度计算
 
 - **必须使用 Decimal.js**: 所有股票价格/收益率计算
-- **全局配置**: 使用 `src/shared/constants` 中的 `DECIMAL_CONFIG`
+- **全局配置**: 使用 `src/constants` 中的 `DECIMAL_CONFIG`
 - **类型转换**: Decimal → Number 必须通过 `.toString()` 中转
 
 ```typescript
@@ -163,20 +163,27 @@ const result = price.mul(new Decimal(dailyReturn).div(100));
 
 ```
 src/
-├── client/          # React 前端
-│   ├── components/  # UI 组件
-│   ├── db/         # IndexedDB 数据库层 (Dexie)
-│   │   ├── dexie.ts                    # 数据库配置
-│   │   ├── calculationRepository.ts     # 数据访问层
-│   │   └── __tests__/                  # 数据库测试
-│   ├── hooks/       # 自定义 Hooks
-│   ├── services/    # 业务服务层
-│   ├── utils/       # 工具函数 (含客户端计算逻辑)
-│   ├── pages/       # 页面组件
-│   ├── theme/       # 主题配置
-│   └── index.css    # 全局样式和 Tailwind 配置
-├── server/          # Bun 静态服务器 (仅入口)
-└── shared/          # 共享逻辑 (constants, schemas, types, utils)
+├── components/      # UI 组件
+│   ├── charts/      # 图表组件
+│   ├── displays/    # 展示组件
+│   ├── forms/       # 表单组件
+│   ├── navigation/  # 导航组件
+│   └── shared/      # 共享组件
+├── db/              # IndexedDB 数据库层 (Dexie)
+│   ├── dexie.ts                    # 数据库配置
+│   ├── calculationRepository.ts     # 数据访问层
+│   └── __tests__/                  # 数据库测试
+├── hooks/           # 自定义 Hooks
+├── services/        # 业务服务层
+│   └── __tests__/                  # 服务测试
+├── utils/           # 工具函数
+├── constants/       # 常量定义
+├── schemas/         # Zod schemas
+├── types/           # TypeScript 类型
+├── pages/           # 页面组件
+├── theme/           # 主题配置
+├── App.tsx          # 根组件
+└── main.tsx         # 应用入口
 ```
 
 ## 🤖 AI 代理指南 (AI Agent Guidelines)
@@ -207,14 +214,14 @@ src/
 - **禁止** `any` 类型 (使用 `unknown` + 类型守卫)
 - **必须** 所有 API 输入使用 Zod schema 验证
 - **必须** 每次提交前运行 `bun run lint` + `bun run format`
-- **必须** 在前端业务逻辑变更时更新或添加 `src/client/services/__tests__` 下的测试
+- **必须** 在前端业务逻辑变更时更新或添加 `src/services/__tests__` 下的测试
 - **必须** 视觉变更保持深色/浅色模式兼容性
 
 ## 🎨 Ant Design 主题配置最佳实践
 
 ### 主题配置原则
 
-- **统一主色**: 在 `src/client/theme/index.tsx` 中配置 `colorPrimary: "#667eea"`，确保全站颜色一致
+- **统一主色**: 在 `src/theme/index.tsx` 中配置 `colorPrimary: "#667eea"`，确保全站颜色一致
 - **使用 ConfigProvider**: 所有 Ant Design 组件的样式配置应通过 `ConfigProvider` 的 `components` Token 配置，而非 CSS 覆盖
 - **避免内联样式**: 尽可能使用 Ant Design 的 `type="primary"` 等预设样式，避免硬编码渐变或颜色
 - **废弃 API 迁移**: 及时更新废弃的 API，如：

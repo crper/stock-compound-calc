@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import Decimal from "decimal.js";
 import { calculateRecovery } from "@/utils/lossRecovery";
+import { ErrorHandler } from "@/utils/errorHandler";
+import { generateId } from "@/utils/idGenerator";
 
 const STORAGE_KEY = "loss-recovery-history";
 const MAX_HISTORY_ITEMS = 50;
@@ -15,15 +17,12 @@ export interface RecoveryHistoryItem {
   createdAt: string;
 }
 
-// 生成唯一 ID 的辅助函数
-const generateId = (): string => `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-
 // 持久化历史记录到 localStorage
 const persistHistory = (history: RecoveryHistoryItem[]): void => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-  } catch {
-    console.error("Failed to persist history");
+  } catch (error) {
+    ErrorHandler.log(ErrorHandler.handleUnknown(error));
   }
 };
 
@@ -32,8 +31,8 @@ const loadPersistedHistory = (): RecoveryHistoryItem[] => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? (JSON.parse(stored) as RecoveryHistoryItem[]) : [];
-  } catch {
-    console.error("Failed to parse history");
+  } catch (error) {
+    ErrorHandler.log(ErrorHandler.handleUnknown(error));
     return [];
   }
 };
