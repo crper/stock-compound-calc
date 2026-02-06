@@ -6,6 +6,7 @@ import { Alert, Button } from "antd";
 import React, { Component } from "react";
 import type { ErrorInfo, ReactNode } from "react";
 import { createErrorBoundary } from "@/utils/errorHandler";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   /** 子组件 */
@@ -24,42 +25,45 @@ interface State {
 /**
  * 默认错误展示组件
  */
-const DefaultErrorFallback: React.FC<{ error: Error; retry: () => void }> = ({ error, retry }) => (
-  <div style={{ padding: "20px", textAlign: "center" }}>
-    <Alert
-      title="应用程序遇到错误"
-      description={
-        <div>
-          <p>很抱歉，应用程序遇到了一个意外错误。</p>
-          <details style={{ whiteSpace: "pre-wrap", marginTop: "12px" }}>
-            <summary className="dark:text-gray-300">错误详情（点击展开）</summary>
-            <code
-              style={{
-                display: "block",
-                padding: "8px",
-                borderRadius: "4px",
-                marginTop: "8px",
-                fontSize: "12px",
-                textAlign: "left",
-              }}
-              className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
-            >
-              {error.message}
-              {error.stack && `\n\n${error.stack}`}
-            </code>
-          </details>
-        </div>
-      }
-      type="error"
-      showIcon
-      action={
-        <Button size="small" danger onClick={retry}>
-          重试
-        </Button>
-      }
-    />
-  </div>
-);
+const DefaultErrorFallback: React.FC<{ error: Error; retry: () => void }> = ({ error, retry }) => {
+  const { t } = useTranslation();
+  return (
+    <div style={{ padding: "20px", textAlign: "center" }}>
+      <Alert
+        title={t("common.errorBoundary.title")}
+        description={
+          <div>
+            <p>{t("common.errorBoundary.description")}</p>
+            <details style={{ whiteSpace: "pre-wrap", marginTop: "12px" }}>
+              <summary className="dark:text-gray-300">{t("common.errorBoundary.details")}</summary>
+              <code
+                style={{
+                  display: "block",
+                  padding: "8px",
+                  borderRadius: "4px",
+                  marginTop: "8px",
+                  fontSize: "12px",
+                  textAlign: "left",
+                }}
+                className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
+              >
+                {error.message}
+                {error.stack && `\n\n${error.stack}`}
+              </code>
+            </details>
+          </div>
+        }
+        type="error"
+        showIcon
+        action={
+          <Button size="small" danger onClick={retry}>
+            {t("common.buttons.retry")}
+          </Button>
+        }
+      />
+    </div>
+  );
+};
 
 export class ErrorBoundary extends Component<Props, State> {
   private retryCount = 0;

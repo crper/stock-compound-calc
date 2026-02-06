@@ -7,6 +7,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import { formatPercentage } from "@/utils/formatters";
 import type { KeyMetrics } from "@/types";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
@@ -45,6 +46,7 @@ MetricItem.displayName = "MetricItem";
 
 export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
   ({ metrics, dailyReturn, boardCount, isMobile }) => {
+    const { t } = useTranslation();
     if (!metrics) return null;
 
     const items: MetricItemProps[] = [];
@@ -52,9 +54,13 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
     // 翻倍天数
     if (metrics.doubleDays !== null) {
       items.push({
-        label: "翻倍天数",
-        value: `${metrics.doubleDays}天`,
-        tooltip: `以 ${Math.abs(dailyReturn)}% 涨跌幅，需要 ${metrics.doubleDays} 天翻倍`,
+        label: t("stockCalculator.results.metrics.doubleDays"),
+        value: `${metrics.doubleDays}${t("stockCalculator.results.overview.days")}`,
+        tooltip: t("stockCalculator.results.metrics.dynamicTooltip", {
+          return: Math.abs(dailyReturn),
+          days: metrics.doubleDays,
+          action: t("stockCalculator.results.metrics.doubleAction", { defaultValue: "翻倍" }),
+        }),
         colorClass: "text-green-600 dark:text-green-400 border-green-200 dark:border-green-800",
         bgClass: "bg-green-50 dark:bg-green-900/20",
       });
@@ -63,9 +69,11 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
     // 盈亏平衡回撤
     if (metrics.breakEvenReturn !== null) {
       items.push({
-        label: "盈亏回撤",
+        label: t("stockCalculator.results.metrics.breakEvenReturn"),
         value: formatPercentage(Math.abs(metrics.breakEvenReturn), { multiply: false }),
-        tooltip: `回到初始价需要 ${Math.abs(metrics.breakEvenReturn).toFixed(2)}% 的反向变动`,
+        tooltip: t("stockCalculator.results.metrics.breakEvenTooltip", {
+          return: Math.abs(metrics.breakEvenReturn).toFixed(2),
+        }),
         colorClass: "text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800",
         bgClass: "bg-orange-50 dark:bg-orange-900/20",
       });
@@ -74,9 +82,12 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
     // 10倍天数
     if (metrics.tenXDays !== null) {
       items.push({
-        label: "10倍天数",
-        value: `${metrics.tenXDays}天`,
-        tooltip: `以 ${Math.abs(dailyReturn)}% 涨跌幅，需要 ${metrics.tenXDays} 天达到10倍`,
+        label: t("stockCalculator.results.metrics.tenXDays"),
+        value: `${metrics.tenXDays}${t("stockCalculator.results.overview.days")}`,
+        tooltip: t("stockCalculator.results.metrics.tenXTooltip", {
+          return: Math.abs(dailyReturn),
+          days: metrics.tenXDays,
+        }),
         colorClass: "text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800",
         bgClass: "bg-purple-50 dark:bg-purple-900/20",
       });
@@ -85,11 +96,13 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
     // 年化收益率
     if (metrics.annualizedReturn !== null) {
       items.push({
-        label: "年化收益",
+        label: t("stockCalculator.results.metrics.annualizedReturn"),
         value: formatPercentage(Math.abs(metrics.annualizedReturn), {
           multiply: false,
         }),
-        tooltip: `按 ${boardCount} 天计算的年化收益率`,
+        tooltip: t("stockCalculator.results.metrics.annualizedTooltip", {
+          days: boardCount,
+        }),
         colorClass: "text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800",
         bgClass: "bg-blue-50 dark:bg-blue-900/20",
       });
@@ -103,8 +116,10 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
     return (
       <div className="mt-4">
         <div className="flex items-center gap-2 mb-3">
-          <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300">关键指标</Text>
-          <Tooltip title="关键指标帮助您快速评估投资潜力和风险">
+          <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            {t("stockCalculator.results.metrics.title")}
+          </Text>
+          <Tooltip title={t("stockCalculator.results.metrics.tooltip")}>
             <InfoCircleOutlined className="text-gray-400 text-[13px]" />
           </Tooltip>
         </div>

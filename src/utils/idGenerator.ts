@@ -13,18 +13,4 @@ export const generateId = (): string => {
   return `${timestamp}-${randomStr}`;
 };
 
-/**
- * 生成纯数字 ID（基于时间戳）
- * 适合需要数值 ID 的场景
- */
-export const generateNumericId = (): string => {
-  return Date.now().toString();
-};
 
-/**
- * 生成短 ID（适合临时标识）
- * 格式: {randomString}
- */
-export const generateShortId = (): string => {
-  return Math.random().toString(36).slice(2, 10);
-};

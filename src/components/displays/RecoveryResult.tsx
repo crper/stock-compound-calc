@@ -162,8 +162,8 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
 
         {lossPercent >= 80 && (
           <Alert
-            title="严重警告"
-            description="亏损超过80%后，回本需要400%以上的涨幅，实际操作中几乎不可能实现。请务必重视风险管理。"
+            title={t("recoveryCalculator.results.warnings.severe.title")}
+            description={t("recoveryCalculator.results.warnings.severe.desc")}
             type="error"
             showIcon
             className="rounded-xl"

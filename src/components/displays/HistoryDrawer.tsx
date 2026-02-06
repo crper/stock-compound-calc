@@ -9,8 +9,9 @@ import {
   HistoryOutlined,
   DeleteOutlined,
   SearchOutlined,
+  ClockCircleOutlined,
 } from "@ant-design/icons";
-import type { CheckboxChangeEvent } from "antd/es/checkbox";
+
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import {
@@ -19,7 +20,7 @@ import {
   Drawer,
   Empty,
   Popconfirm,
-  Space,
+  Flex,
   Tag,
   Typography,
   Input,
@@ -29,6 +30,7 @@ import {
   App,
 } from "antd";
 import React, { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { CalculationHistory } from "@/types";
 import { TREND_COLORS } from "@/constants";
 import { formatCurrency, formatDate, formatPercentage } from "@/utils/formatters";
@@ -48,13 +50,13 @@ interface HistoryDrawerProps {
 
 export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
   ({ visible, onClose, history, isMobile, onLoadHistory, onClearHistory, onDeleteHistory }) => {
+    const { t } = useTranslation();
     const [clearing, setClearing] = useState(false);
     const [searchValue, setSearchValue] = useState("");
     const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([null, null]);
     const [dailyReturnFilter, setDailyReturnFilter] = useState<number | undefined>(undefined);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-    // 使用 App.useApp() 获取带上下文的消息实例
     const { message } = App.useApp();
 
     const handleClearHistory = async () => {
@@ -69,7 +71,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
 
     const handleBatchDelete = async () => {
       if (selectedIds.size === 0) {
-        message.warning("请先选择要删除的记录");
+        message.warning(t("common.messages.selectFirst"));
         return;
       }
 
@@ -77,12 +79,10 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
         try {
           onDeleteHistory(Array.from(selectedIds));
           setSelectedIds(new Set());
-          message.success(`已删除 ${selectedIds.size} 条记录`);
+          message.success(t("common.messages.deleteSuccess", { count: selectedIds.size }));
         } catch {
-          message.error("删除失败，请稍后重试");
+          message.error(t("common.messages.deleteFailed"));
         }
-      } else {
-        message.error("批量删除功能暂未实现");
       }
     };
 
@@ -94,8 +94,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
       }
     };
 
-    const handleSelectItem = (id: string, checked: boolean, event: React.MouseEvent) => {
-      event.stopPropagation();
+    const handleSelectItem = (id: string, checked: boolean) => {
       setSelectedIds((prev) => {
         const next = new Set(prev);
         if (checked) {
@@ -139,169 +138,164 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
     return (
       <Drawer
         title={
-          <Space size="middle">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
+          <Flex align="center" gap={12} wrap="wrap">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center flex-shrink-0">
               <HistoryOutlined className="text-white text-lg" />
             </div>
-            <div>
-              <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                计算历史
+            <Flex align="center" gap={8} wrap="wrap" style={{ minWidth: 0 }}>
+              <span className="text-lg font-semibold text-gray-800 dark:text-gray-100 truncate">
+                {t("stockCalculator.history.title")}
               </span>
               {filteredHistory.length > 0 && (
-                <Tag
-                  color="blue"
-                  className="ml-3 rounded-full px-3 py-0.5 text-xs font-medium bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800"
-                >
-                  {filteredHistory.length} 条记录
+                <Tag className="rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800 flex-shrink-0">
+                  {t("stockCalculator.history.recordCount", { count: filteredHistory.length })}
                 </Tag>
               )}
-            </div>
-          </Space>
+            </Flex>
+          </Flex>
         }
         placement={isMobile ? "bottom" : "right"}
         onClose={onClose}
         open={visible}
-        size={isMobile ? "large" : "default"}
-        className={`${isMobile ? "history-drawer-mobile" : ""} backdrop-blur-sm`}
+        size={isMobile ? "100%" : 520}
+        className="backdrop-blur-sm"
         styles={{
-          body: { padding: "20px" },
+          body: { padding: 0 },
           header: { borderBottom: "1px solid #f0f0f0", padding: "16px 20px" },
         }}
         extra={
           selectedIds.size > 0 ? (
-            <Space>
-              <Text type="secondary">已选 {selectedIds.size} 项</Text>
+            <Space size="small">
+              <Text type="secondary" className="text-sm">
+                {t("stockCalculator.history.selectedCount", { count: selectedIds.size })}
+              </Text>
               <Popconfirm
-                title="确认删除"
-                description={`确定要删除选中的 ${selectedIds.size} 条记录吗？`}
+                title={t("stockCalculator.history.confirmDelete")}
+                description={t("stockCalculator.history.confirmDeleteDesc", { count: selectedIds.size })}
                 onConfirm={handleBatchDelete}
-                okText="确认"
-                cancelText="取消"
+                okText={t("common.buttons.confirm")}
+                cancelText={t("common.buttons.cancel")}
                 okButtonProps={{ danger: true }}
               >
                 <Button size="small" danger icon={<DeleteOutlined />} className="rounded-lg">
-                  批量删除
+                  {t("common.buttons.batchDelete")}
                 </Button>
               </Popconfirm>
               <Button size="small" onClick={() => setSelectedIds(new Set())} className="rounded-lg">
-                取消选择
+                {t("common.buttons.cancelSelection")}
               </Button>
             </Space>
           ) : (
             history.length > 0 && (
               <Popconfirm
-                title="确认清空"
-                description="确定要清空所有历史记录吗？此操作不可恢复。"
+                title={t("stockCalculator.history.confirmClear")}
+                description={t("stockCalculator.history.confirmClearDesc")}
                 onConfirm={handleClearHistory}
-                okText="确认"
-                cancelText="取消"
+                okText={t("common.buttons.confirm")}
+                cancelText={t("common.buttons.cancel")}
                 okButtonProps={{ danger: true, loading: clearing }}
               >
-                <Button
-                  size="small"
-                  danger
-                  icon={<ClearOutlined />}
-                  className="rounded-lg transition-all duration-300 hover:scale-105"
-                >
-                  清空历史
+                <Button size="small" danger icon={<ClearOutlined />} className="rounded-lg">
+                  {t("common.buttons.clearHistory")}
                 </Button>
               </Popconfirm>
             )
           )
         }
       >
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className="flex flex-col h-full">
+          {/* 筛选区 */}
           {history.length > 0 && (
-            <Card
-              size="small"
-              className="dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm"
-            >
-              <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 12 }}>
-                <Input
-                  placeholder="搜索初始股价"
-                  prefix={<SearchOutlined className="text-gray-400" />}
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  allowClear
-                  className="rounded-lg"
-                  size="middle"
-                />
-                <Space size="small" wrap className="w-full">
-                  <RangePicker
-                    placeholder={["开始日期", "结束日期"]}
-                    value={dateRange}
-                    onChange={(dates) => setDateRange([dates?.[0] ?? null, dates?.[1] ?? null])}
+            <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30">
+              <div className="flex flex-col gap-3">
+                {/* 搜索和筛选 */}
+                <div className="flex gap-2">
+                  <Input
+                    placeholder={t("stockCalculator.history.searchPlaceholder")}
+                    prefix={<SearchOutlined className="text-gray-400" />}
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    allowClear
+                    className="rounded-lg flex-1"
                     size="middle"
-                    className="rounded-lg"
-                    style={{ width: isMobile ? "100%" : "auto" }}
                   />
                   <Select
-                    placeholder="涨跌幅"
+                    placeholder={t("stockCalculator.history.filterReturn")}
                     value={dailyReturnFilter}
                     onChange={setDailyReturnFilter}
-                    options={[{ label: "全部", value: undefined }, ...DailyReturnOptions]}
+                    options={[{ label: t("stockCalculator.history.filterAll"), value: undefined }, ...DailyReturnOptions]}
                     allowClear
-                    style={{ width: isMobile ? "100%" : 140 }}
+                    style={{ width: 120 }}
                     size="middle"
                     className="rounded-lg"
                   />
-                </Space>
+                </div>
+                {/* 日期范围 */}
+                <RangePicker
+                  placeholder={[t("stockCalculator.history.dateRange.start"), t("stockCalculator.history.dateRange.end")]}
+                  value={dateRange}
+                  onChange={(dates) => setDateRange([dates?.[0] ?? null, dates?.[1] ?? null])}
+                  size="middle"
+                  className="rounded-lg w-full"
+                />
+                {/* 全选 */}
                 {filteredHistory.length > 0 && (
                   <Checkbox
-                    checked={selectedIds.size === filteredHistory.length}
+                    checked={selectedIds.size === filteredHistory.length && filteredHistory.length > 0}
+                    indeterminate={selectedIds.size > 0 && selectedIds.size < filteredHistory.length}
                     onChange={(e) => handleSelectAll(e.target.checked)}
                     className="rounded-lg"
                   >
-                    全选 ({filteredHistory.length} 条)
+                    {t("stockCalculator.history.selectAll", { count: filteredHistory.length })}
                   </Checkbox>
                 )}
               </div>
-            </Card>
+            </div>
           )}
 
-          {filteredHistory.length === 0 ? (
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={
-                <span className="text-gray-400 dark:text-gray-500 text-xs sm:text-sm">
-                  {history.length === 0 ? "暂无历史记录" : "未找到匹配的记录"}
-                </span>
-              }
-              style={{ transition: "all 0.3s ease" }}
-            >
-              {history.length === 0 && (
-                <div style={{ marginTop: 16 }}>
+          {/* 历史列表 */}
+          <div className="flex-1 overflow-y-auto p-4">
+            {filteredHistory.length === 0 ? (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={
+                  <span className="text-gray-400 dark:text-gray-500 text-sm">
+                    {history.length === 0 ? t("common.empty.noHistory") : t("stockCalculator.history.noMatch")}
+                  </span>
+                }
+                className="mt-12"
+              >
+                {history.length === 0 && (
                   <HistoryOutlined
                     style={{ fontSize: 48 }}
-                    className="text-gray-300 dark:text-gray-600"
+                    className="text-gray-300 dark:text-gray-600 mt-4"
                   />
-                </div>
-              )}
-            </Empty>
-          ) : (
-            filteredHistory.map((item, index) => (
-              <HistoryCard
-                key={item.id}
-                item={item}
-                isMobile={isMobile}
-                index={index}
-                selected={selectedIds.has(item.id)}
-                onSelect={(checked, event) => handleSelectItem(item.id, checked, event)}
-                onClick={() => {
-                  if (selectedIds.size > 0) {
-                    handleSelectItem(item.id, !selectedIds.has(item.id), {
-                      stopPropagation: () => {},
-                      preventDefault: () => {},
-                      defaultPrevented: false,
-                    } as React.MouseEvent);
-                  } else {
-                    onLoadHistory(item);
-                    onClose();
-                  }
-                }}
-              />
-            ))
-          )}
+                )}
+              </Empty>
+            ) : (
+              <div className="space-y-3">
+                {filteredHistory.map((item, index) => (
+                  <HistoryCard
+                    key={item.id}
+                    item={item}
+                    isMobile={isMobile}
+                    index={index}
+                    selected={selectedIds.has(item.id)}
+                    onSelect={(checked) => handleSelectItem(item.id, checked)}
+                    onClick={() => {
+                      if (selectedIds.size > 0) {
+                        handleSelectItem(item.id, !selectedIds.has(item.id));
+                      } else {
+                        onLoadHistory(item);
+                        onClose();
+                      }
+                    }}
+                    t={t}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </Drawer>
     );
@@ -315,103 +309,86 @@ interface HistoryCardProps {
   isMobile: boolean;
   index: number;
   selected?: boolean;
-  onSelect?: (checked: boolean, event: React.MouseEvent) => void;
+  onSelect?: (checked: boolean) => void;
   onClick: () => void;
+  t: (key: string, options?: Record<string, unknown>) => string;
 }
 
 const HistoryCard: React.FC<HistoryCardProps> = React.memo(
-  ({ item, isMobile, index, selected = false, onSelect, onClick }) => {
+  ({ item, isMobile, index, selected = false, onSelect, onClick, t }) => {
     const formattedTimestamp = formatDate(item.timestamp);
     const hasStockQuantity = item.params.stockQuantity && item.params.stockQuantity > 0;
-
-    const handleCardClick = () => {
-      onClick();
-    };
-
-    const handleCheckboxChange = (e: CheckboxChangeEvent) => {
-      e.stopPropagation();
-      onSelect?.(e.target.checked, {
-        stopPropagation: () => {},
-        preventDefault: () => {},
-        defaultPrevented: false,
-      } as React.MouseEvent);
-    };
+    const [datePart, timePart] = formattedTimestamp.split(" ");
 
     return (
       <Card
-        size={isMobile ? "default" : "default"}
+        size="small"
         hoverable
+        onClick={onClick}
+        className={`transition-all duration-200 dark:bg-gray-800 dark:border-gray-700 ${
+          selected ? "ring-2 ring-blue-500 border-blue-500" : "border-gray-200"
+        }`}
         style={{
           animation: `slideIn 0.3s ease-out ${index * 0.05}s both`,
-          border: selected ? "2px solid #1890ff" : "1px solid #e8e8e8",
         }}
-        onClick={handleCardClick}
-        styles={{
-          body: { padding: isMobile ? 16 : 20 },
-        }}
-        className="history-card mb-3 transition-all duration-300 dark:bg-gray-800 dark:border-gray-700"
       >
-        <div className={isMobile ? "flex flex-col gap-4" : "grid grid-cols-4 gap-6 items-center"}>
+        <Flex align="flex-start" gap={12}>
+          {/* 复选框 */}
           {onSelect && (
-            <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-              <Checkbox checked={selected} onChange={handleCheckboxChange} />
+            <div className="pt-0.5" onClick={(e) => e.stopPropagation()}>
+              <Checkbox checked={selected} onChange={(e) => onSelect?.(e.target.checked)} />
             </div>
           )}
 
-          <div className="flex flex-col gap-1.5 min-w-0">
-            <Text
-              type="secondary"
-              className="text-xs font-medium uppercase tracking-wider dark:text-gray-400"
-            >
-              初始参数
-            </Text>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-bold text-base dark:text-gray-100">
+          {/* 内容区 */}
+          <div className="flex-1 min-w-0">
+            {/* 头部：时间和参数 */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                <ClockCircleOutlined />
+                <span>{datePart}</span>
+                <span className="text-gray-300">{timePart}</span>
+              </div>
+              <Tag size="small" className="text-xs m-0 bg-blue-50 text-blue-600 border-blue-200">
+                {item.params.dailyReturn}%
+              </Tag>
+            </div>
+
+            {/* 主体：价格和天数 */}
+            <div className="flex items-baseline gap-2 mb-3">
+              <span className="text-lg font-bold text-gray-800 dark:text-gray-100">
                 {formatCurrency(item.params.initialPrice, {
                   compact: item.params.initialPrice >= 1000000,
                 })}
               </span>
               <span className="text-gray-400">×</span>
-              <span className="text-gray-600 dark:text-gray-300 text-sm">
-                {item.params.boardCount} 天
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                {item.params.boardCount} {t("stockCalculator.form.units.days")}
               </span>
-              <Tag color="blue" className="text-xs m-0">
-                {item.params.dailyReturn}%
-              </Tag>
+              {hasStockQuantity && (
+                <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                  ({t("stockCalculator.history.holding", { count: item.params.stockQuantity })})
+                </span>
+              )}
             </div>
-            {hasStockQuantity && (
-              <Text type="secondary" className="text-sm dark:text-gray-400">
-                持仓{" "}
-                <Text strong className="dark:text-gray-200">
-                  {item.params.stockQuantity.toLocaleString()}
-                </Text>{" "}
-                股
-              </Text>
-            )}
-          </div>
 
-          <HistoryResultCell
-            result={item.results.up}
-            type="up"
-            hasStockQuantity={hasStockQuantity}
-          />
-
-          <HistoryResultCell
-            result={item.results.down}
-            type="down"
-            hasStockQuantity={hasStockQuantity}
-          />
-
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <HistoryOutlined className="text-gray-400 text-lg" />
-            <div className="flex flex-col">
-              <Text className="text-sm dark:text-gray-200">{formattedTimestamp.split(" ")[0]}</Text>
-              <Text type="secondary" className="text-xs dark:text-gray-500">
-                {formattedTimestamp.split(" ")[1]}
-              </Text>
+            {/* 结果对比 */}
+            <div className={`grid gap-2 ${isMobile ? "grid-cols-1" : "grid-cols-2"}`}>
+              <HistoryResultCell
+                result={item.results.up}
+                type="up"
+                hasStockQuantity={hasStockQuantity}
+                t={t}
+              />
+              <HistoryResultCell
+                result={item.results.down}
+                type="down"
+                hasStockQuantity={hasStockQuantity}
+                t={t}
+              />
             </div>
           </div>
-        </div>
+        </Flex>
       </Card>
     );
   },
@@ -428,42 +405,42 @@ interface HistoryResultCellProps {
   };
   type: "up" | "down";
   hasStockQuantity: boolean;
+  t: (key: string, options?: Record<string, unknown>) => string;
 }
 
 const HistoryResultCell: React.FC<HistoryResultCellProps> = React.memo(
-  ({ result, type, hasStockQuantity }) => {
+  ({ result, type, hasStockQuantity, t }) => {
     const isUp = type === "up";
     const colors = isUp ? TREND_COLORS.up : TREND_COLORS.down;
 
     return (
-      <div className={`rounded-lg ${colors.bg} border ${colors.border} p-3`}>
-        <div className="flex items-center gap-1.5 mb-2">
-          {isUp ? (
-            <RiseOutlined className={`${colors.iconColor} text-sm`} />
-          ) : (
-            <FallOutlined className={`${colors.iconColor} text-sm`} />
-          )}
-          <Text
-            type="secondary"
-            className="text-xs font-medium uppercase tracking-wider dark:text-gray-400"
-          >
-            {isUp ? "涨停收益" : "跌停收益"}
-          </Text>
-        </div>
-        <div className="font-bold text-lg dark:text-gray-100 mb-1">
-          {formatCurrency(result.finalPrice, { compact: result.finalPrice >= 1000000 })}
-        </div>
-        <div className={`text-sm ${colors.iconColor} font-medium mb-1`}>
-          {formatPercentage(result.totalReturn, { multiply: false })}
-        </div>
-        {hasStockQuantity && result.positionGain !== undefined && (
-          <div className={`text-sm ${colors.iconColor} truncate`}>
-            {result.positionGain >= 0 ? "+" : ""}
-            {formatCurrency(result.positionGain, {
-              compact: Math.abs(result.positionGain) >= 1000000,
-            })}
+      <div className={`rounded-lg ${colors.bg} border ${colors.border} p-2.5`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            {isUp ? (
+              <RiseOutlined className={`${colors.iconColor} text-sm`} />
+            ) : (
+              <FallOutlined className={`${colors.iconColor} text-sm`} />
+            )}
+            <Text className="text-xs text-gray-500 dark:text-gray-400">
+              {isUp ? t("stockCalculator.history.limitUpProfit") : t("stockCalculator.history.limitDownLoss")}
+            </Text>
           </div>
-        )}
+          <div className={`text-xs font-medium ${colors.iconColor}`}>
+            {formatPercentage(result.totalReturn, { multiply: false })}
+          </div>
+        </div>
+        <div className="mt-1.5 flex items-baseline justify-between">
+          <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+            {formatCurrency(result.finalPrice, { compact: result.finalPrice >= 1000000 })}
+          </span>
+          {hasStockQuantity && result.positionGain !== undefined && (
+            <span className={`text-xs ${colors.iconColor}`}>
+              {result.positionGain >= 0 ? "+" : ""}
+              {formatCurrency(result.positionGain, { compact: Math.abs(result.positionGain) >= 1000000 })}
+            </span>
+          )}
+        </div>
       </div>
     );
   },

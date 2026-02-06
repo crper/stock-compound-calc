@@ -19,6 +19,7 @@ import React, { useMemo } from "react";
 import { CHART_CONFIG } from "@/constants";
 import type { CalculationResult } from "@/types";
 import { formatCurrency } from "@/utils/formatters";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/theme";
 import type { ChartType } from "./ChartTypeSelector";
 
@@ -68,6 +69,7 @@ const getChartConfig = (isMobile: boolean) => ({
 export const BasicChart: React.FC<BasicChartProps> = React.memo(
   ({ results, isMobile, chartType = "BAR" }) => {
     const { theme } = useTheme();
+    const { t } = useTranslation();
     const isDarkMode = theme === "dark";
     const chartData = useMemo(() => getChartData(results), [results]);
     const config = useMemo(() => getChartConfig(isMobile), [isMobile]);
@@ -88,7 +90,7 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
     if (chartData.length === 0) {
       return (
         <div className="p-10 text-center text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 rounded-lg min-h-[400px] flex items-center justify-center">
-          <Empty description="暂无数据" />
+          <Empty description={t("common.empty.noData")} />
         </div>
       );
     }
@@ -136,14 +138,14 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
                 stroke={colors.up}
                 strokeWidth={config.lineWidth}
                 dot={{ r: isMobile ? 3 : 4 }}
-                name="涨停价"
+                name={t("stockCalculator.charts.limitUp")}
               />
               <Line
                 dataKey="跌停"
                 stroke={colors.down}
                 strokeWidth={config.lineWidth}
                 dot={{ r: isMobile ? 3 : 4 }}
-                name="跌停价"
+                name={t("stockCalculator.charts.limitDown")}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -172,14 +174,14 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
               dataKey="涨停"
               fill={colors.up}
               radius={[2, 2, 0, 0]}
-              name="涨停价"
+              name={t("stockCalculator.charts.limitUp")}
               barSize={config.barSize}
             />
             <Bar
               dataKey="跌停"
               fill={colors.down}
               radius={[2, 2, 0, 0]}
-              name="跌停价"
+              name={t("stockCalculator.charts.limitDown")}
               barSize={config.barSize}
             />
           </BarChart>

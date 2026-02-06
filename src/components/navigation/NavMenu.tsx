@@ -32,7 +32,7 @@ export const NavMenu: React.FC<NavMenuProps> = React.memo(({ isMobile = false })
     },
     {
       key: "/about",
-      label: isMobile ? t("common.navigation.about") : t("common.navigation.about"),
+      label: t("common.navigation.about"),
       icon: <InfoCircleOutlined />,
     },
   ];
@@ -42,18 +42,24 @@ export const NavMenu: React.FC<NavMenuProps> = React.memo(({ isMobile = false })
   };
 
   return (
-    <div className="w-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-md rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+    <div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
       <Tabs
         activeKey={currentPath}
         onChange={handleTabChange}
         items={items}
-        centered
+        centered={!isMobile}
         size={isMobile ? "small" : "middle"}
         className="dark:text-gray-100"
         tabBarStyle={{
           margin: 0,
-          padding: isMobile ? "8px 8px 0" : "12px 16px 0",
+          padding: isMobile ? "4px 4px 0" : "8px 16px 0",
+          borderBottom: "none",
         }}
+        style={{
+          "--ant-tabs-ink-bar-color": "#667eea",
+          "--ant-tabs-tab-active-color": "#667eea",
+          "--ant-tabs-tab-hover-color": "#764ba2",
+        } as React.CSSProperties}
       />
     </div>
   );

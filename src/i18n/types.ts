@@ -45,6 +45,11 @@ export interface TranslationResources {
       noResults: string;
       noData: string;
     };
+    messages: {
+      selectFirst: string;
+      deleteSuccess: string;
+      deleteFailed: string;
+    };
   };
   stockCalculator: {
     title: string;
@@ -196,17 +201,20 @@ export interface TranslationResources {
         almostImpossible: string;
       };
     };
-    table: {
-      title: string;
-      range: string;
-      columns: {
-        loss: string;
-        required: string;
-        multiplier: string;
+      table: {
+        title: string;
+        range: string;
+        columns: {
+          loss: string;
+          required: string;
+          multiplier: string;
+        };
+        formula: string;
       };
-      formula: string;
+      history: {
+        title: string;
+      };
     };
-  };
   about: {
     title: string;
     subtitle: string;

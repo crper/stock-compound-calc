@@ -29,6 +29,4 @@ export const API_LIMITS = {
   MAX_PAGE_SIZE: 100,
   /** 不分页时最大返回记录数 */
   MAX_HISTORY_WITHOUT_PAGINATION: 1000,
-  /** 请求超时时间（毫秒） */
-  REQUEST_TIMEOUT_MS: 10000,
 } as const;

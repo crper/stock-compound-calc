@@ -39,15 +39,7 @@ export const PRESET_VALUES = {
   BEIJING_STOCK_EXCHANGE: 30,
 } as const;
 
-/**
- * API 常量
- */
-export const API_CONSTANTS = {
-  /** API 基础路径 */
-  BASE_URL: "/api",
-  /** 请求超时时间（毫秒） */
-  TIMEOUT_MS: 10000,
-} as const;
+
 
 /**
  * Decimal 配置常量
@@ -103,13 +95,6 @@ export const FORM_CONFIG = {
     10: "10%",
     20: "20%",
     30: "30%",
-  },
-  /** 连板天数滑块刻度 */
-  BOARD_SLIDER_MARKS: {
-    1: "1天",
-    5: "5天",
-    10: "10天",
-    15: "15天",
   },
 } as const;
 

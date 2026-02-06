@@ -12,6 +12,7 @@ import { PositionChangeSection } from "./PositionChangeSection";
 import { MetricsGrid } from "./MetricsGrid";
 import { CollapseButton } from "./CollapseButton";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
@@ -30,9 +31,12 @@ interface ResultOverviewCardProps {
 
 export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
   ({ result, type, isMobile, params, defaultExpanded = false }) => {
+    const { t } = useTranslation();
     const isUp = type === "up";
     const IconComponent = isUp ? RiseOutlined : FallOutlined;
-    const title = isUp ? "连续涨停" : "连续跌停";
+    const title = isUp
+      ? t("stockCalculator.results.overview.consecutiveUp")
+      : t("stockCalculator.results.overview.consecutiveDown");
     const colors = isUp ? TREND_COLORS.up : TREND_COLORS.down;
 
     // 移动端折叠状态
@@ -61,7 +65,10 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
                 color={isUp ? "success" : "error"}
                 className="m-0 text-xs font-medium rounded-full px-3 py-0.5"
               >
-                {params.boardCount} 天
+
+                {params.boardCount}
+                {t("stockCalculator.results.overview.days")}
+              
               </Tag>
             )}
           </div>

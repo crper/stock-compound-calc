@@ -17,6 +17,9 @@ export const enUS: { translation: TranslationResources } = {
         cancel: "Cancel",
         close: "Close",
         delete: "Delete",
+        collapseLess: "Collapse",
+        expandMore: "Expand",
+        retry: "Retry",
       },
       footer: {
         copyright: "©2026 Stock Calculator",
@@ -44,6 +47,18 @@ export const enUS: { translation: TranslationResources } = {
         noHistory: "No history records",
         noResults: "No results",
         noData: "No data available",
+      },
+      messages: {
+        selectFirst: "Please select records to delete first",
+        deleteSuccess: "Deleted {{count}} records",
+        deleteFailed: "Delete failed, please try again later",
+        clearSuccess: "History cleared successfully",
+        clearFailed: "Failed to clear history",
+      },
+      errorBoundary: {
+        title: "Application Error",
+        description: "We're sorry, the application encountered an unexpected error.",
+        details: "Error Details (click to expand)",
       },
     },
     stockCalculator: {
@@ -102,6 +117,10 @@ export const enUS: { translation: TranslationResources } = {
           title: "Key Metrics",
           tooltip: "Key metrics help you quickly assess investment potential and risk",
           dynamicTooltip: "With {{return}}% daily return, need {{days}} days to {{action}}",
+          doubleAction: "double",
+          breakEvenTooltip: "Need {{return}}% reverse movement to return to initial price",
+          tenXTooltip: "With {{return}}% daily return, need {{days}} days to reach 10x",
+          annualizedTooltip: "Annualized return calculated based on {{days}} days",
         },
         positionChange: {
           title: "Position Change",
@@ -206,6 +225,9 @@ export const enUS: { translation: TranslationResources } = {
           multiplier: "Multiple",
         },
         formula: "Formula: Required% = Loss% ÷ (100 - Loss%) × 100",
+      },
+      history: {
+        title: "Recovery History",
       },
     },
     about: {

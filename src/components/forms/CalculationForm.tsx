@@ -378,7 +378,12 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   min={1}
                   max={15}
                   step={1}
-                  marks={FORM_CONFIG.BOARD_SLIDER_MARKS}
+                  marks={{
+                    1: `1${t("stockCalculator.results.overview.days")}`,
+                    5: `5${t("stockCalculator.results.overview.days")}`,
+                    10: `10${t("stockCalculator.results.overview.days")}`,
+                    15: `15${t("stockCalculator.results.overview.days")}`,
+                  }}
                   value={boardCountValue}
                   onChange={(value) => handleFieldChange("boardCount", value)}
                   tooltip={{

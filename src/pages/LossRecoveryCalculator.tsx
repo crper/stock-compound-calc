@@ -6,16 +6,14 @@ import {
   Row,
   Col,
   Button,
-  Badge,
-  Divider,
-  Space,
-  Flex,
-  Avatar,
+  Drawer,
+  Empty,
   Tag,
-  Tooltip,
   FloatButton,
+  Popconfirm,
+  App,
 } from "antd";
-import { HistoryOutlined, CalculatorOutlined, ArrowUpOutlined } from "@ant-design/icons";
+import { HistoryOutlined, CalculatorOutlined, ArrowUpOutlined, DeleteOutlined, ClearOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useLossRecovery } from "@/hooks/useLossRecovery";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -29,11 +27,12 @@ import {
   LanguageSelector,
 } from "@/components";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export const LossRecoveryCalculator: React.FC = () => {
   const { isMobile } = useResponsive();
   const { t } = useTranslation();
+  const { message } = App.useApp();
   const {
     lossPercent,
     history,
@@ -45,6 +44,11 @@ export const LossRecoveryCalculator: React.FC = () => {
     loadFromHistory,
     openHistoryDrawer,
   } = useLossRecovery();
+
+  const handleClear = () => {
+    clearHistory();
+    message.success(t("common.messages.deleteSuccess", { count: history.length }));
+  };
 
   return (
     <ErrorBoundary>
@@ -61,8 +65,10 @@ export const LossRecoveryCalculator: React.FC = () => {
           >
             <Row gutter={[24, 24]}>
               <Col span={24}>
+                {/* 头部卡片 */}
                 <Card className="mb-6 overflow-hidden" styles={{ body: { padding: 0 } }}>
                   <div className="relative">
+                    {/* 顶部渐变装饰条 */}
                     <div
                       className="h-1.5 w-full"
                       style={{
@@ -71,144 +77,79 @@ export const LossRecoveryCalculator: React.FC = () => {
                     />
 
                     <div className="p-5 sm:p-6">
-                      <Row gutter={[16, 16]} align="middle" justify="space-between">
-                        <Col xs={24} sm={20} md={18} lg={16}>
-                          <Space size={isMobile ? "middle" : "large"} align="center">
-                            <Avatar
-                              size={isMobile ? 56 : 64}
-                              icon={<CalculatorOutlined />}
-                              style={{
-                                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                              className="shadow-lg"
-                            />
-
-                            <div>
-                              <Space size="small" align="baseline">
-                                <Title
-                                  level={isMobile ? 4 : 3}
-                                  style={{
-                                    margin: 0,
-                                    fontSize: isMobile ? "1.25rem" : "1.75rem",
-                                    fontWeight: 700,
-                                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                                    WebkitBackgroundClip: "text",
-                                    WebkitTextFillColor: "transparent",
-                                  }}
-                                >
-                                  {t("recoveryCalculator.title")}
-                                </Title>
-                                <Tooltip title={t("recoveryCalculator.description")}>
-                                  <Tag
-                                    icon={<ArrowUpOutlined />}
-                                    color="warning"
-                                    style={{
-                                      borderRadius: 12,
-                                      fontSize: "0.75rem",
-                                      display: isMobile ? "none" : "inline-flex",
-                                    }}
-                                  >
-                                    {t("common.tags.recoveryAnalysis")}
-                                  </Tag>
-                                </Tooltip>
-                              </Space>
-
-                              <div className="mt-1">
-                                <Typography.Text
-                                  type="secondary"
-                                  style={{
-                                    fontSize: isMobile ? "0.75rem" : "0.875rem",
-                                  }}
-                                >
-                                  {t("recoveryCalculator.subtitle")}
-                                </Typography.Text>
-                              </div>
-
-                              <Space
-                                size="small"
-                                style={{ marginTop: 8 }}
-                                className={isMobile ? "hidden" : "flex"}
-                              >
-                                <Tag
-                                  color="blue"
-                                  style={{
-                                    borderRadius: 12,
-                                    fontSize: "0.7rem",
-                                    background: "rgba(102, 126, 234, 0.1)",
-                                    border: "1px solid rgba(102, 126, 234, 0.2)",
-                                  }}
-                                >
-                                  {t("common.tags.realTime")}
-                                </Tag>
-                                <Tag
-                                  color="purple"
-                                  style={{
-                                    borderRadius: 12,
-                                    fontSize: "0.7rem",
-                                    background: "rgba(118, 75, 162, 0.1)",
-                                    border: "1px solid rgba(118, 75, 162, 0.2)",
-                                  }}
-                                >
-                                  {t("common.tags.quickLookup")}
-                                </Tag>
-                                <Tag
-                                  color="orange"
-                                  style={{
-                                    borderRadius: 12,
-                                    fontSize: "0.7rem",
-                                    background: "rgba(250, 173, 20, 0.1)",
-                                    border: "1px solid rgba(250, 173, 20, 0.2)",
-                                  }}
-                                >
-                                  {t("common.tags.riskAssessment")}
-                                </Tag>
-                              </Space>
-                            </div>
-                          </Space>
-                        </Col>
-
-                        <Col
-                          xs={24}
-                          sm={4}
-                          md={6}
-                          lg={8}
-                          style={{
-                            textAlign: isMobile ? "left" : "right",
-                          }}
-                        >
-                          <Space size="small">
-                            <ThemeToggle />
-                            <LanguageSelector />
-                            <Divider orientation="vertical" style={{ height: 24 }} />
-                            <Badge
-                              count={history.length}
-                              showZero={false}
-                              size="small"
-                              offset={[-5, 5]}
-                            >
-                              <Button
-                                type={history.length > 0 ? "primary" : "default"}
-                                icon={<HistoryOutlined />}
-                                onClick={openHistoryDrawer}
-                                disabled={history.length === 0}
-                                size={isMobile ? "middle" : "large"}
+                      {/* 头部内容 */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        {/* 左侧：Logo + 标题 */}
+                        <div className="flex items-center gap-4">
+                          <div
+                            className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shadow-lg"
+                            style={{
+                              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            }}
+                          >
+                            <CalculatorOutlined className="text-white text-2xl sm:text-3xl" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h1
+                                className="text-xl sm:text-2xl font-bold"
                                 style={{
-                                  borderRadius: 10,
-                                  boxShadow:
-                                    history.length > 0
-                                      ? "0 2px 8px rgba(102, 126, 234, 0.3)"
-                                      : undefined,
+                                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                                  WebkitBackgroundClip: "text",
+                                  WebkitTextFillColor: "transparent",
                                 }}
                               >
-                                {t("common.buttons.history")}
-                              </Button>
-                            </Badge>
-                          </Space>
-                        </Col>
-                      </Row>
+                                {t("recoveryCalculator.title")}
+                              </h1>
+                              {!isMobile && (
+                                <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-700 border border-orange-200 flex items-center gap-1">
+                                  <ArrowUpOutlined /> {t("common.tags.recoveryAnalysis")}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                              {t("recoveryCalculator.subtitle")}
+                            </p>
+                            {!isMobile && (
+                              <div className="flex gap-2 mt-2">
+                                <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-600 border border-blue-100">
+                                  {t("common.tags.realTime")}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-full text-xs bg-purple-50 text-purple-600 border border-purple-100">
+                                  {t("common.tags.quickLookup")}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-full text-xs bg-orange-50 text-orange-600 border border-orange-100">
+                                  {t("common.tags.riskAssessment")}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 右侧：操作按钮 */}
+                        <div className="flex items-center gap-2">
+                          <ThemeToggle />
+                          <LanguageSelector />
+                          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+                          <button
+                            onClick={openHistoryDrawer}
+                            disabled={history.length === 0}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                              history.length > 0
+                                ? "bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-md hover:shadow-lg"
+                                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            }`}
+                          >
+                            <HistoryOutlined />
+                            {t("common.buttons.history")}
+                            {history.length > 0 && (
+                              <span className="ml-1 px-1.5 py-0.5 bg-white/20 rounded-full text-xs">
+                                {history.length}
+                              </span>
+                            )}
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </Card>
@@ -252,82 +193,130 @@ export const LossRecoveryCalculator: React.FC = () => {
         </Layout>
 
         {/* 历史记录抽屉 */}
-        {historyDrawerVisible && (
-          <div
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={() => setHistoryDrawerVisible(false)}
-          />
-        )}
-        <div
-          className={`fixed top-0 right-0 h-full bg-white dark:bg-gray-800 shadow-2xl z-50 transition-transform duration-300 ${
-            historyDrawerVisible ? "translate-x-0" : "translate-x-full"
-          }`}
-          style={{
-            width: isMobile ? "100%" : "400px",
-            maxWidth: "100%",
-          }}
-        >
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-            <Title level={4} className="!m-0 dark:text-gray-100">
-              {t("stockCalculator.history.title")}
-            </Title>
-            <Space>
-              <Button danger size="small" onClick={clearHistory} disabled={history.length === 0}>
-                {t("common.buttons.clearHistory")}
-              </Button>
-              <Button size="small" onClick={() => setHistoryDrawerVisible(false)}>
-                {t("common.buttons.close")}
-              </Button>
-            </Space>
-          </div>
-          <div className="overflow-y-auto" style={{ height: "calc(100% - 60px)" }}>
-            {history.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-gray-400">
-                <Flex vertical align="center" gap="middle">
-                  <HistoryOutlined style={{ fontSize: 48 }} />
-                  <Text>{t("common.empty.noHistory")}</Text>
-                </Flex>
+        <Drawer
+          title={
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
+                <HistoryOutlined className="text-white text-lg" />
               </div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                  {t("recoveryCalculator.history.title", { defaultValue: "回本历史" })}
+                </span>
+                {history.length > 0 && (
+                  <Tag className="rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800">
+                    {history.length} {t("stockCalculator.history.recordCount", { count: history.length }).split(" ")[1]}
+                  </Tag>
+                )}
+              </div>
+            </div>
+          }
+          placement={isMobile ? "bottom" : "right"}
+          onClose={() => setHistoryDrawerVisible(false)}
+          open={historyDrawerVisible}
+          size={isMobile ? "100%" : 400}
+          className="backdrop-blur-sm"
+          styles={{
+            body: { padding: "20px" },
+            header: { borderBottom: "1px solid #f0f0f0", padding: "16px 20px" },
+          }}
+          extra={
+            history.length > 0 && (
+              <Popconfirm
+                title={t("stockCalculator.history.confirmClear")}
+                description={t("stockCalculator.history.confirmClearDesc")}
+                onConfirm={handleClear}
+                okText={t("common.buttons.confirm")}
+                cancelText={t("common.buttons.cancel")}
+                okButtonProps={{ danger: true }}
+              >
+                <Button size="small" danger icon={<ClearOutlined />} className="rounded-lg">
+                  {t("common.buttons.clearHistory")}
+                </Button>
+              </Popconfirm>
+            )
+          }
+        >
+          <div className="flex flex-col h-full">
+            {history.length === 0 ? (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={
+                  <span className="text-gray-400 dark:text-gray-500 text-sm">
+                    {t("common.empty.noHistory")}
+                  </span>
+                }
+                className="mt-12"
+              >
+                <HistoryOutlined
+                  style={{ fontSize: 48 }}
+                  className="text-gray-300 dark:text-gray-600 mt-4"
+                />
+              </Empty>
             ) : (
-              <div className="p-4 space-y-3">
-                {history.map((item) => (
+              <div className="space-y-3">
+                {history.map((item, index) => (
                   <Card
                     key={item.id}
                     size="small"
-                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    className="cursor-pointer hover:shadow-md transition-all duration-200 dark:bg-gray-800 dark:border-gray-700"
+                    style={{
+                      animation: `slideIn 0.3s ease-out ${index * 0.05}s both`,
+                    }}
                     onClick={() => loadFromHistory(item)}
                   >
-                    <div className="flex items-center justify-between">
-                      <Flex vertical gap="small">
-                        <Text strong className="dark:text-gray-200">
-                          {t("recoveryCalculator.results.currentLoss")} {item.lossPercent}%
-                        </Text>
-                        <Text type="secondary" className="text-xs">
-                          {t("recoveryCalculator.results.requiredGain")} {item.requiredGain}% ·{" "}
-                          {item.multiplier}x
-                        </Text>
-                        <Text type="secondary" className="text-xs">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Text strong className="dark:text-gray-200 text-lg">
+                            {item.lossPercent}%
+                          </Text>
+                          <Tag size="small" className="m-0 bg-red-50 text-red-600 border-red-200">
+                            {t("recoveryCalculator.results.currentLoss")}
+                          </Tag>
+                        </div>
+                        <div className="flex items-baseline gap-3">
+                          <div>
+                            <Text type="secondary" className="text-xs block">
+                              {t("recoveryCalculator.results.requiredGain")}
+                            </Text>
+                            <Text className="text-base font-semibold text-green-600 dark:text-green-400">
+                              +{item.requiredGain}%
+                            </Text>
+                          </div>
+                          <div className="w-px h-8 bg-gray-200 dark:bg-gray-700" />
+                          <div>
+                            <Text type="secondary" className="text-xs block">
+                              {t("recoveryCalculator.results.multiplier")}
+                            </Text>
+                            <Text className="text-base font-semibold text-blue-600 dark:text-blue-400">
+                              {item.multiplier}x
+                            </Text>
+                          </div>
+                        </div>
+                        <Text type="secondary" className="text-xs mt-2 block">
                           {item.createdAt}
                         </Text>
-                      </Flex>
+                      </div>
                       <Button
                         type="text"
                         danger
                         size="small"
+                        icon={<DeleteOutlined />}
                         onClick={(e) => {
                           e.stopPropagation();
                           deleteHistory([item.id]);
+                          message.success(t("common.messages.deleteSuccess", { count: 1 }));
                         }}
-                      >
-                        {t("common.buttons.delete")}
-                      </Button>
+                        className="mt-1"
+                      />
                     </div>
                   </Card>
                 ))}
               </div>
             )}
           </div>
-        </div>
+        </Drawer>
 
         {/* 浮动按钮 - 移动端显示 */}
         {isMobile && history.length > 0 && (

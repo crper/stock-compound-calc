@@ -8,16 +8,6 @@ const EnvSchema = z.object({
     .transform(Number)
     .default(() => 3000),
   DB_PATH: z.string().default("./calculations.db"),
-  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
-  API_TIMEOUT: z
-    .string()
-    .regex(/^\d+$/)
-    .transform(Number)
-    .default(() => 10000),
-  HEALTH_CHECK_ENABLED: z
-    .string()
-    .transform((val) => val === "true")
-    .default(() => true),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

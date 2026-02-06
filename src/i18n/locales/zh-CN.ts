@@ -17,6 +17,9 @@ export const zhCN: { translation: TranslationResources } = {
         cancel: "取消",
         close: "关闭",
         delete: "删除",
+        collapseLess: "收起详情",
+        expandMore: "展开详情",
+        retry: "重试",
       },
       footer: {
         copyright: "©2026 股价收益计算器",
@@ -44,6 +47,18 @@ export const zhCN: { translation: TranslationResources } = {
         noHistory: "暂无历史记录",
         noResults: "暂无结果",
         noData: "暂无数据",
+      },
+      messages: {
+        selectFirst: "请先选择要删除的记录",
+        deleteSuccess: "已删除 {{count}} 条记录",
+        deleteFailed: "删除失败，请稍后重试",
+        clearSuccess: "历史记录已清空",
+        clearFailed: "清空历史记录失败",
+      },
+      errorBoundary: {
+        title: "应用程序遇到错误",
+        description: "很抱歉，应用程序遇到了一个意外错误。",
+        details: "错误详情（点击展开）",
       },
     },
     stockCalculator: {
@@ -101,6 +116,10 @@ export const zhCN: { translation: TranslationResources } = {
           title: "关键指标",
           tooltip: "关键指标帮助您快速评估投资潜力和风险",
           dynamicTooltip: "以 {{return}}% 涨跌幅，需要 {{days}} 天{{action}}",
+          doubleAction: "翻倍",
+          breakEvenTooltip: "回到初始价需要 {{return}}% 的反向变动",
+          tenXTooltip: "以 {{return}}% 涨跌幅，需要 {{days}} 天达到10倍",
+          annualizedTooltip: "按 {{days}} 天计算的年化收益率",
         },
         positionChange: {
           title: "持仓变化",
@@ -205,6 +224,9 @@ export const zhCN: { translation: TranslationResources } = {
           multiplier: "倍数",
         },
         formula: "公式：需涨幅% = 亏损% ÷ (100 - 亏损%) × 100",
+      },
+      history: {
+        title: "回本历史",
       },
     },
     about: {

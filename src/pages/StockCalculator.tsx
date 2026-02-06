@@ -1,20 +1,5 @@
 /**
  * 股价收益计算器主页面组件
- *
- * 功能概述：
- * - 提供股票连板收益计算功能
- * - 支持正向（涨停）和负向（跌停）两种计算模式
- * - 实时计算并展示结果
- * - 历史记录管理和查看
- * - 响应式设计，支持移动端和桌面端
- *
- * 组件架构：
- * - 使用自定义 Hook 管理业务逻辑和状态
- * - 采用模块化组件设计，职责分离
- * - 统一的错误处理和用户反馈机制
- *
- * @author Stock Calculator Team
- * @since 1.0.0
  */
 import React from "react";
 import {
@@ -24,15 +9,7 @@ import {
   Layout,
   Form,
   Card,
-  Typography,
-  Button,
-  Space,
   FloatButton,
-  Tag,
-  Badge,
-  Avatar,
-  Divider,
-  Tooltip,
 } from "antd";
 import {
   HistoryOutlined,
@@ -53,34 +30,25 @@ import {
   LanguageSelector,
 } from "@/components";
 
-const { Title } = Typography;
-
 export const StockCalculator: React.FC = () => {
-  // 初始化 Ant Design 表单实例，用于管理表单状态和验证
   const [form] = Form.useForm();
-
-  // 获取响应式状态，用于移动端适配
   const { isMobile } = useResponsive();
-
-  // 获取翻译函数
   const { t } = useTranslation();
 
-  // 使用自定义 Hook 管理股票计算器的核心业务逻辑
-  // 包含：计算结果、错误处理、历史记录管理等功能
   const {
-    results, // 计算结果对象（包含涨停和跌停两种情况）
-    error, // 错误信息
-    setError, // 设置错误信息的方法
-    history, // 历史记录数组
-    historyDrawerVisible, // 历史记录抽屉可见性
-    setHistoryDrawerVisible, // 设置历史记录抽屉可见性
-    loadFromHistory, // 从历史记录加载计算结果
-    clearHistory, // 清除所有历史记录
-    deleteHistory, // 批量删除历史记录
-    openHistoryDrawer, // 打开历史记录抽屉
-    isFieldValid, // 验证单个字段是否有效
-    handleValuesChange, // 处理表单值变化（带防抖）
-    currentParams, // 当前计算参数
+    results,
+    error,
+    setError,
+    history,
+    historyDrawerVisible,
+    setHistoryDrawerVisible,
+    loadFromHistory,
+    clearHistory,
+    deleteHistory,
+    openHistoryDrawer,
+    isFieldValid,
+    handleValuesChange,
+    currentParams,
   } = useStockCalculator();
 
   return (
@@ -99,15 +67,8 @@ export const StockCalculator: React.FC = () => {
           >
             <Row gutter={[24, 24]}>
               <Col span={24}>
-                {/* 全新设计的顶栏 - 现代简约风格 */}
-                <Card
-                  className="mb-6 overflow-hidden"
-                  styles={{
-                    body: {
-                      padding: 0,
-                    },
-                  }}
-                >
+                {/* 头部卡片 */}
+                <Card className="mb-6 overflow-hidden" styles={{ body: { padding: 0 } }}>
                   <div className="relative">
                     {/* 顶部渐变装饰条 */}
                     <div
@@ -118,159 +79,84 @@ export const StockCalculator: React.FC = () => {
                     />
 
                     <div className="p-5 sm:p-6">
-                      <Row gutter={[16, 16]} align="middle" justify="space-between">
-                        <Col xs={24} sm={20} md={18} lg={16}>
-                          <Space size={isMobile ? "middle" : "large"} align="center">
-                            {/* Logo 区域 */}
-                            <Avatar
-                              size={isMobile ? 56 : 64}
-                              icon={<LineChartOutlined />}
-                              style={{
-                                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                              className="shadow-lg"
-                            />
-
-                            <div>
-                              {/* 主标题 */}
-                              <Space size="small" align="baseline">
-                                <Title
-                                  level={isMobile ? 4 : 3}
-                                  style={{
-                                    margin: 0,
-                                    fontSize: isMobile ? "1.25rem" : "1.75rem",
-                                    fontWeight: 700,
-                                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                                    WebkitBackgroundClip: "text",
-                                    WebkitTextFillColor: "transparent",
-                                  }}
-                                >
-                                  {t("stockCalculator.title")}
-                                </Title>
-                                <Tooltip title={t("stockCalculator.description")}>
-                                  <Tag
-                                    icon={<ArrowUpOutlined />}
-                                    color="success"
-                                    style={{
-                                      borderRadius: 12,
-                                      fontSize: "0.75rem",
-                                      display: isMobile ? "none" : "inline-flex",
-                                    }}
-                                  >
-                                    {t("common.tags.limitUp")}
-                                  </Tag>
-                                  <Tag
-                                    icon={<ArrowDownOutlined />}
-                                    color="error"
-                                    style={{
-                                      borderRadius: 12,
-                                      fontSize: "0.75rem",
-                                      display: isMobile ? "none" : "inline-flex",
-                                    }}
-                                  >
-                                    {t("common.tags.limitDown")}
-                                  </Tag>
-                                </Tooltip>
-                              </Space>
-
-                              {/* 副标题 */}
-                              <div className="mt-1">
-                                <Typography.Text
-                                  type="secondary"
-                                  style={{
-                                    fontSize: isMobile ? "0.75rem" : "0.875rem",
-                                  }}
-                                >
-                                  {t("stockCalculator.subtitle")}
-                                </Typography.Text>
-                              </div>
-
-                              {/* 特性标签 */}
-                              <Space
-                                size="small"
-                                style={{ marginTop: 8 }}
-                                className={isMobile ? "hidden" : "flex"}
-                              >
-                                <Tag
-                                  color="blue"
-                                  style={{
-                                    borderRadius: 12,
-                                    fontSize: "0.7rem",
-                                    background: "rgba(102, 126, 234, 0.1)",
-                                    border: "1px solid rgba(102, 126, 234, 0.2)",
-                                  }}
-                                >
-                                  {t("common.tags.realTime")}
-                                </Tag>
-                                <Tag
-                                  color="purple"
-                                  style={{
-                                    borderRadius: 12,
-                                    fontSize: "0.7rem",
-                                    background: "rgba(118, 75, 162, 0.1)",
-                                    border: "1px solid rgba(118, 75, 162, 0.2)",
-                                  }}
-                                >
-                                  {t("common.tags.history")}
-                                </Tag>
-                                <Tag
-                                  color="cyan"
-                                  style={{
-                                    borderRadius: 12,
-                                    fontSize: "0.7rem",
-                                    background: "rgba(6, 182, 212, 0.1)",
-                                    border: "1px solid rgba(6, 182, 212, 0.2)",
-                                  }}
-                                >
-                                  {t("common.tags.visualization")}
-                                </Tag>
-                              </Space>
-                            </div>
-                          </Space>
-                        </Col>
-
-                        <Col
-                          xs={24}
-                          sm={4}
-                          md={6}
-                          lg={8}
-                          style={{
-                            textAlign: isMobile ? "left" : "right",
-                          }}
-                        >
-                          <Space size="small">
-                            <ThemeToggle />
-                            <LanguageSelector />
-                            <Divider orientation="vertical" style={{ height: 24 }} />
-                            <Badge
-                              count={history.length}
-                              showZero={false}
-                              size="small"
-                              offset={[-5, 5]}
-                            >
-                              <Button
-                                type={history.length > 0 ? "primary" : "default"}
-                                icon={<HistoryOutlined />}
-                                onClick={openHistoryDrawer}
-                                disabled={history.length === 0}
-                                size={isMobile ? "middle" : "large"}
+                      {/* 头部内容 */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        {/* 左侧：Logo + 标题 */}
+                        <div className="flex items-center gap-4">
+                          <div
+                            className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shadow-lg"
+                            style={{
+                              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            }}
+                          >
+                            <LineChartOutlined className="text-white text-2xl sm:text-3xl" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h1
+                                className="text-xl sm:text-2xl font-bold"
                                 style={{
-                                  borderRadius: 10,
-                                  boxShadow:
-                                    history.length > 0
-                                      ? "0 2px 8px rgba(102, 126, 234, 0.3)"
-                                      : undefined,
+                                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                                  WebkitBackgroundClip: "text",
+                                  WebkitTextFillColor: "transparent",
                                 }}
                               >
-                                {t("common.buttons.history")}
-                              </Button>
-                            </Badge>
-                          </Space>
-                        </Col>
-                      </Row>
+                                {t("stockCalculator.title")}
+                              </h1>
+                              {!isMobile && (
+                                <>
+                                  <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 border border-green-200 flex items-center gap-1">
+                                    <ArrowUpOutlined /> {t("common.tags.limitUp")}
+                                  </span>
+                                  <span className="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-700 border border-red-200 flex items-center gap-1">
+                                    <ArrowDownOutlined /> {t("common.tags.limitDown")}
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                              {t("stockCalculator.subtitle")}
+                            </p>
+                            {!isMobile && (
+                              <div className="flex gap-2 mt-2">
+                                <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-600 border border-blue-100">
+                                  {t("common.tags.realTime")}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-full text-xs bg-purple-50 text-purple-600 border border-purple-100">
+                                  {t("common.tags.history")}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-full text-xs bg-cyan-50 text-cyan-600 border border-cyan-100">
+                                  {t("common.tags.visualization")}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 右侧：操作按钮 */}
+                        <div className="flex items-center gap-2">
+                          <ThemeToggle />
+                          <LanguageSelector />
+                          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+                          <button
+                            onClick={openHistoryDrawer}
+                            disabled={history.length === 0}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                              history.length > 0
+                                ? "bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-md hover:shadow-lg"
+                                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            }`}
+                          >
+                            <HistoryOutlined />
+                            {t("common.buttons.history")}
+                            {history.length > 0 && (
+                              <span className="ml-1 px-1.5 py-0.5 bg-white/20 rounded-full text-xs">
+                                {history.length}
+                              </span>
+                            )}
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </Card>

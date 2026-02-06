@@ -1,6 +1,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { App } from "antd";
+import { useTranslation } from "react-i18next";
 import type { CalculationParams, CalculationResult, CalculationHistory } from "@/types";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { isFieldValid, getFieldErrorMessage } from "@/utils/validator";
@@ -41,6 +42,7 @@ export const useStockCalculator = () => {
 
   // 使用 App.useApp() 获取带上下文的消息实例
   const { message } = App.useApp();
+  const { t } = useTranslation();
 
   // 获取全部历史记录
   const allHistoryResult = useLiveQuery(() => calculationRepository.getAll({ limit: 1000 }), []);
@@ -93,15 +95,15 @@ export const useStockCalculator = () => {
     setIsClearing(true);
     try {
       await calculationService.clearHistory();
-      message.success("历史记录已清空");
+      message.success(t("common.messages.clearSuccess"));
     } catch (error) {
       const appError = ErrorHandler.handleUnknown(error);
       ErrorHandler.log(appError);
-      message.error("清空历史记录失败");
+      message.error(t("common.messages.clearFailed"));
     } finally {
       setIsClearing(false);
     }
-  }, [message]);
+  }, [message, t]);
 
   // 删除历史
   const handleDeleteHistory = useCallback(async (ids: string[]) => {

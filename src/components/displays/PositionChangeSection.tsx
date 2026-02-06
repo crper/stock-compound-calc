@@ -5,6 +5,7 @@
 import { Typography } from "antd";
 import { formatCurrency, formatPercentage } from "@/utils/formatters";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
@@ -20,6 +21,7 @@ interface PositionChangeSectionProps {
 
 export const PositionChangeSection: React.FC<PositionChangeSectionProps> = React.memo(
   ({ positionValue, positionGain, stockQuantity, isUp }) => {
+    const { t } = useTranslation();
     const bgColorClass = isUp
       ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
       : "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800";
@@ -30,13 +32,18 @@ export const PositionChangeSection: React.FC<PositionChangeSectionProps> = React
     return (
       <div className={`rounded-lg p-4 border ${bgColorClass}`}>
         <Text className="block text-xs text-gray-500 dark:text-gray-400 mb-3">
-          持仓变化
-          <span className="ml-2 text-gray-400">({stockQuantity}股)</span>
+          {t("stockCalculator.results.positionChange.title")}
+          <span className="ml-2 text-gray-400">
+            ({stockQuantity}
+            {t("stockCalculator.results.positionChange.shares")})
+          </span>
         </Text>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="text-center">
-            <Text className="block text-xs text-gray-400 dark:text-gray-500 mb-1">初始市值</Text>
+            <Text className="block text-xs text-gray-400 dark:text-gray-500 mb-1">
+              {t("stockCalculator.results.positionChange.initialMarketValue")}
+            </Text>
             <Text className="text-base font-semibold font-mono text-gray-700 dark:text-gray-200">
               {formatCurrency(positionValue.initial, {
                 compact: positionValue.initial >= 10000000,
@@ -45,7 +52,9 @@ export const PositionChangeSection: React.FC<PositionChangeSectionProps> = React
           </div>
 
           <div className="text-center">
-            <Text className="block text-xs text-gray-400 dark:text-gray-500 mb-1">最终市值</Text>
+            <Text className="block text-xs text-gray-400 dark:text-gray-500 mb-1">
+              {t("stockCalculator.results.positionChange.finalMarketValue")}
+            </Text>
             <Text className={`text-base font-semibold font-mono ${textColorClass}`}>
               {formatCurrency(positionValue.final, {
                 compact: positionValue.final >= 10000000,
@@ -59,7 +68,9 @@ export const PositionChangeSection: React.FC<PositionChangeSectionProps> = React
             isUp ? "bg-red-100 dark:bg-red-900/30" : "bg-green-100 dark:bg-green-900/30"
           }`}
         >
-          <Text className="block text-xs text-gray-500 dark:text-gray-400 mb-1">持仓盈亏</Text>
+          <Text className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+            {t("stockCalculator.results.positionChange.profitLoss")}
+          </Text>
           <Text className={`text-2xl font-bold font-mono tracking-tight ${textColorClass}`}>
             {formatCurrency(positionGain, {
               compact: Math.abs(positionGain) >= 10000000,
