@@ -40,7 +40,7 @@ export const StockCalculator: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <PageContainer navMenu={<NavMenu isMobile={isMobile} />}>
+      <PageContainer showNavMenu navMenu={<NavMenu isMobile={isMobile} />}>
         {error && (
           <Alert
             title={t("stockCalculator.errors.inputError")}

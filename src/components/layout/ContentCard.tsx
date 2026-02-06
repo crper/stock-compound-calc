@@ -8,17 +8,16 @@ import { useResponsive } from "@/hooks/useResponsive";
 
 interface ContentCardProps {
   children: React.ReactNode;
-  minCardHeight?: string;
   padding?: number;
 }
 
 export const ContentCard: React.FC<ContentCardProps> = React.memo(
-  ({ children, minCardHeight, padding = 28 }) => {
+  ({ children, padding = 28 }) => {
     const { isMobile } = useResponsive();
 
     return (
       <Card
-        className={`flex flex-col rounded-2xl border-0 shadow-xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-md ${minCardHeight ? "" : "min-h-[calc(100vh-140px)]"}`}
+        className="flex flex-col rounded-2xl border-0 shadow-xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-md"
         styles={{
           body: {
             padding: isMobile ? 20 : padding,

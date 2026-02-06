@@ -42,7 +42,7 @@ export const LossRecoveryCalculator: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <PageContainer navMenu={<NavMenu isMobile={isMobile} />}>
+      <PageContainer showNavMenu navMenu={<NavMenu isMobile={isMobile} />}>
         <Row gutter={[32, 32]} className="flex-1 items-start">
           <Col xs={24} lg={8}>
             <div className="h-full animate-[slideIn_0.4s_ease-out]">

@@ -12,13 +12,13 @@ import { useResponsive } from "@/hooks/useResponsive";
 interface PageContainerProps {
   children: React.ReactNode;
   navMenu?: React.ReactNode;
-  minCardHeight?: string;
+  showNavMenu?: boolean;
 }
 
 export const PageContainer: React.FC<PageContainerProps> = React.memo(
-  ({ children, navMenu, minCardHeight }) => {
+  ({ children, navMenu, showNavMenu = false }) => {
     const { isMobile } = useResponsive();
-    const pagePadding = isMobile
+    const cardPadding = isMobile
       ? LAYOUT_CONSTANTS.pagePadding.mobile
       : LAYOUT_CONSTANTS.pagePadding.desktop;
 
@@ -28,15 +28,15 @@ export const PageContainer: React.FC<PageContainerProps> = React.memo(
         <BackgroundDecor />
 
         {/* 导航菜单容器 */}
-        {navMenu && (
-          <div className="relative z-10 mb-6">
+        {showNavMenu && navMenu && (
+          <div className="relative z-10">
             {navMenu}
           </div>
         )}
 
         {/* 主内容卡片 */}
         <div className="relative z-10">
-          <ContentCard minCardHeight={minCardHeight} padding={pagePadding}>
+          <ContentCard padding={cardPadding}>
             {children}
           </ContentCard>
         </div>

@@ -74,7 +74,7 @@ export const About: React.FC = React.memo(() => {
 
   return (
     <ErrorBoundary>
-      <PageContainer navMenu={<NavMenu isMobile={isMobile} />}>
+      <PageContainer showNavMenu navMenu={<NavMenu isMobile={isMobile} />}>
         {/* Tech Stack */}
         <div className="mb-8">
           <Title level={4} className="mb-4 dark:text-white flex items-center gap-2">
