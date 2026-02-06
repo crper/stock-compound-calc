@@ -1,8 +1,9 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, Form, Slider, Typography, Space } from "antd";
+import { Card, Form, Slider, Typography, Space, Flex } from "antd";
 import { useResponsive } from "@/hooks/useResponsive";
 import { CARD_STYLES, SLIDER_STYLES } from "@/constants/uiPatterns";
+import { LAYOUT_CONSTANTS } from "@/constants/layout";
 
 const { Text, Title } = Typography;
 
@@ -70,7 +71,7 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
         <div className="flex-1 flex flex-col min-h-[300px]">
           <Form.Item style={{ marginBottom: 24 }}>
             <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
-              <Space size="small" style={{ marginBottom: 16 }} className="whitespace-nowrap">
+              <Space size="small" className="whitespace-nowrap" style={{ marginBottom: 16 }}>
                 <Text strong className="dark:text-gray-200 text-base lg:text-sm">
                   {t("recoveryCalculator.form.currentLoss")}
                 </Text>
@@ -79,14 +80,14 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
                 </Text>
               </Space>
 
-              <div className="flex items-center gap-4 mb-4">
+              <Flex align="center" gap={LAYOUT_CONSTANTS.spacing.lg} style={{ marginBottom: 16 }}>
                 <div
                   className="text-4xl font-bold transition-all duration-300"
                   style={{ color: currentColor }}
                 >
                   {value.toFixed(1)}%
                 </div>
-              </div>
+              </Flex>
 
               <Slider
                 min={0}
@@ -118,7 +119,7 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
             <Text strong className="text-gray-500 dark:text-gray-400 text-base lg:text-sm">
               {t("recoveryCalculator.form.presets.label")}
             </Text>
-            <div className="flex flex-wrap gap-2">
+            <Space wrap>
               {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((preset) => (
                 <button
                   key={preset}
@@ -132,7 +133,7 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
                   {preset}%
                 </button>
               ))}
-            </div>
+            </Space>
           </div>
         </div>
       </Form>

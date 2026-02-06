@@ -28,8 +28,8 @@ interface MetricItemProps {
 
 const MetricItem: React.FC<MetricItemProps> = React.memo(
   ({ label, value, tooltip, colorClass, bgClass }) => (
-    <div className={`text-center p-3 rounded-lg border ${bgClass} ${colorClass}`}>
-      <div className="flex items-center justify-center gap-1 mb-1">
+    <div className={`text-center p-3 rounded-lg border ${bgClass} ${colorClass} min-w-[120px]`}>
+      <div className="flex items-center justify-center gap-1 mb-1 flex-wrap">
         <Text className="text-xs text-gray-500 dark:text-gray-400">{label}</Text>
         {tooltip && (
           <Tooltip title={tooltip}>
@@ -37,7 +37,7 @@ const MetricItem: React.FC<MetricItemProps> = React.memo(
           </Tooltip>
         )}
       </div>
-      <Text className="text-base font-bold">{value}</Text>
+      <Text className="text-base font-bold leading-tight">{value}</Text>
     </div>
   ),
 );
@@ -45,7 +45,7 @@ const MetricItem: React.FC<MetricItemProps> = React.memo(
 MetricItem.displayName = "MetricItem";
 
 export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
-  ({ metrics, dailyReturn, boardCount, isMobile }) => {
+  ({ metrics, dailyReturn, boardCount }) => {
     const { t } = useTranslation();
     if (!metrics) return null;
 
@@ -110,9 +110,6 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
 
     if (items.length === 0) return null;
 
-    // 根据数量决定列数：移动端始终2列，桌面端4列
-    const gridCols = isMobile ? 2 : Math.min(items.length, 4);
-
     return (
       <div className="mt-4">
         <div className="flex items-center gap-2 mb-3">
@@ -127,11 +124,13 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
         <div
           className="grid gap-3"
           style={{
-            gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
+            gridTemplateColumns: `repeat(auto-fit, minmax(140px, 1fr))`,
           }}
         >
           {items.map((item, index) => (
-            <MetricItem key={index} {...item} />
+            <div key={index}>
+              <MetricItem {...item} />
+            </div>
           ))}
         </div>
       </div>

@@ -3,22 +3,20 @@
  * 统一管理 Header、Content、Footer 布局
  */
 import React from "react";
-import { Layout, Row, Col, Button, Drawer } from "antd";
+import { Layout, Button, Flex, Drawer } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import { Outlet } from "react-router-dom";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@/theme";
 import { HeaderContent } from "./HeaderContent";
 import { FooterContent } from "./FooterContent";
 import { NavigationMenu } from "./NavigationMenu";
 
-export interface MainLayoutProps {
-  page?: string;
-}
-
-export const MainLayout: React.FC<MainLayoutProps> = () => {
+export const MainLayout: React.FC = () => {
   const { isMobile } = useResponsive();
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const [mobileMenuVisible, setMobileMenuVisible] = React.useState(false);
 
   const handleMobileMenuClose = () => {
@@ -33,48 +31,52 @@ export const MainLayout: React.FC<MainLayoutProps> = () => {
     <Layout className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* 头部区域 */}
       <Layout.Header
-        className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700"
-        style={{ padding: "0 24px" }}
+        className="shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors duration-300"
+        style={{
+          padding: "0 16px",
+          height: "64px",
+          lineHeight: "64px",
+          backgroundColor: theme === "dark" ? "#1f2937" : "#ffffff",
+        }}
       >
-        <Row justify="space-between" align="middle">
-          <Col flex="auto">
+        <Flex justify="space-between" align="center" style={{ height: "100%" }}>
+          {/* 左侧：Logo + 标题 */}
+          <div style={{ flex: "0 0 auto", lineHeight: "normal" }}>
             <HeaderContent />
-          </Col>
-          
-          {isMobile ? (
-            <Col flex="none">
+          </div>
+
+          {/* 右侧：导航菜单 或 汉堡按钮 */}
+          <div style={{ flex: "0 0 auto", lineHeight: "normal" }}>
+            {isMobile ? (
               <Button
                 type="text"
                 icon={<MenuOutlined />}
                 onClick={handleMobileMenuOpen}
                 className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
               />
-            </Col>
-          ) : (
-            <Col flex="none">
+            ) : (
               <NavigationMenu />
-            </Col>
-          )}
-        </Row>
+            )}
+          </div>
+        </Flex>
       </Layout.Header>
 
       {/* 移动端导航抽屉 */}
-        <Drawer
-          title={t("common.navigation.menuTitle")}
-          placement="left"
-          closable={true}
-          onClose={handleMobileMenuClose}
-          open={mobileMenuVisible}
-          key="left"
-          className="mobile-navigation-drawer"
-        >
-          <NavigationMenu onClose={handleMobileMenuClose} />
-        </Drawer>
+      <Drawer
+        title={t("common.navigation.menuTitle")}
+        placement="left"
+        closable={true}
+        onClose={handleMobileMenuClose}
+        open={mobileMenuVisible}
+        className="mobile-navigation-drawer"
+        width={280}
+      >
+        <NavigationMenu isDrawer onClose={handleMobileMenuClose} />
+      </Drawer>
 
       {/* 内容区域 */}
       <Layout.Content className="flex-1">
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-          {/* 路由出口 - 子页面内容 */}
           <Outlet />
         </div>
       </Layout.Content>

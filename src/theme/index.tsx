@@ -82,11 +82,17 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo
         ...(theme === "dark" ? DARK_TOKENS : {}),
       },
       components: {
+        Layout: {
+          headerBg: theme === "dark" ? "#1f2937" : "#ffffff",
+          headerHeight: 64,
+          siderBg: theme === "dark" ? "#1a1a1a" : "#ffffff",
+        },
         Card: {
           borderRadiusLG: 12,
           borderRadius: 12,
           boxShadow:
             theme === "dark" ? "0 4px 12px rgba(0, 0, 0, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.08)",
+          colorBgContainer: theme === "dark" ? "#1f2937" : "#fff",
         },
         Button: {
           borderRadius: 8,
@@ -95,20 +101,57 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo
         },
         Input: {
           borderRadius: 8,
+          colorBgContainer: theme === "dark" ? "#374151" : "#fff",
+          colorBorder: theme === "dark" ? "#4b5563" : "#d9d9d9",
+          colorText: theme === "dark" ? "#f3f4f6" : "#000",
+          colorTextPlaceholder: theme === "dark" ? "#6b7280" : "#bfbfbf",
+          activeBorderColor: theme === "dark" ? "#667eea" : "#4096ff",
+          hoverBorderColor: theme === "dark" ? "#5a67d8" : "#4096ff",
+        },
+        InputNumber: {
+          borderRadius: 10,
+          colorBgContainer: theme === "dark" ? "#374151" : "#fff",
+          colorBorder: theme === "dark" ? "#4b5563" : "#d9d9d9",
+          colorText: theme === "dark" ? "#f3f4f6" : "#000",
+          colorTextPlaceholder: theme === "dark" ? "#6b7280" : "#bfbfbf",
+          activeBorderColor: theme === "dark" ? "#667eea" : "#4096ff",
+          hoverBorderColor: theme === "dark" ? "#5a67d8" : "#4096ff",
         },
         Slider: {
           colorPrimary: THEME_COLORS.primary,
           controlSize: 12,
           dotSize: 8,
+          trackBg: theme === "dark" ? "#4b5563" : "#e1e1e1",
+          railBg: theme === "dark" ? "#374151" : "#f5f5f5",
+          handleColor: theme === "dark" ? "#667eea" : "#fff",
+          handleBorderColor: theme === "dark" ? "#667eea" : "#e5e5e5",
         },
         Tag: {
           borderRadius: 12,
         },
         Alert: {
           borderRadius: 12,
+          colorErrorBgFilled: theme === "dark" ? "rgba(207, 19, 34, 0.15)" : "#fff2f0",
+          colorInfoBgFilled: theme === "dark" ? "rgba(15, 23, 42, 0.15)" : "#e6f7ff",
+          colorWarningBgFilled: theme === "dark" ? "rgba(250, 140, 22, 0.15)" : "#fffbe6",
+          colorSuccessBgFilled: theme === "dark" ? "rgba(34, 197, 94, 0.15)" : "#f6ffed",
         },
         Drawer: {
           borderRadius: 12,
+          colorBgElevated: theme === "dark" ? "#1f2937" : "#fff",
+        },
+        Segmented: {
+          borderRadius: 8,
+          trackPadding: 2,
+        },
+        Form: {
+          labelColor: theme === "dark" ? "#f3f4f6" : "#000",
+          labelFontSize: 14,
+          itemMarginBottom: 16,
+        },
+        Typography: {
+          colorText: theme === "dark" ? "#f3f4f6" : "#000",
+          colorTextSecondary: theme === "dark" ? "#d1d5db" : "#8c8c8c",
         },
       },
     }),

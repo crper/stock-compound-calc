@@ -39,8 +39,6 @@ export const PRESET_VALUES = {
   BEIJING_STOCK_EXCHANGE: 30,
 } as const;
 
-
-
 /**
  * Decimal 配置常量
  */
@@ -100,3 +98,4 @@ export const FORM_CONFIG = {
 
 export * from "./colors";
 export * from "./limits";
+export * from "./layout";

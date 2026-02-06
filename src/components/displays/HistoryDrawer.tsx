@@ -138,11 +138,11 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
     return (
       <Drawer
         title={
-          <Flex align="center" gap={12} wrap="wrap">
+          <Flex align="center" gap={12} wrap>
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center flex-shrink-0">
               <HistoryOutlined className="text-white text-lg" />
             </div>
-            <Flex align="center" gap={8} wrap="wrap" style={{ minWidth: 0 }}>
+            <Flex align="center" gap={8} wrap style={{ minWidth: 0 }}>
               <span className="text-lg font-semibold text-gray-800 dark:text-gray-100 truncate">
                 {t("stockCalculator.history.title")}
               </span>
@@ -171,7 +171,9 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
               </Text>
               <Popconfirm
                 title={t("stockCalculator.history.confirmDelete")}
-                description={t("stockCalculator.history.confirmDeleteDesc", { count: selectedIds.size })}
+                description={t("stockCalculator.history.confirmDeleteDesc", {
+                  count: selectedIds.size,
+                })}
                 onConfirm={handleBatchDelete}
                 okText={t("common.buttons.confirm")}
                 cancelText={t("common.buttons.cancel")}
@@ -223,7 +225,10 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
                     placeholder={t("stockCalculator.history.filterReturn")}
                     value={dailyReturnFilter}
                     onChange={setDailyReturnFilter}
-                    options={[{ label: t("stockCalculator.history.filterAll"), value: undefined }, ...DailyReturnOptions]}
+                    options={[
+                      { label: t("stockCalculator.history.filterAll"), value: undefined },
+                      ...DailyReturnOptions,
+                    ]}
                     allowClear
                     style={{ width: 120 }}
                     size="middle"
@@ -232,7 +237,10 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
                 </div>
                 {/* 日期范围 */}
                 <RangePicker
-                  placeholder={[t("stockCalculator.history.dateRange.start"), t("stockCalculator.history.dateRange.end")]}
+                  placeholder={[
+                    t("stockCalculator.history.dateRange.start"),
+                    t("stockCalculator.history.dateRange.end"),
+                  ]}
                   value={dateRange}
                   onChange={(dates) => setDateRange([dates?.[0] ?? null, dates?.[1] ?? null])}
                   size="middle"
@@ -241,8 +249,12 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
                 {/* 全选 */}
                 {filteredHistory.length > 0 && (
                   <Checkbox
-                    checked={selectedIds.size === filteredHistory.length && filteredHistory.length > 0}
-                    indeterminate={selectedIds.size > 0 && selectedIds.size < filteredHistory.length}
+                    checked={
+                      selectedIds.size === filteredHistory.length && filteredHistory.length > 0
+                    }
+                    indeterminate={
+                      selectedIds.size > 0 && selectedIds.size < filteredHistory.length
+                    }
                     onChange={(e) => handleSelectAll(e.target.checked)}
                     className="rounded-lg"
                   >
@@ -260,7 +272,9 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                 description={
                   <span className="text-gray-400 dark:text-gray-500 text-sm">
-                    {history.length === 0 ? t("common.empty.noHistory") : t("stockCalculator.history.noMatch")}
+                    {history.length === 0
+                      ? t("common.empty.noHistory")
+                      : t("stockCalculator.history.noMatch")}
                   </span>
                 }
                 className="mt-12"
@@ -423,7 +437,9 @@ const HistoryResultCell: React.FC<HistoryResultCellProps> = React.memo(
               <FallOutlined className={`${colors.iconColor} text-sm`} />
             )}
             <Text className="text-xs text-gray-500 dark:text-gray-400">
-              {isUp ? t("stockCalculator.history.limitUpProfit") : t("stockCalculator.history.limitDownLoss")}
+              {isUp
+                ? t("stockCalculator.history.limitUpProfit")
+                : t("stockCalculator.history.limitDownLoss")}
             </Text>
           </div>
           <div className={`text-xs font-medium ${colors.iconColor}`}>
@@ -437,7 +453,9 @@ const HistoryResultCell: React.FC<HistoryResultCellProps> = React.memo(
           {hasStockQuantity && result.positionGain !== undefined && (
             <span className={`text-xs ${colors.iconColor}`}>
               {result.positionGain >= 0 ? "+" : ""}
-              {formatCurrency(result.positionGain, { compact: Math.abs(result.positionGain) >= 1000000 })}
+              {formatCurrency(result.positionGain, {
+                compact: Math.abs(result.positionGain) >= 1000000,
+              })}
             </span>
           )}
         </div>

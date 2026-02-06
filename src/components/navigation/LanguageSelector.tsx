@@ -1,31 +1,39 @@
 import React from "react";
-import { Button, Tooltip } from "antd";
-import { TranslationOutlined } from "@ant-design/icons";
+import { Segmented } from "antd";
 import { useTranslation } from "react-i18next";
 import { LANGUAGES, type Language } from "@/i18n";
 
 export const LanguageSelector: React.FC = React.memo(() => {
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
 
   const currentLanguage = i18n.language as Language;
-  const isZh = currentLanguage === LANGUAGES.ZH_CN;
 
-  const toggleLanguage = () => {
-    const newLang = isZh ? LANGUAGES.EN_US : LANGUAGES.ZH_CN;
-    void i18n.changeLanguage(newLang);
+  const handleLanguageChange = (value: string) => {
+    void i18n.changeLanguage(value as Language);
   };
 
+  const options = [
+    {
+      label: "中",
+      value: LANGUAGES.ZH_CN,
+    },
+    {
+      label: "En",
+      value: LANGUAGES.EN_US,
+    },
+  ];
+
   return (
-    <Tooltip title={t("common.tooltips.languageToggle")}>
-      <Button
-        type="text"
-        icon={<TranslationOutlined />}
-        onClick={toggleLanguage}
-        className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-      >
-        <span className="text-sm font-medium">{isZh ? "中" : "En"}</span>
-      </Button>
-    </Tooltip>
+    <Segmented
+      value={currentLanguage}
+      onChange={handleLanguageChange}
+      options={options}
+      size="large"
+      style={{
+        background: "var(--colorBgContainer)",
+        border: "1px solid var(--colorBorderSecondary)",
+      }}
+    />
   );
 });
 

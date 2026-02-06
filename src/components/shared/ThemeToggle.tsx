@@ -1,28 +1,34 @@
 import React from "react";
-import { Button, Tooltip } from "antd";
+import { Segmented } from "antd";
 import { SunOutlined, MoonOutlined } from "@ant-design/icons";
 import { useTheme } from "@/theme";
-import { useTranslation } from "react-i18next";
 
-export const ThemeToggle: React.FC = () => {
+export const ThemeToggle: React.FC = React.memo(() => {
   const { theme, toggleTheme } = useTheme();
-  const { t } = useTranslation();
+
+  const options = [
+    {
+      label: <SunOutlined />,
+      value: "light",
+    },
+    {
+      label: <MoonOutlined />,
+      value: "dark",
+    },
+  ];
 
   return (
-    <Tooltip
-      title={
-        theme === "light"
-          ? t("common.tooltips.themeToggle.dark")
-          : t("common.tooltips.themeToggle.light")
-      }
-    >
-      <Button
-        shape="circle"
-        icon={theme === "light" ? <SunOutlined /> : <MoonOutlined />}
-        onClick={toggleTheme}
-        className="border-none bg-transparent"
-        style={{ color: theme === "light" ? "#f59e0b" : "#fbbf24" }}
-      />
-    </Tooltip>
+    <Segmented
+      value={theme}
+      onChange={toggleTheme}
+      options={options}
+      size="large"
+      style={{
+        background: "var(--colorBgContainer)",
+        border: "1px solid var(--colorBorderSecondary)",
+      }}
+    />
   );
-};
+});
+
+ThemeToggle.displayName = "ThemeToggle";

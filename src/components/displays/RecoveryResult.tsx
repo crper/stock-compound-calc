@@ -142,19 +142,9 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
 
         {lossPercent >= 50 && (
           <Alert
-            message={t("recoveryCalculator.results.warnings.highRisk.title")}
+            title={t("recoveryCalculator.results.warnings.highRisk.title")}
             description={t("recoveryCalculator.results.warnings.highRisk.desc")}
             type="warning"
-            showIcon
-            className="rounded-xl"
-          />
-        )}
-
-        {lossPercent >= 80 && (
-          <Alert
-            message={t("recoveryCalculator.results.warnings.severe.title")}
-            description={t("recoveryCalculator.results.warnings.severe.desc")}
-            type="error"
             showIcon
             className="rounded-xl"
           />

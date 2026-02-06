@@ -55,11 +55,13 @@ export const NavMenu: React.FC<NavMenuProps> = React.memo(({ isMobile = false })
           padding: isMobile ? "4px 4px 0" : "8px 16px 0",
           borderBottom: "none",
         }}
-        style={{
-          "--ant-tabs-ink-bar-color": "#667eea",
-          "--ant-tabs-tab-active-color": "#667eea",
-          "--ant-tabs-tab-hover-color": "#764ba2",
-        } as React.CSSProperties}
+        style={
+          {
+            "--ant-tabs-ink-bar-color": "#667eea",
+            "--ant-tabs-tab-active-color": "#667eea",
+            "--ant-tabs-tab-hover-color": "#764ba2",
+          } as React.CSSProperties
+        }
       />
     </div>
   );

@@ -7,8 +7,10 @@ export const enUS: { translation: TranslationResources } = {
         stockCalculator: "Stock Calculator",
         lossRecovery: "Loss Recovery",
         about: "About",
-        stockCalculatorSubtitle: "Intelligent analysis of consecutive limit returns, real-time investment calculation",
-        lossRecoverySubtitle: "Quickly calculate required gains for loss recovery, set reasonable stop-loss strategies",
+        stockCalculatorSubtitle:
+          "Intelligent analysis of consecutive limit returns, real-time investment calculation",
+        lossRecoverySubtitle:
+          "Quickly calculate required gains for loss recovery, set reasonable stop-loss strategies",
         aboutSubtitle: "Learn about the project tech stack, development team, and usage guide",
         menuTitle: "Navigation Menu",
       },

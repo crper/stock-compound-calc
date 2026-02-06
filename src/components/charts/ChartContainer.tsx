@@ -2,7 +2,7 @@
  * 图表容器组件
  * 直接展示图表，不使用额外的 Card 包装
  */
-import { Alert } from "antd";
+import { Alert, Flex } from "antd";
 import React, { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BasicChart } from "./BasicChart";
@@ -10,6 +10,7 @@ import { ChartTypeSelector, type ChartType } from "./ChartTypeSelector";
 import { LoadingState } from "@/components/shared/ui";
 import type { CalculationResult } from "@/types";
 import { Typography } from "antd";
+import { LAYOUT_CONSTANTS } from "@/constants/layout";
 
 const { Title } = Typography;
 
@@ -81,16 +82,12 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
   }, [results]);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        gap: "16px",
-      }}
+    <Flex
+      vertical
+      gap={LAYOUT_CONSTANTS.spacing.md}
       className="bg-gray-50 dark:bg-gray-700/30 rounded-2xl p-5 border border-gray-100 dark:border-gray-700"
     >
-      <div className="flex justify-between items-center flex-wrap gap-3">
+      <Flex justify="space-between" align="center" wrap gap={LAYOUT_CONSTANTS.spacing.md}>
         <Title
           level={5}
           className="!m-0 text-gray-800 dark:text-gray-100 flex items-center gap-2"
@@ -102,7 +99,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
           <span>{t("stockCalculator.charts.title")}</span>
         </Title>
         <ChartTypeSelector value={chartType} onChange={setChartType} />
-      </div>
+      </Flex>
 
       {hasError && (
         <Alert
@@ -115,7 +112,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
       )}
 
       <ChartWrapper results={results} isMobile={isMobile} chartType={chartType} />
-    </div>
+    </Flex>
   );
 });
 
