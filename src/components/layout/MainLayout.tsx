@@ -30,16 +30,20 @@ export const MainLayout: React.FC = () => {
       {/* 头部区域 */}
       <Layout.Header
         className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700"
-        style={{ padding: "0 16px", height: "auto", lineHeight: "normal" }}
+        style={{ 
+          padding: "0 16px",
+          height: "64px",
+          lineHeight: "64px",
+        }}
       >
-        <Flex justify="space-between" align="center" style={{ minHeight: "64px" }}>
+        <Flex justify="space-between" align="center" style={{ height: "100%" }}>
           {/* 左侧：Logo + 标题 */}
-          <div style={{ flex: "0 1 auto" }}>
+          <div style={{ flex: "0 0 auto", lineHeight: "normal" }}>
             <HeaderContent />
           </div>
 
           {/* 右侧：导航菜单 或 汉堡按钮 */}
-          <div style={{ flex: "0 1 auto" }}>
+          <div style={{ flex: "0 0 auto", lineHeight: "normal" }}>
             {isMobile ? (
               <Button
                 type="text"
