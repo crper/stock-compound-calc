@@ -138,11 +138,11 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
     return (
       <Drawer
         title={
-          <Flex align="center" gap={12} wrap="wrap">
+          <Flex align="center" gap={12} wrap>
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center flex-shrink-0">
               <HistoryOutlined className="text-white text-lg" />
             </div>
-            <Flex align="center" gap={8} wrap="wrap" style={{ minWidth: 0 }}>
+            <Flex align="center" gap={8} wrap style={{ minWidth: 0 }}>
               <span className="text-lg font-semibold text-gray-800 dark:text-gray-100 truncate">
                 {t("stockCalculator.history.title")}
               </span>

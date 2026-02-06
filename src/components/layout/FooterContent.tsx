@@ -2,7 +2,7 @@
  * 底部内容组件 - 统一的页脚布局和样式
  * 包含版权信息、免责声明和社交链接
  */
-import { Row, Col, Space } from "antd";
+import { Row, Col, Space, Flex } from "antd";
 import { useTranslation } from "react-i18next";
 
 export const FooterContent: React.FC = () => {
@@ -13,14 +13,14 @@ export const FooterContent: React.FC = () => {
       {/* 主要内容区域 */}
       <Row justify="center" align="middle" className="mb-4">
         <Col xs={24} sm={20} md={16} lg={14} xl={12}>
-          <Space direction="vertical" size="small" className="text-center">
+          <Flex vertical gap="small" className="text-center">
             <div className="text-gray-600 dark:text-gray-400 text-sm">
               {t("common.footer.copyright")}
             </div>
             <div className="text-gray-500 dark:text-gray-400 text-xs">
               {t("common.footer.disclaimer")}
             </div>
-          </Space>
+          </Flex>
         </Col>
       </Row>
 

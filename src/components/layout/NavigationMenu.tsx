@@ -52,13 +52,9 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({ onClose }) => {
         selectedKeys={[location.pathname]}
         items={menuItems}
         onClick={handleMenuClick}
-        className="border-0 bg-transparent dark:text-gray-200"
+        className="border-0 bg-transparent"
+        theme="dark"
         style={{ flex: 1, minWidth: 0 }}
-        styles={{
-          item: {
-            color: "inherit",
-          },
-        }}
       />
       
       <Space size="small" className="border-l border-gray-200 dark:border-gray-700 pl-4 flex-shrink-0">
