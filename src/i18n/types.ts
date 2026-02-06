@@ -7,6 +7,10 @@ export interface TranslationResources {
       stockCalculator: string;
       lossRecovery: string;
       about: string;
+      stockCalculatorSubtitle: string;
+      lossRecoverySubtitle: string;
+      aboutSubtitle: string;
+      menuTitle: string;
     };
     buttons: {
       history: string;
@@ -17,6 +21,9 @@ export interface TranslationResources {
       cancel: string;
       close: string;
       delete: string;
+      collapseLess: string;
+      expandMore: string;
+      retry: string;
     };
     footer: {
       copyright: string;
@@ -49,6 +56,15 @@ export interface TranslationResources {
       selectFirst: string;
       deleteSuccess: string;
       deleteFailed: string;
+      clearSuccess: string;
+      clearFailed: string;
+    };
+    errorBoundary: {
+      title: string;
+      description: string;
+      details: string;
+      tryAgain: string;
+      goHome: string;
     };
   };
   stockCalculator: {
@@ -101,11 +117,15 @@ export interface TranslationResources {
       metrics: {
         doubleDays: string;
         breakEvenReturn: string;
+        breakEvenTooltip: string;
         tenXDays: string;
+        tenXTooltip: string;
         annualizedReturn: string;
+        annualizedTooltip: string;
         title: string;
         tooltip: string;
         dynamicTooltip: string;
+        doubleAction: string;
       };
       positionChange: {
         title: string;

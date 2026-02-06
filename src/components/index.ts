@@ -2,6 +2,9 @@
  * 组件模块统一导出入口
  */
 
+// 布局组件
+export * from "./layout";
+
 // 共享组件
 export * from "./shared";
 

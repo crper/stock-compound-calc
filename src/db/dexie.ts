@@ -1,6 +1,6 @@
 import Dexie, { type EntityTable } from "dexie";
 
-interface CalculationEntity {
+export interface CalculationEntity {
   id: string;
   timestamp: number;
   initialPrice: number;
@@ -27,7 +27,7 @@ interface CalculationEntity {
 
 type CalculationDB = EntityTable<CalculationEntity, "id">;
 
-class StockCalculatorDB extends Dexie {
+export class StockCalculatorDB extends Dexie {
   calculations!: CalculationDB;
 
   constructor() {

@@ -7,6 +7,10 @@ export const zhCN: { translation: TranslationResources } = {
         stockCalculator: "股价连板计算器",
         lossRecovery: "亏损回本计算器",
         about: "关于",
+        stockCalculatorSubtitle: "智能分析连板收益，实时计算投资回报",
+        lossRecoverySubtitle: "快速计算亏损回本所需涨幅，制定合理止损策略",
+        aboutSubtitle: "了解项目技术栈、开发团队和使用指南",
+        menuTitle: "导航菜单",
       },
       buttons: {
         history: "历史记录",
@@ -59,6 +63,8 @@ export const zhCN: { translation: TranslationResources } = {
         title: "应用程序遇到错误",
         description: "很抱歉，应用程序遇到了一个意外错误。",
         details: "错误详情（点击展开）",
+        tryAgain: "重试",
+        goHome: "返回首页",
       },
     },
     stockCalculator: {

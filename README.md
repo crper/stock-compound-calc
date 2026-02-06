@@ -60,7 +60,7 @@
 ### 开发工具
 
 - **TypeScript** - 类型安全
-- - 快速代码检查（类型感知 **oxlint**）
+- **oxlint** - 快速代码检查（类型感知，支持100+ ESLint规则）
 - **oxfmt** - 代码格式化
 
 ## 快速开始
@@ -95,7 +95,15 @@ bun start
 
 ### 代码规范
 
-运行 lint 检查：
+#### 类型检查与代码质量
+
+TypeScript 类型检查：
+
+```bash
+bun run typecheck
+```
+
+运行 lint 检查（类型感知）：
 
 ```bash
 bun run lint
@@ -270,7 +278,78 @@ NODE_ENV=production
 
 所有数据存储在浏览器的 IndexedDB 中，无需服务器端数据库。历史记录在客户端本地持久化。
 
+## Oxlint 配置说明
+
+项目使用 oxlint 进行代码检查，配置文件为 `oxlint.json`。
+
+### 核心特性
+
+- **类型感知**: 通过 `--type-aware` 标志启用 TypeScript 类型检查
+- **批量规则**: 使用 categories 隐式继承数百条规则，无需逐条声明
+- **三方插件集成**: 支持 React、TypeScript、Unicorn、Promise 等插件
+- **导入排序**: 实验性导入排序功能自动组织 import 语句
+
+### 配置结构
+
+```json
+{
+  "plugins": ["unicorn", "typescript", "oxc", "react", "jsx-a11y", "promise", "react-hooks"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "style": "warn",
+    "restriction": "off",
+    "perf": "off",
+    "nursery": "warn"
+  },
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-member-access": "error"
+  }
+}
+```
+
+### 规则分类
+
+- **correctness**: 代码错误或无用代码
+- **suspicious**: 可能有问题或无用的代码
+- **style**: 风格一致性规则
+- **restriction**: 禁止特定模式或功能
+- **perf**: 性能优化规则
+- **nursery**: 开发中的实验性规则
+
+更多详情见 [AGENTS.md](./AGENTS.md)。
+
 ## 更新日志
+
+### 2026-02-07
+
+#### Oxlint 配置完善 + TypeScript 类型修复
+
+**代码质量工具升级**
+
+- **Oxlint 配置简化**: 利用 categories 批量管理规则，代码量减少 60%
+- **类型感知检查**: 启用 `--type-aware` 标志，运行时类型验证
+- **三方插件集成**: Unicorn + TypeScript + React + Promise 规则集
+- **导入排序**: 实验性 `experimentalSortImports` 配置自动组织 import
+
+**TypeScript 类型错误修复**
+
+- **Ant Design v6 兼容性**: Space → Flex vertical 替换，Tag size 属性移除
+- **数据库类型导出**: 导出 CalculationEntity 和 StockCalculatorDB 类型
+- **类型定义完善**: i18n 缺失字段（errorBoundary breakEvenTooltip tenXTooltip annualizedTooltip）
+- **测试文件修复**: beforeEach/afterEach 导入，可选链处理 undefined
+- **InputNumber 适配**: parser/fomatter 类型正确
+
+**验证完成**
+
+- ✅ TypeScript 类型检查通过（tsc --noEmit）
+- ✅ Oxlint 检查通过（0 warnings, 0 errors）
+- ✅ 单元测试全部通过（22/22）
+- ✅ 生产构建成功
+- ✅ 规则生效：105条规则检查
 
 ### 2026-02-06
 

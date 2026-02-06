@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Tooltip } from "antd";
 import { TranslationOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { LANGUAGES } from "@/i18n";
+import { LANGUAGES, type Language } from "@/i18n";
 
 export const LanguageSelector: React.FC = React.memo(() => {
   const { i18n, t } = useTranslation();

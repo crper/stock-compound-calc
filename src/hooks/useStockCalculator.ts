@@ -90,6 +90,11 @@ export const useStockCalculator = () => {
     };
   }, []);
 
+  // 组件加载时触发默认计算
+  useEffect(() => {
+    void handleCalculate(DEFAULT_PARAMS);
+  }, [handleCalculate]);
+
   // 清空历史
   const handleClearHistory = useCallback(async () => {
     setIsClearing(true);

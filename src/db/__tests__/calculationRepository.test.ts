@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, beforeEach, afterEach } from "bun:test";
 
 describe("calculationRepository", () => {
   if (typeof indexedDB === "undefined") {
@@ -168,9 +168,9 @@ describe("calculationRepository", () => {
 
     const result = await calculationRepository.getAll();
 
-    expect(result.data[0].id).toBe(third.id);
-    expect(result.data[1].id).toBe(second.id);
-    expect(result.data[2].id).toBe(first.id);
+    expect(result.data[0]?.id).toBe(third.id);
+    expect(result.data[1]?.id).toBe(second.id);
+    expect(result.data[2]?.id).toBe(first.id);
   });
 
   it("应该处理空ids数组", async () => {

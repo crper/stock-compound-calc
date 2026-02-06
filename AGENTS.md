@@ -192,6 +192,213 @@ src/
 └── main.tsx         # 应用入口
 ```
 
+## 🤖 Oxlint 配置指南
+
+### 配置文件结构
+
+项目使用 `oxlint.json` 配置文件，支持类型感知 lint 和代码质量检查。
+
+### 核心配置说明
+
+#### Plugins（插件）
+
+oxlint 原生支持多个主流插件，无需额外安装：
+
+```json
+{
+  "plugins": ["unicorn", "typescript", "oxc", "react", "jsx-a11y", "promise", "react-hooks"]
+}
+```
+
+- **unicorn** (200+ 规则): 现代 JavaScript 最佳实践
+- **typescript**: 类型检查和 TypeScript 特定规则
+- **react**: React/React Hooks 规则
+- **jsx-a11y**: 可访问性规则
+- **promise**: 异步代码规范
+- **react-hooks**: Hooks 依赖检查
+
+#### Categories（规则分类）
+
+使用 categories 批量管理规则，避免逐条声明：
+
+```json
+{
+  "categories": {
+    "correctness": "error",   // 代码错误（必须修复）
+    "suspicious": "warn",     // 可能有问题（建议修复）
+    "style": "warn",          // 风格一致性
+    "restriction": "off",     // 禁止特定模式（关闭）
+    "perf": "off",            // 性能优化（关闭）
+    "nursery": "warn"         // 实验性规则（警告级别）
+  }
+}
+```
+
+#### Rules（自定义规则）
+
+仅覆盖关键安全规则，其他由 categories 隐式继承：
+
+```json
+{
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/consistent-type-imports": "error",
+    "react/no-deprecated": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "react-hooks/rules-of-hooks": "error"
+  }
+}
+```
+
+#### Options（配置选项）
+
+```json
+{
+  "options": {
+    "experimentalSortImports": {
+      "newlinesBetween": true,
+      "order": "asc",
+      "partitionByComment": false,
+      "partitionByNewline": false,
+      "sortSideEffects": true
+    }
+  }
+}
+```
+
+#### Overrides（覆盖规则）
+
+测试文件放宽部分约束：
+
+```json
+{
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
+}
+```
+
+#### Environment（环境配置）
+
+```json
+{
+  "env": {
+    "browser": true,    // 浏览器环境
+    "es2022": true,     // ES2022 语法
+    "bun": true         // Bun 运行时
+  }
+}
+```
+
+### 使用命令
+
+#### 类型感知检查
+
+```bash
+# 类型感知 lint（支持 no-unsafe-* 等类型规则）
+bun run lint      # oxlint --type-aware src
+
+# 自动修复
+bun run lint:fix  # oxlint --type-aware --fix src
+```
+
+#### TypeScript 类型检查
+
+```bash
+# 纯类型检查（替代 tsc）
+bun run typecheck  # bun run tsc --noEmit
+```
+
+### 规则优先级
+
+1. **显式规则**: `rules` 中声明的规则优先级最高
+2. **Categories**: 未声明的规则从 categories 继承
+3. **插件默认**: plugins 自带的推荐规则
+4. **Overrides**: 文件特定覆盖规则
+
+### 常见问题
+
+#### Q: 为什么使用 categories 而不是逐条声明规则？
+
+A: Categories 可以批量管理数百条规则，减少配置复杂度。例如 `correctness: "error"` 会自动启用所有正确性相关的规则。
+
+#### Q: 如何查看 oxlint 支持的所有规则？
+
+A: 运行 `oxlint --help` 查看文档，或访问 https://oxc.rs/docs/guide/usage/linter
+
+#### Q: --type-aware 标志的作用是什么？
+
+A: 启用 TypeScript 类型信息，支持 `no-unsafe-*`、`no-floating-promises` 等需要类型上下文的规则。
+
+#### Q: 如何禁用某条规则？
+
+A: 在 `rules` 中设置 `"rule-name": "off"`，或在特定文件中使用 `// oxlint-disable-next-line` 注释。
+
+### 完整配置示例
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "plugins": ["unicorn", "typescript", "oxc", "react", "jsx-a11y", "promise", "react-hooks"],
+  "settings": {
+    "react": {
+      "version": "19.2.3",
+      "linkComponents": [{ "name": "Link", "linkAttribute": "to" }]
+    },
+    "jsx-a11y": {
+      "components": { "Link": "a", "Button": "button" }
+    }
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "style": "warn",
+    "restriction": "off",
+    "perf": "off",
+    "nursery": "warn"
+  },
+  "options": {
+    "experimentalSortImports": {
+      "newlinesBetween": true,
+      "order": "asc",
+      "partitionByComment": false,
+      "partitionByNewline": false,
+      "sortSideEffects": true
+    }
+  },
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/consistent-type-imports": "error",
+    "react/no-deprecated": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "react-hooks/rules-of-hooks": "error"
+  },
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "bun": true
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "rules": { "no-console": "off" }
+    }
+  ],
+  "ignore": ["dist/**", "node_modules/**", "*.config.js", "*.config.ts", "build.ts", ".iflow/**"]
+}
+```
+
 ## 🤖 AI 代理指南 (AI Agent Guidelines)
 
 - **工具选择**: 必须使用 `bun` 而非 `npm`/`yarn`/`pnpm`
@@ -397,3 +604,247 @@ const antThemeConfig: ThemeConfig = {
 - [x] 错误处理完善（try-catch + ErrorHandler）
 - [x] 类型安全（无 any，使用 unknown + 类型守卫）
 - [x] Decimal.js 用于所有金融计算
+
+## 🚀 提交流程与检查清单
+
+### 提交前必做流程
+
+#### 1. 代码质量检查
+
+**Lint 检查（类型感知）**
+```bash
+bun run lint
+```
+- ✅ 必须通过：0 warnings, 0 errors
+- 📊 规则生效：105条规则检查
+
+**TypeScript 类型检查**
+```bash
+bun run typecheck
+```
+- ✅ 必须通过：无类型错误
+
+#### 2. 测试验证
+
+**运行所有测试**
+```bash
+bun test
+```
+- ✅ 必须通过：所有测试用例
+
+**测试覆盖率（可选）**
+```bash
+bun test:coverage
+```
+- 📊 确保核心逻辑有测试覆盖
+
+#### 3. 代码格式化
+
+**自动格式化**
+```bash
+bun run format
+```
+- ✅ 使用 oxfmt 格式化所有代码
+
+**格式检查**
+```bash
+bun run format:check
+```
+- ✅ 确保代码格式一致
+
+#### 4. 构建验证
+
+**生产构建**
+```bash
+bun run build
+```
+- ✅ 必须成功：构建无错误
+- 📦 检查 bundle 大小是否合理
+
+#### 5. 文档更新（如需要）
+
+**README.md 更新**
+- [ ] 如果有新功能，更新功能特性列表
+- [ ] 如果修复了重要问题，添加到更新日志
+- [ ] 如果有 API 变更，更新使用说明
+
+**AGENTS.md 更新**
+- [ ] 如果有新的约束或规范，添加到关键约束
+- [ ] 如果有新组件或架构变更，更新项目结构
+- [ ] 如果有新的最佳实践，添加代码审查清单
+
+**i18n 翻译更新**
+- [ ] 如果添加了新的 UI 文本，添加到 zh-CN.ts 和 en-US.ts
+- [ ] 如果修改了类型定义，更新 types.ts
+- [ ] 运行应用验证中英文切换正常
+
+### 提交流程
+
+#### 提交前检查清单
+
+```bash
+# 完整检查流程
+bun run lint         # Lint 检查
+bun run typecheck    # 类型检查
+bun test            # 测试验证
+bun run format      # 代码格式化
+bun run build       # 构建验证
+
+# 查看 git 状态
+git status
+```
+
+#### 提交规范
+
+**1. 查看变更内容**
+```bash
+git diff                    # 查看未暂存的变更
+git diff --staged          # 查看已暂存的变更
+```
+
+**2. 添加文件到暂存区**
+```bash
+git add <file>             # 添加单个文件
+git add .                  # 添加所有变更
+git add src/              # 添加 src 目录下所有变更
+```
+
+**3. 创建提交**
+
+**提交信息格式**：
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Type 类型**：
+- `feat`: 新功能
+- `fix`: Bug 修复
+- `refactor`: 重构（不是新功能也不是修复）
+- `docs`: 文档更新
+- `style`: 代码格式（不影响功能）
+- `test`: 测试相关（添加/修改测试）
+- `chore`: 构建过程或辅助工具变动
+- `perf`: 性能优化
+- `build`: 构建系统或依赖项变动
+
+**示例**：
+```bash
+git commit -m "feat(oxlint): 完善类型感知检查配置
+
+- 添加 --type-aware 标志启用 TypeScript 类型检查
+- 配置 categories 批量管理规则，减少配置复杂度
+- 修复 InputNumber parser/fomatter 类型问题
+
+验证:
+- ✅ bun run lint: 0 warnings, 0 errors
+- ✅ bun run typecheck: 通过
+- ✅ bun test: 22/22 通过
+"
+```
+
+**4. 推送远程**
+
+```bash
+git push origin main           # 推送到 main 分支
+git push origin feature/xxx   # 推送到功能分支
+```
+
+### 提交后验证
+
+#### 远程构建检查（如果有 CI/CD）
+
+- [ ] CI 检查通过
+- [ ] 部署成功（如果有）
+
+#### 功能验证
+
+- [ ] 在开发环境验证功能正常
+- [ ] 在生产环境验证功能正常（如果是小版本）
+- [ ] 浏览器测试（Chrome, Firefox, Safari）
+- [ ] 移动端测试（iOS/Android）
+
+### 常见问题处理
+
+#### Lint 不通过怎么办？
+
+**查看错误信息**
+```bash
+bun run lint
+```
+
+**自动修复**
+```bash
+bun run lint:fix
+```
+
+**手动修复特殊规则**
+- `// oxlint-disable-next-line` - 禁单行规则
+- `// oxlint-disable-line` - 禁当前行规则
+- `/* oxlint-disable */` ... `/* oxlint-enable */` - 禁代码块规则
+
+#### 类型错误怎么办？
+
+**查看错误详情**
+```bash
+bun run typecheck
+```
+
+**常见修复方法**
+1. 添加明确的类型注解
+2. 使用类型守卫（`isSomething` 函数）
+3. 使用可选链 `?.` 和空值合并 `??`
+4. 避免使用 `any`，使用 `unknown` + 类型守卫
+
+#### 测试失败怎么办？
+
+**运行单个测试**
+```bash
+bun test -t "测试名称"
+```
+
+**运行单个文件**
+```bash
+bun test path/to/test.ts
+```
+
+**调试模式**
+```bash
+bun test --watch
+```
+
+### 提交流程总结
+
+**提交流程图**：
+```
+1. 开发完成
+   ↓
+2. bun run lint ✅
+   ↓
+3. bun run typecheck ✅
+   ↓
+4. bun test ✅
+   ↓
+5. bun run format
+   ↓
+6. 更新文档（如需要）
+   ↓
+7. git add .
+   ↓
+8. git commit -m "..."
+   ↓
+9. git push
+   ↓
+10. 验证功能
+```
+
+**必做项**：
+- ✅ Lint 检查通过
+- ✅ 类型检查通过
+- ✅ 测试全部通过
+- ✅ 代码已格式化
+- ✅ 构建成功
+- ✅ 文档已更新（如需要）

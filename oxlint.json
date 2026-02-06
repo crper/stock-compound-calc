@@ -19,55 +19,39 @@
     "style": "warn",
     "restriction": "off",
     "perf": "off",
-    "nursery": "allow"
+    "nursery": "warn"
+  },
+  "options": {
+    "experimentalSortImports": {
+      "newlinesBetween": true,
+      "order": "asc",
+      "partitionByComment": false,
+      "partitionByNewline": false,
+      "sortSideEffects": true
+    }
   },
   "rules": {
-    "no-eval": "error",
-    "no-implied-eval": "error",
-    "no-new-func": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/consistent-type-imports": "error",
+    "react/no-deprecated": "error",
     "react-hooks/exhaustive-deps": "error",
-    "react-hooks/rules-of-hooks": "error",
-    "react/jsx-key": "error",
-    "react/jsx-no-duplicate-props": "warn",
-    "react/no-array-index-key": "warn",
-    "react/no-unescaped-entities": "warn",
-    "react/no-deprecated": "warn",
-    "react/display-name": "warn",
-    "react/prop-types": "warn",
-    "react/no-unknown-property": "warn",
-    "react/style-prop-object": "warn",
-    "react/no-render-return-value": "warn",
-    "react/no-children-prop": "warn",
-    "react/no-danger": "warn",
-    "jsx-a11y/alt-text": "warn",
-    "jsx-a11y/aria-role": "warn",
-    "jsx-a11y/click-events-have-key-events": "warn",
-    "jsx-a11y/no-noninteractive-element-interactions": "warn",
-    "jsx-a11y/heading-has-content": "warn",
-    "jsx-a11y/anchor-has-content": "warn",
-    "typescript/no-explicit-any": "warn",
-    "typescript/no-unnecessary-type-assertion": "warn",
-    "typescript/no-floating-promises": "error",
-    "typescript/consistent-type-imports": "warn",
-    "typescript/no-unused-vars": "error",
-    "typescript/array-type": "warn",
-    "typescript/ban-ts-comment": "warn",
-    "typescript/ban-types": "warn",
-    "typescript/prefer-readonly": "warn",
-    "no-console": "error",
-    "no-debugger": "error",
-    "no-unused-vars": "error",
-    "no-var": "error",
-    "prefer-const": "error",
-    "unicorn/prefer-module": "warn",
-    "unicorn/prefer-spread": "warn",
-    "unicorn/prefer-number-properties": "warn",
-    "unicorn/no-null": "warn"
+    "react-hooks/rules-of-hooks": "error"
   },
   "env": {
     "browser": true,
     "es2022": true,
     "bun": true
   },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ],
   "ignore": ["dist/**", "node_modules/**", "*.config.js", "*.config.ts", "build.ts", ".iflow/**"]
 }

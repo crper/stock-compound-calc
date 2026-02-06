@@ -13,7 +13,8 @@
     "lint": "oxlint --type-aware src",
     "lint:fix": "oxlint --type-aware --fix src",
     "format": "oxfmt .",
-    "format:check": "oxfmt --check ."
+    "format:check": "oxfmt --check .",
+    "typecheck": "bun run tsc --noEmit"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
@@ -40,6 +41,7 @@
     "@types/react-dom": "^19.2.3",
     "oxfmt": "^0.28.0",
     "oxlint": "^1.43.0",
-    "oxlint-tsgolint": "^0.11.4"
+    "oxlint-tsgolint": "^0.11.4",
+    "typescript": "^5.9.3"
   }
 }

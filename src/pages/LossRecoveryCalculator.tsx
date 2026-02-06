@@ -1,19 +1,10 @@
+/**
+ * 亏损回本计算器主页面组件
+ * 使用 MainLayout 统一布局管理
+ */
 import React from "react";
-import {
-  Layout,
-  Card,
-  Typography,
-  Row,
-  Col,
-  Button,
-  Drawer,
-  Empty,
-  Tag,
-  FloatButton,
-  Popconfirm,
-  App,
-} from "antd";
-import { HistoryOutlined, CalculatorOutlined, ArrowUpOutlined, DeleteOutlined, ClearOutlined } from "@ant-design/icons";
+import { Card, Typography, Row, Col, Drawer, Empty, Tag, FloatButton, Popconfirm, Button, App } from "antd";
+import { HistoryOutlined, DeleteOutlined, ClearOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useLossRecovery } from "@/hooks/useLossRecovery";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -22,9 +13,7 @@ import {
   RecoveryResult,
   RecoveryTable,
   NavMenu,
-  ThemeToggle,
   ErrorBoundary,
-  LanguageSelector,
 } from "@/components";
 
 const { Text } = Typography;
@@ -52,145 +41,53 @@ export const LossRecoveryCalculator: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen w-full bg-gradient-to-br from-[#667eea] via-[#7c6cd9] to-[#764ba2] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500 relative overflow-hidden">
+      <div className="w-full relative overflow-hidden">
+        {/* 背景装饰元素 */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/3 rounded-full blur-3xl" />
         </div>
 
-        <Layout className="min-h-screen w-full bg-transparent relative z-10">
-          <Layout.Content
-            className={`max-w-[1400px] mx-auto w-full ${isMobile ? "px-3 py-4" : "px-6 py-8"}`}
+        {/* 导航菜单 */}
+        <div className="relative z-10 mb-6">
+          <NavMenu isMobile={isMobile} />
+        </div>
+
+        {/* 主要内容 */}
+        <div className="relative z-10">
+          <Card
+            className={`flex flex-col rounded-2xl border-0 shadow-xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-md ${isMobile ? "" : "min-h-[calc(100vh-140px)]"}`}
+            styles={{
+              body: {
+                padding: isMobile ? "20px" : "28px",
+                display: "flex",
+                flexDirection: "column",
+                flex: 1,
+              },
+            }}
           >
-            <Row gutter={[24, 24]}>
-              <Col span={24}>
-                {/* 头部卡片 */}
-                <Card className="mb-6 overflow-hidden" styles={{ body: { padding: 0 } }}>
-                  <div className="relative">
-                    {/* 顶部渐变装饰条 */}
-                    <div
-                      className="h-1.5 w-full"
-                      style={{
-                        background: "linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)",
-                      }}
-                    />
+            <Row gutter={[32, 32]} className="flex-1 items-start">
+              <Col xs={24} lg={8}>
+                <div className="h-full animate-[slideIn_0.4s_ease-out]">
+                  <RecoveryForm value={lossPercent} onChange={handleLossChange} />
+                </div>
+              </Col>
 
-                    <div className="p-5 sm:p-6">
-                      {/* 头部内容 */}
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        {/* 左侧：Logo + 标题 */}
-                        <div className="flex items-center gap-4">
-                          <div
-                            className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shadow-lg"
-                            style={{
-                              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                            }}
-                          >
-                            <CalculatorOutlined className="text-white text-2xl sm:text-3xl" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <h1
-                                className="text-xl sm:text-2xl font-bold"
-                                style={{
-                                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                                  WebkitBackgroundClip: "text",
-                                  WebkitTextFillColor: "transparent",
-                                }}
-                              >
-                                {t("recoveryCalculator.title")}
-                              </h1>
-                              {!isMobile && (
-                                <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-700 border border-orange-200 flex items-center gap-1">
-                                  <ArrowUpOutlined /> {t("common.tags.recoveryAnalysis")}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                              {t("recoveryCalculator.subtitle")}
-                            </p>
-                            {!isMobile && (
-                              <div className="flex gap-2 mt-2">
-                                <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-600 border border-blue-100">
-                                  {t("common.tags.realTime")}
-                                </span>
-                                <span className="px-2 py-0.5 rounded-full text-xs bg-purple-50 text-purple-600 border border-purple-100">
-                                  {t("common.tags.quickLookup")}
-                                </span>
-                                <span className="px-2 py-0.5 rounded-full text-xs bg-orange-50 text-orange-600 border border-orange-100">
-                                  {t("common.tags.riskAssessment")}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+              <Col xs={24} lg={8}>
+                <div className="h-full animate-[slideIn_0.4s_ease-out_0.1s_both]">
+                  <RecoveryResult lossPercent={lossPercent} />
+                </div>
+              </Col>
 
-                        {/* 右侧：操作按钮 */}
-                        <div className="flex items-center gap-2">
-                          <ThemeToggle />
-                          <LanguageSelector />
-                          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
-                          <button
-                            onClick={openHistoryDrawer}
-                            disabled={history.length === 0}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                              history.length > 0
-                                ? "bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-md hover:shadow-lg"
-                                : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                            }`}
-                          >
-                            <HistoryOutlined />
-                            {t("common.buttons.history")}
-                            {history.length > 0 && (
-                              <span className="ml-1 px-1.5 py-0.5 bg-white/20 rounded-full text-xs">
-                                {history.length}
-                              </span>
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-
-                <NavMenu isMobile={isMobile} />
-
-                <Card
-                  className={`mt-6 flex flex-col rounded-2xl border-0 shadow-xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-md ${isMobile ? "" : "min-h-[calc(100vh-280px)]"}`}
-                  styles={{
-                    body: {
-                      padding: isMobile ? "20px" : "28px",
-                      display: "flex",
-                      flexDirection: "column",
-                      flex: 1,
-                    },
-                  }}
-                >
-                  <Row gutter={[32, 32]} className="flex-1 items-start">
-                    <Col xs={24} lg={8}>
-                      <div className="h-full animate-[slideIn_0.4s_ease-out]">
-                        <RecoveryForm value={lossPercent} onChange={handleLossChange} />
-                      </div>
-                    </Col>
-
-                    <Col xs={24} lg={8}>
-                      <div className="h-full animate-[slideIn_0.4s_ease-out_0.1s_both]">
-                        <RecoveryResult lossPercent={lossPercent} />
-                      </div>
-                    </Col>
-
-                    <Col xs={24} lg={8}>
-                      <div className="h-full animate-[slideIn_0.4s_ease-out_0.2s_both]">
-                        <RecoveryTable currentValue={lossPercent} />
-                      </div>
-                    </Col>
-                  </Row>
-                </Card>
+              <Col xs={24} lg={8}>
+                <div className="h-full animate-[slideIn_0.4s_ease-out_0.2s_both]">
+                  <RecoveryTable currentValue={lossPercent} />
+                </div>
               </Col>
             </Row>
-          </Layout.Content>
-        </Layout>
+          </Card>
+        </div>
 
         {/* 历史记录抽屉 */}
         <Drawer
@@ -271,7 +168,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                           <Text strong className="dark:text-gray-200 text-lg">
                             {item.lossPercent}%
                           </Text>
-                          <Tag size="small" className="m-0 bg-red-50 text-red-600 border-red-200">
+                          <Tag className="m-0 bg-red-50 text-red-600 border-red-200">
                             {t("recoveryCalculator.results.currentLoss")}
                           </Tag>
                         </div>

@@ -7,6 +7,10 @@ export const enUS: { translation: TranslationResources } = {
         stockCalculator: "Stock Calculator",
         lossRecovery: "Loss Recovery",
         about: "About",
+        stockCalculatorSubtitle: "Intelligent analysis of consecutive limit returns, real-time investment calculation",
+        lossRecoverySubtitle: "Quickly calculate required gains for loss recovery, set reasonable stop-loss strategies",
+        aboutSubtitle: "Learn about the project tech stack, development team, and usage guide",
+        menuTitle: "Navigation Menu",
       },
       buttons: {
         history: "History",
@@ -59,6 +63,8 @@ export const enUS: { translation: TranslationResources } = {
         title: "Application Error",
         description: "We're sorry, the application encountered an unexpected error.",
         details: "Error Details (click to expand)",
+        tryAgain: "Try Again",
+        goHome: "Go Home",
       },
     },
     stockCalculator: {

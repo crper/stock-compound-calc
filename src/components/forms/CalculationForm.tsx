@@ -1,5 +1,6 @@
 import type { FormInstance } from "antd/es/form";
 import type { CalculationParams } from "@/types";
+import type { InputNumberProps } from "antd";
 import { Alert, Button, Card, Form, InputNumber, Slider, Space, Typography } from "antd";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -67,8 +68,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
 
     // 处理值变化并触发计算
     const handleFieldChange = useCallback(
-      (fieldName: keyof CalculationParams, value: number | null) => {
-        if (value !== null) {
+      (fieldName: keyof CalculationParams, value: number | string | null) => {
+        if (value !== null && typeof value !== "string") {
           form.setFieldsValue({ [fieldName]: value });
           // 使用 useWatch 获取的最新值构建 allValues
           const allValues: CalculationParams = {
@@ -232,11 +233,13 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 suffix={t("stockCalculator.form.units.shares")}
                 className="hover:border-blue-400 focus:border-blue-500 transition-colors duration-300"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                parser={(value: string | undefined): number | undefined => {
-                  if (!value) return undefined;
-                  const parsed = Number(value.replace(/,/g, ""));
-                  return isNaN(parsed) ? undefined : parsed;
-                }}
+                parser={
+                  ((displayValue: string | undefined) => {
+                    if (!displayValue) return null;
+                    const parsed = Number(displayValue.replace(/,/g, ""));
+                    return isNaN(parsed) ? null : parsed;
+                  }) as NonNullable<InputNumberProps["parser"]>
+                }
                 onChange={(value) => handleFieldChange("stockQuantity", value)}
               />
             </Form.Item>

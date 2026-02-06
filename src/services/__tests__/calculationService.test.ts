@@ -1,15 +1,13 @@
 import { describe, expect, it, beforeEach, afterEach } from "bun:test";
+import { db } from "@/db/dexie";
 
 describe("calculationService", () => {
   let calculationService: typeof import("../calculationService").calculationService;
-  let db: import("../dexie").StockCalculatorDB;
 
   beforeEach(async () => {
     const mod = await import("../calculationService");
     calculationService = mod.calculationService;
     if (typeof indexedDB !== "undefined") {
-      const dbMod = await import("../dexie");
-      db = dbMod.db as unknown as import("../dexie").StockCalculatorDB;
       await db.calculations.clear();
     }
   });
@@ -35,8 +33,8 @@ describe("calculationService", () => {
       const params = { initialPrice: 10, boardCount: 3, dailyReturn: -5 };
       const result = await calculationService.calculate(params);
 
-      expect(result.up.dailyDetails[0].dailyReturnPercent).toBe(5);
-      expect(result.down.dailyDetails[0].dailyReturnPercent).toBe(-5);
+      expect(result.up.dailyDetails[0]?.dailyReturnPercent).toBe(5);
+      expect(result.down.dailyDetails[0]?.dailyReturnPercent).toBe(-5);
     });
   });
 
@@ -108,7 +106,7 @@ describe("calculationService", () => {
       await calculationService.saveCalculation(params, results);
       await calculationService.clearHistory();
 
-      const { calculationRepository } = await import("../calculationRepository");
+      const { calculationRepository } = await import("@/db/calculationRepository");
       const history = await calculationRepository.getAll();
       expect(history.data).toHaveLength(0);
     });
@@ -133,10 +131,10 @@ describe("calculationService", () => {
       expect(response.success).toBe(true);
       expect(response.data?.deletedCount).toBe(1);
 
-      const { calculationRepository } = await import("../calculationRepository");
+      const { calculationRepository } = await import("@/db/calculationRepository");
       const history = await calculationRepository.getAll();
       expect(history.data).toHaveLength(1);
-      expect(history.data[0].id).toBe(saved2.id);
+      expect(history.data[0]?.id).toBe(saved2.id);
     });
 
     it("应该处理空ids数组", async () => {

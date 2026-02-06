@@ -165,7 +165,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
         }}
         extra={
           selectedIds.size > 0 ? (
-            <Space size="small">
+            <Flex gap="small" align="center">
               <Text type="secondary" className="text-sm">
                 {t("stockCalculator.history.selectedCount", { count: selectedIds.size })}
               </Text>
@@ -184,7 +184,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
               <Button size="small" onClick={() => setSelectedIds(new Set())} className="rounded-lg">
                 {t("common.buttons.cancelSelection")}
               </Button>
-            </Space>
+            </Flex>
           ) : (
             history.length > 0 && (
               <Popconfirm
@@ -317,7 +317,7 @@ interface HistoryCardProps {
 const HistoryCard: React.FC<HistoryCardProps> = React.memo(
   ({ item, isMobile, index, selected = false, onSelect, onClick, t }) => {
     const formattedTimestamp = formatDate(item.timestamp);
-    const hasStockQuantity = item.params.stockQuantity && item.params.stockQuantity > 0;
+    const hasStockQuantity = Boolean(item.params.stockQuantity && item.params.stockQuantity > 0);
     const [datePart, timePart] = formattedTimestamp.split(" ");
 
     return (
@@ -349,7 +349,7 @@ const HistoryCard: React.FC<HistoryCardProps> = React.memo(
                 <span>{datePart}</span>
                 <span className="text-gray-300">{timePart}</span>
               </div>
-              <Tag size="small" className="text-xs m-0 bg-blue-50 text-blue-600 border-blue-200">
+              <Tag className="text-xs m-0 bg-blue-50 text-blue-600 border-blue-200">
                 {item.params.dailyReturn}%
               </Tag>
             </div>
