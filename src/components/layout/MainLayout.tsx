@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { HeaderContent } from "./HeaderContent";
 import { FooterContent } from "./FooterContent";
 import { NavigationMenu } from "./NavigationMenu";
+import { LAYOUT_CONSTANTS } from "@/constants/layout";
 
 export interface MainLayoutProps {
   page?: string;
@@ -73,7 +74,13 @@ export const MainLayout: React.FC<MainLayoutProps> = () => {
 
       {/* 内容区域 */}
       <Layout.Content className="flex-1">
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        <div
+          className="mx-auto w-full"
+          style={{
+            marginTop: LAYOUT_CONSTANTS.spacing.xxxl,
+            marginBottom: LAYOUT_CONSTANTS.spacing.xxxl,
+          }}
+        >
           {/* 路由出口 - 子页面内容 */}
           <Outlet />
         </div>

@@ -2,12 +2,13 @@
  * 关键指标网格组件
  * 4列网格展示翻倍天数、盈亏回撤、10倍天数、年化收益
  */
-import { Tooltip, Typography } from "antd";
+import { Tooltip, Typography, Row, Col } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { formatPercentage } from "@/utils/formatters";
 import type { KeyMetrics } from "@/types";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { LAYOUT_CONSTANTS } from "@/constants/layout";
 
 const { Text } = Typography;
 
@@ -48,6 +49,8 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
   ({ metrics, dailyReturn, boardCount, isMobile }) => {
     const { t } = useTranslation();
     if (!metrics) return null;
+
+    const gutter = isMobile ? LAYOUT_CONSTANTS.gutter.mobile : LAYOUT_CONSTANTS.gutter.desktop;
 
     const items: MetricItemProps[] = [];
 
@@ -110,9 +113,6 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
 
     if (items.length === 0) return null;
 
-    // 根据数量决定列数：移动端始终2列，桌面端4列
-    const gridCols = isMobile ? 2 : Math.min(items.length, 4);
-
     return (
       <div className="mt-4">
         <div className="flex items-center gap-2 mb-3">
@@ -124,16 +124,13 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
           </Tooltip>
         </div>
 
-        <div
-          className="grid gap-3"
-          style={{
-            gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
-          }}
-        >
+        <Row gutter={gutter}>
           {items.map((item, index) => (
-            <MetricItem key={index} {...item} />
+            <Col key={index} xs={12} md={12} lg={6}>
+              <MetricItem {...item} />
+            </Col>
           ))}
-        </div>
+        </Row>
       </div>
     );
   },

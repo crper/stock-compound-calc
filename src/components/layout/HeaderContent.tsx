@@ -2,7 +2,7 @@
  * 头部内容组件 - 统一的头部布局和样式
  * 包含 Logo、标题、主题切换、语言选择
  */
-import { Badge } from "antd";
+import { Badge, Flex, Space } from "antd";
 import {
   LineChartOutlined,
 } from "@ant-design/icons";
@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom";
 import { useResponsive } from "@/hooks/useResponsive";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { LanguageSelector } from "@/components/navigation/LanguageSelector";
+import { LAYOUT_CONSTANTS } from "@/constants/layout";
 
 export interface HeaderContentProps {
   page?: string;
@@ -69,53 +70,57 @@ export const HeaderContent: React.FC<HeaderContentProps> = () => {
   };
 
   return (
-    <div className="flex items-center gap-4 min-h-[64px]">
-      {/* Logo 区域 */}
-      <div className="flex items-center gap-3">
-        <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
-          style={{
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          }}
-        >
-          <LineChartOutlined className="text-white text-xl" />
-        </div>
-        
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1
-              className="text-lg font-bold"
-              style={{
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              {getPageTitle()}
-            </h1>
-            
-            {getPageTags().map((tag, index) => (
-              <Badge
-                key={index}
-                color={tag.color}
-                text={tag.label}
-                size="small"
-                style={{ fontSize: "12px", padding: "2px 6px" }}
-              />
-            ))}
+    <div className="min-h-[64px]">
+      <Flex gap={LAYOUT_CONSTANTS.spacing.lg} align="center">
+        {/* Logo 区域 */}
+        <Flex gap={LAYOUT_CONSTANTS.spacing.md} align="center">
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            }}
+          >
+            <LineChartOutlined className="text-white text-xl" />
           </div>
-          
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {getPageSubtitle()}
-          </p>
-        </div>
-      </div>
 
-      {/* 右侧操作按钮 - 仅桌面端显示 */}
-      <div className="hidden md:flex items-center gap-2">
-        <ThemeToggle />
-        <LanguageSelector />
-      </div>
+          <div className="flex flex-col">
+            <Flex gap={LAYOUT_CONSTANTS.spacing.sm} wrap>
+              <h1
+                className="text-lg font-bold"
+                style={{
+                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                {getPageTitle()}
+              </h1>
+
+              {getPageTags().map((tag, index) => (
+                <Badge
+                  key={index}
+                  color={tag.color}
+                  text={tag.label}
+                  size="small"
+                  style={{ fontSize: "12px", padding: "2px 6px" }}
+                />
+              ))}
+            </Flex>
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              {getPageSubtitle()}
+            </p>
+          </div>
+        </Flex>
+
+        {/* 右侧操作按钮 - 仅桌面端显示 */}
+        <div className="hidden md:flex">
+          <Space size="small">
+            <ThemeToggle />
+            <LanguageSelector />
+          </Space>
+        </div>
+      </Flex>
     </div>
   );
 };
