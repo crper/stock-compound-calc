@@ -13,7 +13,11 @@ import { useTranslation } from "react-i18next";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { LanguageSelector } from "@/components/navigation/LanguageSelector";
 
-export const NavigationMenu: React.FC = () => {
+interface NavigationMenuProps {
+  onClose?: () => void;
+}
+
+export const NavigationMenu: React.FC<NavigationMenuProps> = ({ onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
@@ -38,6 +42,7 @@ export const NavigationMenu: React.FC = () => {
 
   const handleMenuClick = ({ key }: { key: string }) => {
     void navigate(key);
+    onClose?.();
   };
 
   return (
