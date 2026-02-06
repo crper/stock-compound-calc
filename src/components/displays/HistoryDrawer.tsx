@@ -119,8 +119,8 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
           (itemDate.isAfter(dateRange[0].startOf("day").subtract(1, "second")) &&
             itemDate.isBefore(dateRange[1].endOf("day").add(1, "second")));
 
-const matchesDailyReturn =
-        dailyReturnFilter === undefined || item.params.dailyReturn === dailyReturnFilter;
+        const matchesDailyReturn =
+          dailyReturnFilter === undefined || item.params.dailyReturn === dailyReturnFilter;
 
         return matchesSearch && matchesDateRange && matchesDailyReturn;
       });
@@ -210,13 +210,13 @@ const matchesDailyReturn =
           )
         }
       >
-      <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 16 }}>
-      {history.length > 0 && (
-        <Card
-          size="small"
-          className="dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm"
-        >
-          <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 16 }}>
+          {history.length > 0 && (
+            <Card
+              size="small"
+              className="dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm"
+            >
+              <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 12 }}>
                 <Input
                   placeholder="搜索初始股价"
                   prefix={<SearchOutlined className="text-gray-400" />}
@@ -255,11 +255,11 @@ const matchesDailyReturn =
                     全选 ({filteredHistory.length} 条)
                   </Checkbox>
                 )}
-          </div>
-        </Card>
-      )}
+              </div>
+            </Card>
+          )}
 
-      {filteredHistory.length === 0 ? (
+          {filteredHistory.length === 0 ? (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
               description={
@@ -300,10 +300,10 @@ const matchesDailyReturn =
                   }
                 }}
               />
-        ))
-      )}
-    </div>
-  </Drawer>
+            ))
+          )}
+        </div>
+      </Drawer>
     );
   },
 );
@@ -359,7 +359,10 @@ const HistoryCard: React.FC<HistoryCardProps> = React.memo(
           )}
 
           <div className="flex flex-col gap-1.5 min-w-0">
-            <Text type="secondary" className="text-xs font-medium uppercase tracking-wider dark:text-gray-400">
+            <Text
+              type="secondary"
+              className="text-xs font-medium uppercase tracking-wider dark:text-gray-400"
+            >
               初始参数
             </Text>
             <div className="flex items-center gap-2 flex-wrap">
@@ -378,21 +381,31 @@ const HistoryCard: React.FC<HistoryCardProps> = React.memo(
             </div>
             {hasStockQuantity && (
               <Text type="secondary" className="text-sm dark:text-gray-400">
-                持仓 <Text strong className="dark:text-gray-200">{item.params.stockQuantity.toLocaleString()}</Text> 股
+                持仓{" "}
+                <Text strong className="dark:text-gray-200">
+                  {item.params.stockQuantity.toLocaleString()}
+                </Text>{" "}
+                股
               </Text>
             )}
           </div>
 
-          <HistoryResultCell result={item.results.up} type="up" hasStockQuantity={hasStockQuantity} />
+          <HistoryResultCell
+            result={item.results.up}
+            type="up"
+            hasStockQuantity={hasStockQuantity}
+          />
 
-          <HistoryResultCell result={item.results.down} type="down" hasStockQuantity={hasStockQuantity} />
+          <HistoryResultCell
+            result={item.results.down}
+            type="down"
+            hasStockQuantity={hasStockQuantity}
+          />
 
           <div className="flex items-center gap-3 flex-shrink-0">
             <HistoryOutlined className="text-gray-400 text-lg" />
             <div className="flex flex-col">
-              <Text className="text-sm dark:text-gray-200">
-                {formattedTimestamp.split(" ")[0]}
-              </Text>
+              <Text className="text-sm dark:text-gray-200">{formattedTimestamp.split(" ")[0]}</Text>
               <Text type="secondary" className="text-xs dark:text-gray-500">
                 {formattedTimestamp.split(" ")[1]}
               </Text>
@@ -417,36 +430,43 @@ interface HistoryResultCellProps {
   hasStockQuantity: boolean;
 }
 
-const HistoryResultCell: React.FC<HistoryResultCellProps> = React.memo(({ result, type, hasStockQuantity }) => {
-  const isUp = type === "up";
-  const colors = isUp ? TREND_COLORS.up : TREND_COLORS.down;
+const HistoryResultCell: React.FC<HistoryResultCellProps> = React.memo(
+  ({ result, type, hasStockQuantity }) => {
+    const isUp = type === "up";
+    const colors = isUp ? TREND_COLORS.up : TREND_COLORS.down;
 
-  return (
-    <div className={`rounded-lg ${colors.bg} border ${colors.border} p-3`}>
-      <div className="flex items-center gap-1.5 mb-2">
-        {isUp ? (
-          <RiseOutlined className={`${colors.iconColor} text-sm`} />
-        ) : (
-          <FallOutlined className={`${colors.iconColor} text-sm`} />
-        )}
-        <Text type="secondary" className="text-xs font-medium uppercase tracking-wider dark:text-gray-400">
-          {isUp ? "涨停收益" : "跌停收益"}
-        </Text>
-      </div>
-      <div className="font-bold text-lg dark:text-gray-100 mb-1">
-        {formatCurrency(result.finalPrice, { compact: result.finalPrice >= 1000000 })}
-      </div>
-      <div className={`text-sm ${colors.iconColor} font-medium mb-1`}>
-        {formatPercentage(result.totalReturn, { multiply: false })}
-      </div>
-      {hasStockQuantity && result.positionGain !== undefined && (
-        <div className={`text-sm ${colors.iconColor} truncate`}>
-          {result.positionGain >= 0 ? "+" : ""}
-          {formatCurrency(result.positionGain, { compact: Math.abs(result.positionGain) >= 1000000 })}
+    return (
+      <div className={`rounded-lg ${colors.bg} border ${colors.border} p-3`}>
+        <div className="flex items-center gap-1.5 mb-2">
+          {isUp ? (
+            <RiseOutlined className={`${colors.iconColor} text-sm`} />
+          ) : (
+            <FallOutlined className={`${colors.iconColor} text-sm`} />
+          )}
+          <Text
+            type="secondary"
+            className="text-xs font-medium uppercase tracking-wider dark:text-gray-400"
+          >
+            {isUp ? "涨停收益" : "跌停收益"}
+          </Text>
         </div>
-      )}
-    </div>
-  );
-});
+        <div className="font-bold text-lg dark:text-gray-100 mb-1">
+          {formatCurrency(result.finalPrice, { compact: result.finalPrice >= 1000000 })}
+        </div>
+        <div className={`text-sm ${colors.iconColor} font-medium mb-1`}>
+          {formatPercentage(result.totalReturn, { multiply: false })}
+        </div>
+        {hasStockQuantity && result.positionGain !== undefined && (
+          <div className={`text-sm ${colors.iconColor} truncate`}>
+            {result.positionGain >= 0 ? "+" : ""}
+            {formatCurrency(result.positionGain, {
+              compact: Math.abs(result.positionGain) >= 1000000,
+            })}
+          </div>
+        )}
+      </div>
+    );
+  },
+);
 
 HistoryResultCell.displayName = "HistoryResultCell";

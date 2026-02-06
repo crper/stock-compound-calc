@@ -54,9 +54,7 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
                   className={`${isUp ? "text-red-500 dark:text-red-400" : "text-green-500 dark:text-green-400"}`}
                 />
               </div>
-              <span className="font-semibold text-gray-800 dark:text-gray-100">
-                {title}
-              </span>
+              <span className="font-semibold text-gray-800 dark:text-gray-100">{title}</span>
             </div>
             {params && (
               <Tag
@@ -76,12 +74,8 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
         className={`rounded-xl border-2 ${colors.border} overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}
       >
         {/* 摘要区 - 始终显示 */}
-        <div
-          className={`text-center p-5 rounded-lg border ${colors.bg} ${colors.border}`}
-        >
-          <Text className="block text-xs text-gray-500 dark:text-gray-400 mb-2">
-            最终股价
-          </Text>
+        <div className={`text-center p-5 rounded-lg border ${colors.bg} ${colors.border}`}>
+          <Text className="block text-xs text-gray-500 dark:text-gray-400 mb-2">最终股价</Text>
           <div
             className={`font-bold mb-1 font-mono tracking-tight ${colors.text} ${
               result.finalPrice >= 10000000 ? "text-2xl" : "text-3xl"
@@ -113,16 +107,14 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
             )}
 
             {/* 持仓变化（有股数时显示） */}
-            {result.positionValue &&
-              result.positionGain !== undefined &&
-              params?.stockQuantity && (
-                <PositionChangeSection
-                  positionValue={result.positionValue}
-                  positionGain={result.positionGain}
-                  stockQuantity={params.stockQuantity}
-                  isUp={isUp}
-                />
-              )}
+            {result.positionValue && result.positionGain !== undefined && params?.stockQuantity && (
+              <PositionChangeSection
+                positionValue={result.positionValue}
+                positionGain={result.positionGain}
+                stockQuantity={params.stockQuantity}
+                isUp={isUp}
+              />
+            )}
 
             {/* 关键指标 */}
             {params && (
@@ -138,10 +130,7 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
 
         {/* 移动端折叠按钮 */}
         {isMobile && (
-          <CollapseButton
-            isExpanded={isExpanded}
-            onClick={() => setIsExpanded(!isExpanded)}
-          />
+          <CollapseButton isExpanded={isExpanded} onClick={() => setIsExpanded(!isExpanded)} />
         )}
       </Card>
     );

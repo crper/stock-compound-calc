@@ -16,6 +16,7 @@ import {
   FloatButton,
 } from "antd";
 import { HistoryOutlined, CalculatorOutlined, ArrowUpOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { useLossRecovery } from "@/hooks/useLossRecovery";
 import { useResponsive } from "@/hooks/useResponsive";
 import {
@@ -25,12 +26,14 @@ import {
   NavMenu,
   ThemeToggle,
   ErrorBoundary,
+  LanguageSelector,
 } from "@/components";
 
 const { Title, Text } = Typography;
 
 export const LossRecoveryCalculator: React.FC = () => {
   const { isMobile } = useResponsive();
+  const { t } = useTranslation();
   const {
     lossPercent,
     history,
@@ -96,9 +99,9 @@ export const LossRecoveryCalculator: React.FC = () => {
                                     WebkitTextFillColor: "transparent",
                                   }}
                                 >
-                                  亏损回本计算器
+                                  {t("recoveryCalculator.title")}
                                 </Title>
-                                <Tooltip title="计算亏损后回本所需的涨幅">
+                                <Tooltip title={t("recoveryCalculator.description")}>
                                   <Tag
                                     icon={<ArrowUpOutlined />}
                                     color="warning"
@@ -108,7 +111,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                                       display: isMobile ? "none" : "inline-flex",
                                     }}
                                   >
-                                    回本分析
+                                    {t("common.tags.recoveryAnalysis")}
                                   </Tag>
                                 </Tooltip>
                               </Space>
@@ -120,7 +123,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                                     fontSize: isMobile ? "0.75rem" : "0.875rem",
                                   }}
                                 >
-                                  智能计算回本所需涨幅，提供完整速查表
+                                  {t("recoveryCalculator.subtitle")}
                                 </Typography.Text>
                               </div>
 
@@ -138,7 +141,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                                     border: "1px solid rgba(102, 126, 234, 0.2)",
                                   }}
                                 >
-                                  实时计算
+                                  {t("common.tags.realTime")}
                                 </Tag>
                                 <Tag
                                   color="purple"
@@ -149,7 +152,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                                     border: "1px solid rgba(118, 75, 162, 0.2)",
                                   }}
                                 >
-                                  1-100%速查
+                                  {t("common.tags.quickLookup")}
                                 </Tag>
                                 <Tag
                                   color="orange"
@@ -160,7 +163,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                                     border: "1px solid rgba(250, 173, 20, 0.2)",
                                   }}
                                 >
-                                  风险评估
+                                  {t("common.tags.riskAssessment")}
                                 </Tag>
                               </Space>
                             </div>
@@ -178,6 +181,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                         >
                           <Space size="small">
                             <ThemeToggle />
+                            <LanguageSelector />
                             <Divider orientation="vertical" style={{ height: 24 }} />
                             <Badge
                               count={history.length}
@@ -199,7 +203,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                                       : undefined,
                                 }}
                               >
-                                历史记录
+                                {t("common.buttons.history")}
                               </Button>
                             </Badge>
                           </Space>
@@ -265,14 +269,14 @@ export const LossRecoveryCalculator: React.FC = () => {
         >
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <Title level={4} className="!m-0 dark:text-gray-100">
-              历史记录
+              {t("stockCalculator.history.title")}
             </Title>
             <Space>
               <Button danger size="small" onClick={clearHistory} disabled={history.length === 0}>
-                清空
+                {t("common.buttons.clearHistory")}
               </Button>
               <Button size="small" onClick={() => setHistoryDrawerVisible(false)}>
-                关闭
+                {t("common.buttons.close")}
               </Button>
             </Space>
           </div>
@@ -281,7 +285,7 @@ export const LossRecoveryCalculator: React.FC = () => {
               <div className="flex items-center justify-center h-full text-gray-400">
                 <Flex vertical align="center" gap="middle">
                   <HistoryOutlined style={{ fontSize: 48 }} />
-                  <Text>暂无历史记录</Text>
+                  <Text>{t("common.empty.noHistory")}</Text>
                 </Flex>
               </div>
             ) : (
@@ -296,10 +300,11 @@ export const LossRecoveryCalculator: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <Flex vertical gap="small">
                         <Text strong className="dark:text-gray-200">
-                          亏损 {item.lossPercent}%
+                          {t("recoveryCalculator.results.currentLoss")} {item.lossPercent}%
                         </Text>
                         <Text type="secondary" className="text-xs">
-                          需涨 {item.requiredGain}% · {item.multiplier}x
+                          {t("recoveryCalculator.results.requiredGain")} {item.requiredGain}% ·{" "}
+                          {item.multiplier}x
                         </Text>
                         <Text type="secondary" className="text-xs">
                           {item.createdAt}
@@ -314,7 +319,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                           deleteHistory([item.id]);
                         }}
                       >
-                        删除
+                        {t("common.buttons.delete")}
                       </Button>
                     </div>
                   </Card>
@@ -335,7 +340,7 @@ export const LossRecoveryCalculator: React.FC = () => {
               bottom: 24,
               boxShadow: "0 4px 14px rgba(102, 126, 234, 0.4)",
             }}
-            tooltip="查看历史记录"
+            tooltip={t("common.tooltips.historyButton")}
           />
         )}
       </div>

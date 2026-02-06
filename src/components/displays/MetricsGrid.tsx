@@ -27,9 +27,7 @@ interface MetricItemProps {
 
 const MetricItem: React.FC<MetricItemProps> = React.memo(
   ({ label, value, tooltip, colorClass, bgClass }) => (
-    <div
-      className={`text-center p-3 rounded-lg border ${bgClass} ${colorClass}`}
-    >
+    <div className={`text-center p-3 rounded-lg border ${bgClass} ${colorClass}`}>
       <div className="flex items-center justify-center gap-1 mb-1">
         <Text className="text-xs text-gray-500 dark:text-gray-400">{label}</Text>
         {tooltip && (
@@ -105,9 +103,7 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
     return (
       <div className="mt-4">
         <div className="flex items-center gap-2 mb-3">
-          <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            关键指标
-          </Text>
+          <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300">关键指标</Text>
           <Tooltip title="关键指标帮助您快速评估投资潜力和风险">
             <InfoCircleOutlined className="text-gray-400 text-[13px]" />
           </Tooltip>

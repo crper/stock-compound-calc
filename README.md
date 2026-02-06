@@ -4,6 +4,12 @@
 
 ## 功能特性
 
+### 🌍 多语言支持
+
+- **中文/英文切换**：支持简体中文和英文界面
+- **自动检测**：根据浏览器语言自动选择（`zh*` 开头→中文，其他→英文）
+- **持久化记忆**：语言偏好保存在 localStorage
+
 ### 📈 股价连板计算器
 
 - **双向计算**：同时计算涨停和跌停的收益情况
@@ -32,14 +38,17 @@
 
 ### 前端
 
-- **React 19.2.3** - UI 框架
+- **React 19.2.4** - UI 框架
 - **React Router 7.13.0** - 路由管理
-- **Ant Design 6.2.0** - UI 组件库
+- **Ant Design 6.2.3** - UI 组件库
 - **Tailwind CSS 4.1.18** - 样式方案
 - **Dexie.js 4.3.0** - IndexedDB 客户端
 - **Dexie React Hooks 4.2.0** - 响应式数据查询
-- **Recharts 3.6.0** - 数据可视化
+- **Recharts 3.7.0** - 数据可视化
 - **Day.js 1.11.19** - 日期处理
+- **react-i18next 16.5.4** - 国际化框架
+- **i18next 25.8.4** - 国际化核心
+- **i18next-browser-languagedetector 8.2.0** - 浏览器语言检测
 
 ### 后端（简化）
 
@@ -139,6 +148,8 @@ src/
 │   ├── displays/    # 展示组件
 │   ├── forms/       # 表单组件
 │   ├── navigation/  # 导航组件
+│   │   ├── NavMenu.tsx          # 导航菜单
+│   │   └── LanguageSelector.tsx # 语言切换
 │   └── shared/      # 共享组件
 ├── db/              # IndexedDB 数据库层 (Dexie)
 │   ├── dexie.ts                    # 数据库配置
@@ -147,6 +158,12 @@ src/
 ├── hooks/           # 自定义 Hooks
 │   ├── useLossRecovery.ts    # 亏损回本计算
 │   └── useStockCalculator.ts # 连板收益计算
+├── i18n/            # 国际化配置
+│   ├── index.ts                # i18n 初始化
+│   ├── types.ts                # 类型定义
+│   └── locales/                # 翻译文件
+│       ├── zh-CN.ts            # 简体中文
+│       └── en-US.ts            # 英文
 ├── services/        # 业务服务层
 │   ├── calculationService.ts # 计算服务
 │   └── __tests__/            # 服务测试
@@ -161,7 +178,8 @@ src/
 ├── types/           # TypeScript 类型
 ├── pages/           # 页面组件
 │   ├── StockCalculator.tsx      # 连板计算器页面
-│   └── LossRecoveryCalculator.tsx # 回本计算器页面
+│   ├── LossRecoveryCalculator.tsx # 回本计算器页面
+│   └── About.tsx                # 关于页面
 ├── theme/           # 主题配置
 ├── App.tsx          # 根组件
 └── main.tsx         # 应用入口
@@ -253,6 +271,40 @@ NODE_ENV=production
 所有数据存储在浏览器的 IndexedDB 中，无需服务器端数据库。历史记录在客户端本地持久化。
 
 ## 更新日志
+
+### 2026-02-06
+
+#### 功能增强 - 国际化与关于页面
+
+**多语言支持**
+
+- 集成 `react-i18next` + `i18next` 国际化框架
+- 支持简体中文(zh-CN)和英文(en-US)两种语言
+- 浏览器语言自动检测：`zh*` 开头→中文，其他→英文
+- 语言偏好持久化到 localStorage（键：`app-language`）
+- 100+ 处硬编码中文文本提取到翻译文件
+
+**关于页面**
+
+- 新增 `/about` 路由和页面组件
+- 展示技术栈详情（Bun + React 19 + TypeScript + Ant Design + Tailwind + IndexedDB + Dexie + React Router + Recharts + Decimal.js + Zod + i18next）
+- 介绍核心功能（股价连板计算器、亏损回本计算器、数据可视化、历史记录）
+- 开发者信息（GitHub: https://github.com/crper）
+- 免责声明
+
+**UI 优化**
+
+- 新增 `LanguageSelector` 语言切换组件（顶部导航栏）
+- NavMenu 导航添加"关于"选项
+- 页脚文本支持国际化
+- ThemeProvider 集成 Ant Design locale
+
+**代码质量**
+
+- 所有组件使用 `useTranslation` hook 获取翻译
+- 翻译文件按命名空间组织：common、stockCalculator、recoveryCalculator、about、validation
+- lint 0 warnings 0 errors
+- 构建成功，无性能回归
 
 ### 2026-02-04
 

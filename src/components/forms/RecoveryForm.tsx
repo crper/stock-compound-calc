@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, Form, Slider, Typography, Space } from "antd";
 import { useResponsive } from "@/hooks/useResponsive";
 import { CARD_STYLES, SLIDER_STYLES } from "@/constants/uiPatterns";
@@ -11,6 +12,7 @@ interface RecoveryFormProps {
 }
 
 export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, onChange }) => {
+  const { t } = useTranslation();
   useResponsive(); // 响应式 hooks，用于获取设备信息
 
   const handleSliderChange = useCallback(
@@ -50,7 +52,7 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
       title={
         <div className="flex items-center justify-between">
           <Title level={4} className="!m-0 dark:text-gray-100 text-lg lg:text-base font-semibold">
-            亏损百分比
+            {t("recoveryCalculator.form.title")}
           </Title>
         </div>
       }
@@ -70,10 +72,10 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
             <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
               <Space size="small" style={{ marginBottom: 16 }} className="whitespace-nowrap">
                 <Text strong className="dark:text-gray-200 text-base lg:text-sm">
-                  当前亏损
+                  {t("recoveryCalculator.form.currentLoss")}
                 </Text>
                 <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
-                  (%)
+                  ({t("recoveryCalculator.form.unit")})
                 </Text>
               </Space>
 
@@ -107,14 +109,14 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
                 type="secondary"
                 className="dark:text-gray-400 block mt-4 text-xs lg:text-[11px]"
               >
-                拖动滑块设置亏损百分比，范围 0% - 99.9%
+                {t("recoveryCalculator.form.sliderDescription")}
               </Text>
             </div>
           </Form.Item>
 
           <div className="space-y-3">
             <Text strong className="text-gray-500 dark:text-gray-400 text-base lg:text-sm">
-              快速选择：
+              {t("recoveryCalculator.form.presets.label")}
             </Text>
             <div className="flex flex-wrap gap-2">
               {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((preset) => (

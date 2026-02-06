@@ -1,11 +1,8 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Card, Typography, Flex, Statistic, Alert } from "antd";
 import { ArrowUpOutlined } from "@ant-design/icons";
-import {
-  calculateRecovery,
-  formatRecoveryNumber,
-  getDifficultyLevel,
-} from "@/utils/lossRecovery";
+import { calculateRecovery, formatRecoveryNumber, getDifficultyLevel } from "@/utils/lossRecovery";
 import { CARD_STYLES } from "@/constants/uiPatterns";
 
 const { Title, Text } = Typography;
@@ -15,8 +12,21 @@ interface RecoveryResultProps {
 }
 
 export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossPercent }) => {
+  const { t } = useTranslation();
   const metrics = calculateRecovery(lossPercent);
   const difficulty = getDifficultyLevel(lossPercent);
+
+  const getDifficultyTranslationKey = (text: string): string => {
+    const keyMap: Record<string, string> = {
+      无需回本: "recoveryCalculator.results.difficultyLevels.noLoss",
+      容易: "recoveryCalculator.results.difficultyLevels.easy",
+      中等: "recoveryCalculator.results.difficultyLevels.medium",
+      困难: "recoveryCalculator.results.difficultyLevels.hard",
+      非常难: "recoveryCalculator.results.difficultyLevels.veryHard",
+      几乎不可能: "recoveryCalculator.results.difficultyLevels.almostImpossible",
+    };
+    return keyMap[text] || text;
+  };
 
   return (
     <Card
@@ -24,7 +34,7 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
       title={
         <div className="flex items-center justify-between">
           <Title level={4} className="!m-0 dark:text-gray-100 text-lg lg:text-base font-semibold">
-            回本分析
+            {t("recoveryCalculator.results.title")}
           </Title>
         </div>
       }
@@ -43,7 +53,9 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
           className={`p-4 rounded-xl ${difficulty.bgColor} border border-gray-200 dark:border-gray-700`}
         >
           <Flex vertical gap="small" className="w-full">
-            <Text className="dark:text-gray-300 text-sm">回本难度</Text>
+            <Text className="dark:text-gray-300 text-sm">
+              {t("recoveryCalculator.results.difficulty.label")}
+            </Text>
             <div className="flex items-center gap-3">
               <div
                 className="px-3 py-1 rounded-full text-sm font-bold"
@@ -52,7 +64,7 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
                   color: "#fff",
                 }}
               >
-                {difficulty.text}
+                {t(getDifficultyTranslationKey(difficulty.text))}
               </div>
             </div>
           </Flex>
@@ -61,7 +73,9 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-200 dark:border-gray-700">
             <Flex vertical gap="small" className="w-full">
-              <Text className="dark:text-gray-300 text-sm">当前亏损</Text>
+              <Text className="dark:text-gray-300 text-sm">
+                {t("recoveryCalculator.results.currentLoss")}
+              </Text>
               <Statistic
                 value={lossPercent.toFixed(1)}
                 suffix="%"
@@ -80,7 +94,7 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
             <Flex vertical gap="small" className="w-full">
               <Text className="dark:text-gray-300 text-sm flex items-center gap-1">
                 <ArrowUpOutlined className="text-green-500" />
-                需要上涨
+                {t("recoveryCalculator.results.requiredGain")}
               </Text>
               <Statistic
                 value={metrics.isInfinity ? "∞" : formatRecoveryNumber(metrics.requiredGain)}
@@ -104,7 +118,9 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
 
         <div className="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-200 dark:border-gray-700">
           <Flex vertical gap="small" className="w-full">
-            <Text className="dark:text-gray-300 text-sm">回本倍数</Text>
+            <Text className="dark:text-gray-300 text-sm">
+              {t("recoveryCalculator.results.multiplier")}
+            </Text>
             <div className="flex items-baseline gap-2">
               <Text
                 className="text-3xl font-bold"
@@ -119,16 +135,26 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
               </Text>
             </div>
             <Text type="secondary" className="dark:text-gray-400 text-xs">
-              当前市值需上涨此倍数才能回本
+              {t("recoveryCalculator.results.multiplierDesc")}
             </Text>
           </Flex>
         </div>
 
         {lossPercent >= 50 && (
           <Alert
-            title="高风险提醒"
-            description="当亏损超过50%时，回本需要翻倍以上的涨幅，投资风险极高。建议合理控制仓位，设置止损线。"
+            message={t("recoveryCalculator.results.warnings.highRisk.title")}
+            description={t("recoveryCalculator.results.warnings.highRisk.desc")}
             type="warning"
+            showIcon
+            className="rounded-xl"
+          />
+        )}
+
+        {lossPercent >= 80 && (
+          <Alert
+            message={t("recoveryCalculator.results.warnings.severe.title")}
+            description={t("recoveryCalculator.results.warnings.severe.desc")}
+            type="error"
             showIcon
             className="rounded-xl"
           />

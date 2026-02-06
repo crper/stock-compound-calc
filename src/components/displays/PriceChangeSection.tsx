@@ -23,14 +23,10 @@ export const PriceChangeSection: React.FC<PriceChangeSectionProps> = React.memo(
 
     return (
       <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-        <Text className="block text-xs text-gray-500 dark:text-gray-400 mb-2">
-          股价变化
-        </Text>
+        <Text className="block text-xs text-gray-500 dark:text-gray-400 mb-2">股价变化</Text>
         <div className="flex items-center justify-between">
           <div className="text-center flex-1">
-            <Text className="block text-xs text-gray-400 dark:text-gray-500 mb-1">
-              初始
-            </Text>
+            <Text className="block text-xs text-gray-400 dark:text-gray-500 mb-1">初始</Text>
             <Text className="text-lg font-semibold font-mono text-gray-700 dark:text-gray-200">
               {formatCurrency(initialPrice)}
             </Text>
@@ -41,9 +37,7 @@ export const PriceChangeSection: React.FC<PriceChangeSectionProps> = React.memo(
           </div>
 
           <div className="text-center flex-1">
-            <Text className="block text-xs text-gray-400 dark:text-gray-500 mb-1">
-              最终
-            </Text>
+            <Text className="block text-xs text-gray-400 dark:text-gray-500 mb-1">最终</Text>
             <Text className={`text-lg font-semibold font-mono ${colorClass}`}>
               {formatCurrency(finalPrice)}
             </Text>

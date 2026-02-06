@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import Decimal from "decimal.js";
 import { Table, Card, Typography, Space } from "antd";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -20,6 +21,7 @@ interface TableData {
 }
 
 export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ currentValue }) => {
+  const { t } = useTranslation();
   const { isMobile } = useResponsive();
 
   const generateData = (): TableData[] => {
@@ -48,7 +50,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
 
   const columns: ColumnsType<TableData> = [
     {
-      title: "亏损",
+      title: t("recoveryCalculator.table.columns.loss"),
       dataIndex: "lossPercent",
       key: "lossPercent",
       width: isMobile ? 80 : 100,
@@ -60,7 +62,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       ),
     },
     {
-      title: "需涨",
+      title: t("recoveryCalculator.table.columns.required"),
       dataIndex: "requiredGain",
       key: "requiredGain",
       width: isMobile ? 100 : 120,
@@ -75,7 +77,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       },
     },
     {
-      title: "倍数",
+      title: t("recoveryCalculator.table.columns.multiplier"),
       dataIndex: "multiplier",
       key: "multiplier",
       width: isMobile ? 80 : 100,
@@ -101,11 +103,11 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       title={
         <div className="flex items-center justify-between">
           <Title level={4} className="!m-0 dark:text-gray-100 text-lg lg:text-base font-semibold">
-            速查表
+            {t("recoveryCalculator.table.title")}
           </Title>
           <Space size="small">
             <Text type="secondary" className="dark:text-gray-400 text-xs">
-              1% - 100%
+              {t("recoveryCalculator.table.range")}
             </Text>
           </Space>
         </div>
@@ -143,7 +145,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       </div>
       <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <Text type="secondary" className="dark:text-gray-400 text-xs block text-center">
-          公式：需涨幅% = 亏损% ÷ (100 - 亏损%) × 100
+          {t("recoveryCalculator.table.formula")}
         </Text>
       </div>
     </Card>

@@ -4,6 +4,7 @@
  */
 import { Card, Col, Empty, Row } from "antd";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import type { CalculationResult, CalculationParams } from "@/types";
 import { ResultOverviewCard } from "./ResultOverviewCard";
 import { ChartContainer } from "../charts/ChartContainer";
@@ -42,6 +43,8 @@ interface ResultsDisplayProps {
 
 export const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
   ({ results, isMobile, params }) => {
+    const { t } = useTranslation();
+
     if (!results) {
       return (
         <Card
@@ -74,10 +77,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
             description={
               <div className="text-center">
                 <span className="text-gray-500 dark:text-gray-400 text-base block mb-2 transition-all duration-300">
-                  输入参数后自动显示计算结果
+                  {t("stockCalculator.results.empty.title")}
                 </span>
                 <span className="text-gray-400 dark:text-gray-500 text-sm">
-                  调整表单中的参数开始计算
+                  {t("stockCalculator.results.empty.subtitle")}
                 </span>
               </div>
             }

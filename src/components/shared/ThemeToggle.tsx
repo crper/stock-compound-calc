@@ -2,12 +2,20 @@ import React from "react";
 import { Button, Tooltip } from "antd";
 import { SunOutlined, MoonOutlined } from "@ant-design/icons";
 import { useTheme } from "@/theme";
+import { useTranslation } from "react-i18next";
 
 export const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation();
 
   return (
-    <Tooltip title={theme === "light" ? "切换到暗色模式" : "切换到亮色模式"}>
+    <Tooltip
+      title={
+        theme === "light"
+          ? t("common.tooltips.themeToggle.dark")
+          : t("common.tooltips.themeToggle.light")
+      }
+    >
       <Button
         shape="circle"
         icon={theme === "light" ? <SunOutlined /> : <MoonOutlined />}

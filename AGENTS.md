@@ -1,7 +1,7 @@
 # AGENTS.md - AI 编码指南
 
-**项目:** 股票计算器 (Bun + React 19 + TypeScript + IndexedDB + Dexie + React Router + Tailwind v4 + Ant Design v6)
-**最后更新:** 2026-02-04
+**项目:** 股票计算器 (Bun + React 19 + TypeScript + IndexedDB + Dexie + React Router + Tailwind v4 + Ant Design v6 + i18next)
+**最后更新:** 2026-02-06
 
 ## 🛠 核心命令
 
@@ -174,6 +174,12 @@ src/
 │   ├── calculationRepository.ts     # 数据访问层
 │   └── __tests__/                  # 数据库测试
 ├── hooks/           # 自定义 Hooks
+├── i18n/            # 国际化配置
+│   ├── index.ts                    # i18n 初始化
+│   ├── types.ts                    # 翻译类型定义
+│   └── locales/                    # 翻译文件
+│       ├── zh-CN.ts                # 简体中文
+│       └── en-US.ts                # 英文
 ├── services/        # 业务服务层
 │   └── __tests__/                  # 服务测试
 ├── utils/           # 工具函数
@@ -204,6 +210,44 @@ src/
 - **常量集中**: 所有配置常量放在 `shared/constants`，禁止硬编码魔法数字
 - **性能优化**: `useLiveQuery` 自动响应数据变化，无需手动缓存失效
 - **代码精简**: 删除冗余文件和重复配置，不保留 `@deprecated` 兼容代码
+- **国际化**: 所有用户界面文本使用 `react-i18next`，支持中英文切换
+
+### 国际化规范
+
+**翻译文件组织**
+
+翻译文件位于 `src/i18n/locales/`，按命名空间组织：
+
+- `common` - 通用文本（导航、按钮、页脚）
+- `stockCalculator` - 股价连板计算器
+- `recoveryCalculator` - 亏损回本计算器
+- `about` - 关于页面
+- `validation` - 表单验证错误
+
+**使用示例**
+
+```typescript
+import { useTranslation } from "react-i18next";
+
+export const Component: React.FC = () => {
+  const { t } = useTranslation();
+
+  return <Button>{t("common.buttons.confirm")}</Button>;
+};
+```
+
+**语言策略**
+
+- 浏览器语言 `zh*` 开头 → 中文，其他 → 英文
+- 兜底语言：英文
+- 语言偏好持久化到 localStorage（键：`app-language`）
+
+**新增文本规范**
+
+1. 不要直接在组件中写中文或英文硬编码
+2. 先在 `zh-CN.ts` 和 `en-US.ts` 中添加对应的翻译键
+3. 使用 `t("namespace.key")` 引用翻译
+4. 变量插值使用 `t("key", { variable: value })`
 
 ## ⚠️ 关键约束
 
@@ -212,10 +256,12 @@ src/
 - **禁止** 已废弃的 Ant Design API (oxlint 会强制拦截)
 - **禁止** 在计算中使用 JavaScript Number (必须用 Decimal.js)
 - **禁止** `any` 类型 (使用 `unknown` + 类型守卫)
+- **禁止** 硬编码中文或英文文本（必须使用 `useTranslation`）
 - **必须** 所有 API 输入使用 Zod schema 验证
 - **必须** 每次提交前运行 `bun run lint` + `bun run format`
 - **必须** 在前端业务逻辑变更时更新或添加 `src/services/__tests__` 下的测试
 - **必须** 视觉变更保持深色/浅色模式兼容性
+- **必须** 所有用户界面文本使用 i18n 翻译
 
 ## 🎨 Ant Design 主题配置最佳实践
 
@@ -296,6 +342,13 @@ const antThemeConfig: ThemeConfig = {
 - [ ] `Statistic valueStyle` 已替换为 `styles.content`
 - [ ] `Alert message` 已替换为 `title`
 - [ ] 使用 `Form.useWatch` 而非 `form.getFieldValue`
+
+### 国际化检查
+
+- [ ] 无硬编码中文或英文文本
+- [ ] 所有文本使用 `t()` 函数引用
+- [ ] 翻译键已添加到 `zh-CN.ts` 和 `en-US.ts`
+- [ ] 变量插值使用 `t("key", { variable: value })`
 
 ### 性能检查
 

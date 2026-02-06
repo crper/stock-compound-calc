@@ -40,6 +40,7 @@ import {
   ArrowUpOutlined,
   ArrowDownOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { useStockCalculator } from "@/hooks/useStockCalculator";
 import { useResponsive } from "@/hooks/useResponsive";
 import {
@@ -49,6 +50,7 @@ import {
   ErrorBoundary,
   ThemeToggle,
   NavMenu,
+  LanguageSelector,
 } from "@/components";
 
 const { Title } = Typography;
@@ -59,6 +61,9 @@ export const StockCalculator: React.FC = () => {
 
   // 获取响应式状态，用于移动端适配
   const { isMobile } = useResponsive();
+
+  // 获取翻译函数
+  const { t } = useTranslation();
 
   // 使用自定义 Hook 管理股票计算器的核心业务逻辑
   // 包含：计算结果、错误处理、历史记录管理等功能
@@ -143,9 +148,9 @@ export const StockCalculator: React.FC = () => {
                                     WebkitTextFillColor: "transparent",
                                   }}
                                 >
-                                  股价收益计算器
+                                  {t("stockCalculator.title")}
                                 </Title>
-                                <Tooltip title="支持涨停/跌停双向计算">
+                                <Tooltip title={t("stockCalculator.description")}>
                                   <Tag
                                     icon={<ArrowUpOutlined />}
                                     color="success"
@@ -155,7 +160,7 @@ export const StockCalculator: React.FC = () => {
                                       display: isMobile ? "none" : "inline-flex",
                                     }}
                                   >
-                                    涨停
+                                    {t("common.tags.limitUp")}
                                   </Tag>
                                   <Tag
                                     icon={<ArrowDownOutlined />}
@@ -166,7 +171,7 @@ export const StockCalculator: React.FC = () => {
                                       display: isMobile ? "none" : "inline-flex",
                                     }}
                                   >
-                                    跌停
+                                    {t("common.tags.limitDown")}
                                   </Tag>
                                 </Tooltip>
                               </Space>
@@ -179,7 +184,7 @@ export const StockCalculator: React.FC = () => {
                                     fontSize: isMobile ? "0.75rem" : "0.875rem",
                                   }}
                                 >
-                                  智能分析连板收益，实时计算投资回报
+                                  {t("stockCalculator.subtitle")}
                                 </Typography.Text>
                               </div>
 
@@ -198,7 +203,7 @@ export const StockCalculator: React.FC = () => {
                                     border: "1px solid rgba(102, 126, 234, 0.2)",
                                   }}
                                 >
-                                  实时计算
+                                  {t("common.tags.realTime")}
                                 </Tag>
                                 <Tag
                                   color="purple"
@@ -209,7 +214,7 @@ export const StockCalculator: React.FC = () => {
                                     border: "1px solid rgba(118, 75, 162, 0.2)",
                                   }}
                                 >
-                                  历史记录
+                                  {t("common.tags.history")}
                                 </Tag>
                                 <Tag
                                   color="cyan"
@@ -220,7 +225,7 @@ export const StockCalculator: React.FC = () => {
                                     border: "1px solid rgba(6, 182, 212, 0.2)",
                                   }}
                                 >
-                                  数据可视化
+                                  {t("common.tags.visualization")}
                                 </Tag>
                               </Space>
                             </div>
@@ -238,6 +243,7 @@ export const StockCalculator: React.FC = () => {
                         >
                           <Space size="small">
                             <ThemeToggle />
+                            <LanguageSelector />
                             <Divider orientation="vertical" style={{ height: 24 }} />
                             <Badge
                               count={history.length}
@@ -259,7 +265,7 @@ export const StockCalculator: React.FC = () => {
                                       : undefined,
                                 }}
                               >
-                                历史记录
+                                {t("common.buttons.history")}
                               </Button>
                             </Badge>
                           </Space>
@@ -284,7 +290,7 @@ export const StockCalculator: React.FC = () => {
                 >
                   {error && (
                     <Alert
-                      title="输入错误"
+                      title={t("stockCalculator.errors.inputError")}
                       description={error}
                       type="error"
                       showIcon
@@ -347,7 +353,7 @@ export const StockCalculator: React.FC = () => {
             bottom: 24,
             boxShadow: "0 4px 14px rgba(102, 126, 234, 0.4)",
           }}
-          tooltip="查看历史记录"
+          tooltip={t("common.tooltips.historyButton")}
         />
       )}
     </ErrorBoundary>

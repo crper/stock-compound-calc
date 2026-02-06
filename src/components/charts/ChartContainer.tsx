@@ -4,6 +4,7 @@
  */
 import { Alert } from "antd";
 import React, { Suspense, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BasicChart } from "./BasicChart";
 import { ChartTypeSelector, type ChartType } from "./ChartTypeSelector";
 import { LoadingState } from "@/components/shared/ui";
@@ -25,6 +26,8 @@ const ChartWrapper: React.FC<{
   isMobile: boolean;
   chartType: ChartType;
 }> = React.memo(({ results, isMobile, chartType }) => {
+  const { t } = useTranslation();
+
   if (!results?.up?.dailyDetails || !results?.down?.dailyDetails) {
     return (
       <div
@@ -37,7 +40,9 @@ const ChartWrapper: React.FC<{
         }}
         className="bg-gray-50 dark:bg-gray-800"
       >
-        <span className="text-gray-400 dark:text-gray-500 text-xs sm:text-sm">暂无图表数据</span>
+        <span className="text-gray-400 dark:text-gray-500 text-xs sm:text-sm">
+          {t("stockCalculator.charts.noData")}
+        </span>
       </div>
     );
   }
@@ -45,7 +50,7 @@ const ChartWrapper: React.FC<{
   return (
     <Suspense
       fallback={
-        <LoadingState loading text="正在加载图表..." showOverlay={false}>
+        <LoadingState loading text={t("stockCalculator.charts.loading")} showOverlay={false}>
           <div className="h-[400px] bg-gray-50 dark:bg-gray-800 rounded-lg" />
         </LoadingState>
       }
@@ -58,6 +63,7 @@ const ChartWrapper: React.FC<{
 ChartWrapper.displayName = "ChartWrapper";
 
 export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ results, isMobile }) => {
+  const { t } = useTranslation();
   const [hasError, setHasError] = React.useState(false);
   const [chartType, setChartType] = useState<ChartType>("BAR");
 
@@ -93,15 +99,15 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
           }}
         >
           <span className="text-xl">📊</span>
-          <span>数据可视化</span>
+          <span>{t("stockCalculator.charts.title")}</span>
         </Title>
         <ChartTypeSelector value={chartType} onChange={setChartType} />
       </div>
 
       {hasError && (
         <Alert
-          title="数据加载失败"
-          description="无法加载图表数据，请检查输入参数"
+          message={t("stockCalculator.charts.error.title")}
+          description={t("stockCalculator.charts.error.message")}
           type="error"
           showIcon
           className="shake rounded-xl"

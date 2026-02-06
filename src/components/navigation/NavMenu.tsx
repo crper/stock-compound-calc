@@ -1,7 +1,8 @@
 import React from "react";
 import { Tabs } from "antd";
-import { LineChartOutlined, CalculatorOutlined } from "@ant-design/icons";
+import { LineChartOutlined, CalculatorOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface NavMenuProps {
   isMobile?: boolean;
@@ -10,19 +11,29 @@ interface NavMenuProps {
 export const NavMenu: React.FC<NavMenuProps> = React.memo(({ isMobile = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const currentPath = location.pathname;
 
   const items = [
     {
       key: "/",
-      label: isMobile ? "股价连板" : "股价连板计算器",
+      label: isMobile
+        ? t("common.navigation.stockCalculator").slice(0, 4)
+        : t("common.navigation.stockCalculator"),
       icon: <LineChartOutlined />,
     },
     {
       key: "/recovery",
-      label: isMobile ? "亏损回本" : "亏损回本计算器",
+      label: isMobile
+        ? t("common.navigation.lossRecovery").slice(0, 4)
+        : t("common.navigation.lossRecovery"),
       icon: <CalculatorOutlined />,
+    },
+    {
+      key: "/about",
+      label: isMobile ? t("common.navigation.about") : t("common.navigation.about"),
+      icon: <InfoCircleOutlined />,
     },
   ];
 

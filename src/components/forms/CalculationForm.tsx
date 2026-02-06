@@ -2,6 +2,7 @@ import type { FormInstance } from "antd/es/form";
 import type { CalculationParams } from "@/types";
 import { Alert, Button, Card, Form, InputNumber, Slider, Space, Typography } from "antd";
 import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useResponsive } from "@/hooks/useResponsive";
 import { getFieldErrorMessage } from "@/utils/validator";
 import { FORM_CONFIG } from "@/constants";
@@ -18,6 +19,7 @@ interface CalculationFormProps {
 
 export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
   ({ form, onValuesChange, isFieldValid, error = null }) => {
+    const { t } = useTranslation();
     const { isMobile, size: responsiveSize, cardSize, spacing, buttonSize } = useResponsive();
     const [hoveredPreset, setHoveredPreset] = useState<number | null>(null);
 
@@ -78,7 +80,14 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
           onValuesChange({ [fieldName]: value }, allValues);
         }
       },
-      [form, onValuesChange, initialPriceValue, boardCountValue, dailyReturnValue, stockQuantityValue],
+      [
+        form,
+        onValuesChange,
+        initialPriceValue,
+        boardCountValue,
+        dailyReturnValue,
+        stockQuantityValue,
+      ],
     );
 
     // 处理预设按钮点击
@@ -89,13 +98,27 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
       [handleFieldChange],
     );
 
+    // 获取预设按钮的翻译键
+    const getPresetTranslationKey = (value: number): string => {
+      switch (value) {
+        case 10:
+          return "stockCalculator.form.presets.mainBoard";
+        case 20:
+          return "stockCalculator.form.presets.starMarket";
+        case 30:
+          return "stockCalculator.form.presets.bex";
+        default:
+          return "";
+      }
+    };
+
     return (
       <Card
         size={cardSize}
         title={
           <div className="flex items-center justify-between">
             <Title level={4} className="!m-0 dark:text-gray-100 text-lg lg:text-base font-semibold">
-              计算参数
+              {t("stockCalculator.form.title")}
             </Title>
           </div>
         }
@@ -111,7 +134,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
       >
         {error && (
           <Alert
-            title="计算错误"
+            message={t("stockCalculator.errors.inputError")}
             description={error}
             type="error"
             showIcon
@@ -142,14 +165,14 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               label={
                 <Space size="small" className="whitespace-nowrap">
                   <Text strong className="dark:text-gray-200 text-base lg:text-sm">
-                    初始股价
+                    {t("stockCalculator.form.initialPrice")}
                   </Text>
                   <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
-                    (元)
+                    ({t("stockCalculator.form.units.yuan")})
                   </Text>
                 </Space>
               }
-              tooltip="请输入股票的起始价格，最大支持10亿"
+              tooltip={t("stockCalculator.form.tooltips.initialPrice")}
               {...getFieldValidation("initialPrice")}
               style={{ marginBottom: isMobile ? 16 : 20 }}
             >
@@ -162,11 +185,11 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 max={1000000000}
                 step={0.01}
                 precision={2}
-                placeholder="请输入初始股价"
+                placeholder={t("stockCalculator.form.placeholders.initialPrice")}
                 controls
                 size={responsiveSize}
                 prefix="¥"
-                suffix="元"
+                suffix={t("stockCalculator.form.units.yuan")}
                 className="hover:border-blue-400 focus:border-blue-500 transition-colors duration-300"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 parser={(value: string | undefined): number => {
@@ -183,14 +206,14 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               label={
                 <Space size="small" className="whitespace-nowrap">
                   <Text strong className="dark:text-gray-200 text-base lg:text-sm">
-                    股票数量
+                    {t("stockCalculator.form.stockQuantity")}
                   </Text>
                   <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
-                    (股)
+                    ({t("stockCalculator.form.units.shares")})
                   </Text>
                 </Space>
               }
-              tooltip="请输入持有的股票数量，选填"
+              tooltip={t("stockCalculator.form.tooltips.stockQuantity")}
               {...getFieldValidation("stockQuantity")}
               style={{ marginBottom: isMobile ? 16 : 20 }}
             >
@@ -203,10 +226,10 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 max={10000000000}
                 step={1000}
                 precision={0}
-                placeholder="选填，默认为100股"
+                placeholder={t("stockCalculator.form.placeholders.stockQuantity")}
                 controls
                 size={responsiveSize}
-                suffix="股"
+                suffix={t("stockCalculator.form.units.shares")}
                 className="hover:border-blue-400 focus:border-blue-500 transition-colors duration-300"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 parser={(value: string | undefined): number | undefined => {
@@ -222,9 +245,14 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
             {initialPriceValue && stockQuantityValue && (
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-3 border border-blue-200 dark:border-blue-800 mb-5">
                 <div className="flex justify-between items-center">
-                  <Text className="text-sm text-gray-600 dark:text-gray-400">初始持仓市值</Text>
+                  <Text className="text-sm text-gray-600 dark:text-gray-400">
+                    {t("stockCalculator.form.initialMarketValue")}
+                  </Text>
                   <Text strong className="text-base text-blue-600 dark:text-blue-400">
-                    ¥{(initialPriceValue * stockQuantityValue).toLocaleString("zh-CN", { maximumFractionDigits: 2 })}
+                    ¥
+                    {(initialPriceValue * stockQuantityValue).toLocaleString("zh-CN", {
+                      maximumFractionDigits: 2,
+                    })}
                   </Text>
                 </div>
               </div>
@@ -239,10 +267,10 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                 <Space size="small" style={{ marginBottom: 12 }} className="whitespace-nowrap">
                   <Text strong className="dark:text-gray-200 text-base lg:text-sm">
-                    涨跌幅度
+                    {t("stockCalculator.form.dailyReturn")}
                   </Text>
                   <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
-                    (%)
+                    ({t("stockCalculator.form.units.percent")})
                   </Text>
                 </Space>
                 <Slider
@@ -265,7 +293,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   type="secondary"
                   className="dark:text-gray-400 block mt-4 text-xs lg:text-[11px]"
                 >
-                  拖动滑块设置每日涨跌幅百分比，范围1%-30%
+                  {t("stockCalculator.form.sliderDescriptions.dailyReturn")}
                 </Text>
               </div>
             </Form.Item>
@@ -280,7 +308,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 }}
                 className="text-gray-500 dark:text-gray-400 text-base lg:text-sm"
               >
-                快速设置：
+                {t("stockCalculator.form.presets.label")}
               </Text>
               <Space wrap size={spacing}>
                 {FORM_CONFIG.PRESETS.map((preset) => {
@@ -314,7 +342,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                       onMouseEnter={() => setHoveredPreset(preset.value)}
                       onMouseLeave={() => setHoveredPreset(null)}
                     >
-                      {preset.label}
+                      {t(getPresetTranslationKey(preset.value))}
                       <Text
                         type="secondary"
                         style={{
@@ -340,10 +368,10 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                 <Space size="small" style={{ marginBottom: 12 }} className="whitespace-nowrap">
                   <Text strong className="dark:text-gray-200 text-base lg:text-sm">
-                    连板数量
+                    {t("stockCalculator.form.boardCount")}
                   </Text>
                   <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
-                    (天)
+                    ({t("stockCalculator.form.units.days")})
                   </Text>
                 </Space>
                 <Slider
@@ -354,7 +382,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   value={boardCountValue}
                   onChange={(value) => handleFieldChange("boardCount", value)}
                   tooltip={{
-                    formatter: (val) => `${val}天`,
+                    formatter: (val) => t("stockCalculator.results.overview.days", { count: val }),
                     className: "rounded-lg",
                   }}
                   className="custom-slider"
@@ -365,7 +393,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   type="secondary"
                   className="dark:text-gray-400 block mt-4 text-xs lg:text-[11px]"
                 >
-                  拖动滑块设置连续涨停/跌停天数，范围1-15天
+                  {t("stockCalculator.form.sliderDescriptions.boardCount")}
                 </Text>
               </div>
             </Form.Item>

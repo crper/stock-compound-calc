@@ -7,6 +7,7 @@ export * from "./shared";
 
 // 导航组件
 export { NavMenu } from "./navigation/NavMenu";
+export { LanguageSelector } from "./navigation/LanguageSelector";
 
 // 表单组件
 export { CalculationForm } from "./forms/CalculationForm";

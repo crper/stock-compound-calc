@@ -1,5 +1,10 @@
 import { db, type CalculationEntity } from "./dexie";
-import type { CalculationHistory, CalculationParams, CalculationResult, PaginatedData } from "@/types";
+import type {
+  CalculationHistory,
+  CalculationParams,
+  CalculationResult,
+  PaginatedData,
+} from "@/types";
 import { generateId } from "@/utils/idGenerator";
 
 const safeJsonParse = <T>(json: string | undefined, defaultValue: T): T => {

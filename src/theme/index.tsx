@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
 import { theme as antTheme, type ThemeConfig, ConfigProvider, App } from "antd";
+import zhCN from "antd/locale/zh_CN";
+import enUS from "antd/locale/en_US";
+import { useTranslation } from "react-i18next";
+import { LANGUAGES } from "@/i18n";
 
 // 主题类型
 export type ThemeMode = "light" | "dark";
@@ -36,12 +40,22 @@ const DEFAULT_FONT_FAMILY = `-apple-system, BlinkMacSystemFont, 'Segoe UI', Robo
 // 创建上下文
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+// Ant Design locale 映射
+const antLocales = {
+  [LANGUAGES.ZH_CN]: zhCN,
+  [LANGUAGES.EN_US]: enUS,
+};
+
 // ThemeProvider 组件
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo(({ children }) => {
   const [theme, setTheme] = useState<ThemeMode>(() => {
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
     return (savedTheme as ThemeMode) || "light";
   });
+
+  const { i18n } = useTranslation();
+  const currentLanguage = i18n.language as keyof typeof antLocales;
+  const antLocale = antLocales[currentLanguage] || enUS;
 
   // 切换主题
   const toggleTheme = useCallback(() => {
@@ -113,7 +127,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo
 
   return (
     <ThemeContext.Provider value={contextValue}>
-      <ConfigProvider theme={antThemeConfig}>
+      <ConfigProvider theme={antThemeConfig} locale={antLocale}>
         <App>{children}</App>
       </ConfigProvider>
     </ThemeContext.Provider>

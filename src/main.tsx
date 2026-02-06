@@ -8,6 +8,7 @@
 import { createRoot } from "react-dom/client";
 import { ErrorBoundary } from "@/components";
 import { App } from "./App";
+import "@/i18n";
 
 function start() {
   const rootElement = document.getElementById("root");
