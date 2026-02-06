@@ -3,7 +3,7 @@
  * 直接展示图表，不使用额外的 Card 包装
  */
 import { Alert, Flex } from "antd";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { BasicChart } from "./BasicChart";
 import { ChartTypeSelector, type ChartType } from "./ChartTypeSelector";
@@ -68,18 +68,26 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
   const [hasError, setHasError] = React.useState(false);
   const [chartType, setChartType] = useState<ChartType>("BAR");
 
+  // 缓存数据验证结果，避免重复计算
+  const isValidData = useMemo(() => {
+    return !!(results?.up?.dailyDetails && results?.down?.dailyDetails);
+  }, [results]);
+
+  // 缓存图表数据，传递给子组件时避免重复创建
+  const chartData = useMemo(() => results, [results]);
+
   useEffect(() => {
     setHasError(false);
 
     try {
-      if (!results?.up?.dailyDetails || !results?.down?.dailyDetails) {
+      if (!isValidData) {
         setHasError(true);
       }
     } catch (error) {
       console.error("ChartContainer: 数据验证失败", error);
       setHasError(true);
     }
-  }, [results]);
+  }, [isValidData]);
 
   return (
     <Flex
@@ -111,7 +119,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
         />
       )}
 
-      <ChartWrapper results={results} isMobile={isMobile} chartType={chartType} />
+      <ChartWrapper results={chartData} isMobile={isMobile} chartType={chartType} />
     </Flex>
   );
 });

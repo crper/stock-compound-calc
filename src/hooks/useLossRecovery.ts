@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import Decimal from "decimal.js";
 import { calculateRecovery } from "@/utils/lossRecovery";
-import { ErrorHandler } from "@/utils/errorHandler";
+import { ErrorHandler, ErrorFactory } from "@/utils/errorHandler";
 import { generateId } from "@/utils/idGenerator";
 
 const STORAGE_KEY = "loss-recovery-history";
@@ -22,7 +22,23 @@ const persistHistory = (history: RecoveryHistoryItem[]): void => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
   } catch (error) {
-    ErrorHandler.log(ErrorHandler.handleUnknown(error));
+    const appError = ErrorHandler.handleUnknown(error);
+    ErrorHandler.log(appError);
+
+    // 检查是否是存储配额溢出错误
+    if (
+      error instanceof Error &&
+      (error.name === "QuotaExceededError" || error.name === "NS_ERROR_DOM_QUOTA_REACHED")
+    ) {
+      console.warn("localStorage 配额已满，部分历史记录可能无法保存。建议清空历史记录。");
+      // 尝试清除旧数据并保存最新的记录
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 20)));
+      } catch {
+        ErrorHandler.log(ErrorFactory.system("无法保存历史记录：存储空间不足"));
+      }
+    }
   }
 };
 
@@ -30,7 +46,15 @@ const persistHistory = (history: RecoveryHistoryItem[]): void => {
 const loadPersistedHistory = (): RecoveryHistoryItem[] => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? (JSON.parse(stored) as RecoveryHistoryItem[]) : [];
+    if (!stored) return [];
+
+    try {
+      return JSON.parse(stored) as RecoveryHistoryItem[];
+    } catch {
+      ErrorHandler.log(ErrorHandler.handleUnknown(new Error("历史记录数据损坏，已重置")));
+      localStorage.removeItem(STORAGE_KEY);
+      return [];
+    }
   } catch (error) {
     ErrorHandler.log(ErrorHandler.handleUnknown(error));
     return [];

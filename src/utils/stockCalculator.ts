@@ -18,24 +18,7 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
 
   const { initialPrice, boardCount, dailyReturn, stockQuantity } = params;
 
-  // 对极端值进行早期检测，避免过度计算
-  if (boardCount > CALCULATION_LIMITS.MAX_BOARD_COUNT) {
-    throw ErrorFactory.validation(
-      `连板天数不能超过${CALCULATION_LIMITS.MAX_BOARD_COUNT}天(约10年)，请减少天数以提高性能`,
-      "boardCount",
-      boardCount,
-    );
-  }
-
-  if (Math.abs(dailyReturn) > CALCULATION_LIMITS.MAX_DAILY_RETURN) {
-    throw ErrorFactory.validation(
-      `每日涨跌幅不能超过${CALCULATION_LIMITS.MAX_DAILY_RETURN}%`,
-      "dailyReturn",
-      dailyReturn,
-    );
-  }
-
-  // 预测最终价格是否会超出合理范围
+  // 预测最终价格是否会超出合理范围（Zod Schema 已验证基本约束，此处做额外保护）
   if (boardCount > 0 && Math.abs(dailyReturn) > 10) {
     const dailyMultiplier = new Decimal(dailyReturn).div(100).plus(1);
     const finalMultiplier = dailyMultiplier.pow(boardCount);

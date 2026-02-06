@@ -3,23 +3,18 @@
  */
 
 export { MainLayout } from "./MainLayout";
-export type { MainLayoutProps } from "./MainLayout";
 
 export { HeaderContent } from "./HeaderContent";
-export type { HeaderContentProps } from "./HeaderContent";
 
 export { FooterContent } from "./FooterContent";
 
 export { NavigationMenu } from "./NavigationMenu";
-export type { NavigationMenuProps } from "./NavigationMenu";
 
 export { MobileNavigation } from "./MobileNavigation";
 export type { MobileNavigationProps } from "./MobileNavigation";
 
 export { PageContainer } from "./PageContainer";
-export type { PageContainerProps } from "./PageContainer";
 
 export { BackgroundDecor } from "./BackgroundDecor";
 
 export { ContentCard } from "./ContentCard";
-export type { ContentCardProps } from "./ContentCard";

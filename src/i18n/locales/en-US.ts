@@ -27,6 +27,10 @@ export const enUS: { translation: TranslationResources } = {
         expandMore: "Expand",
         retry: "Retry",
       },
+      languages: {
+        chinese: "中文",
+        english: "English",
+      },
       footer: {
         copyright: "©2026 Stock Calculator",
         disclaimer: "For reference only, not investment advice",
@@ -63,10 +67,19 @@ export const enUS: { translation: TranslationResources } = {
       },
       errorBoundary: {
         title: "Application Error",
-        description: "We're sorry, the application encountered an unexpected error.",
-        details: "Error Details (click to expand)",
+        description: "Sorry, the application encountered an unexpected error.",
+        details: "Error details (click to expand)",
         tryAgain: "Try Again",
         goHome: "Go Home",
+      },
+      errors: {
+        types: {
+          validation: "Validation failed",
+          calculation: "Calculation error",
+          network: "Network connection error, please check your network and try again",
+          system: "System error, please contact administrator",
+          unknown: "Unknown error, please try again later",
+        },
       },
     },
     stockCalculator: {
@@ -178,6 +191,8 @@ export const enUS: { translation: TranslationResources } = {
           bar: "Bar Chart",
           line: "Line Chart",
         },
+        limitUp: "Limit Up",
+        limitDown: "Limit Down",
       },
       errors: {
         inputError: "Input Error",

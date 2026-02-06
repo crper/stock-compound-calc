@@ -93,14 +93,14 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({ onClose, isDrawe
                 size="small"
                 onClick={() => handleLanguageChange("zh-CN")}
               >
-                中文
+                {t("common.languages.chinese")}
               </Button>
               <Button
                 type={i18n.language === "en-US" ? "primary" : "default"}
                 size="small"
                 onClick={() => handleLanguageChange("en-US")}
               >
-                EN
+                {t("common.languages.english")}
               </Button>
             </Flex>
           </Flex>

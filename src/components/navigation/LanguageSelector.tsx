@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { LANGUAGES, type Language } from "@/i18n";
 
 export const LanguageSelector: React.FC = React.memo(() => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const currentLanguage = i18n.language as Language;
 
@@ -14,11 +14,11 @@ export const LanguageSelector: React.FC = React.memo(() => {
 
   const options = [
     {
-      label: "中",
+      label: t("common.languages.chinese"),
       value: LANGUAGES.ZH_CN,
     },
     {
-      label: "En",
+      label: t("common.languages.english"),
       value: LANGUAGES.EN_US,
     },
   ];

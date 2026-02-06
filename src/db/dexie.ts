@@ -32,8 +32,9 @@ export class StockCalculatorDB extends Dexie {
 
   constructor() {
     super("StockCalculatorDB");
-    this.version(1).stores({
-      calculations: "id, timestamp, [initialPrice+boardCount+dailyReturn]",
+    this.version(2).stores({
+      // 添加 [timestamp+dailyReturn] 复合索引，优化按日期范围和涨跌幅筛选的查询性能
+      calculations: "id, timestamp, [initialPrice+boardCount+dailyReturn], [timestamp+dailyReturn]",
     });
   }
 }

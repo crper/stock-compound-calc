@@ -17,7 +17,7 @@ export const CALCULATION_LIMITS = {
   /** 最小初始股价 */
   MIN_INITIAL_PRICE: 0.01,
   /** 最大年化收益率显示阈值 */
-  MAX_ANNUALIZED_RETURN: 1000,
+  MAX_ANNUALIZED_RETURN: 100000,
   /** 最大增长因子（用于年化计算） */
   MAX_GROWTH_FACTOR: 1e6,
 } as const;

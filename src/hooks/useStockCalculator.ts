@@ -1,4 +1,3 @@
-import { useLiveQuery } from "dexie-react-hooks";
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { App } from "antd";
 import { useTranslation } from "react-i18next";
@@ -7,24 +6,13 @@ import { ErrorHandler } from "@/utils/errorHandler";
 import { isFieldValid, getFieldErrorMessage } from "@/utils/validator";
 import { DEFAULT_VALUES, UI_CONSTANTS } from "@/constants";
 import { calculationService } from "@/services/calculationService";
-import { calculationRepository } from "@/db/calculationRepository";
 import { debounce } from "es-toolkit";
+import { useHistoryPagination } from "./useHistoryPagination";
 
 const DEFAULT_PARAMS: CalculationParams = {
   initialPrice: DEFAULT_VALUES.INITIAL_PRICE,
   boardCount: DEFAULT_VALUES.BOARD_COUNT,
   dailyReturn: DEFAULT_VALUES.DAILY_RETURN,
-};
-
-// 默认分页对象
-const DEFAULT_PAGINATION = {
-  currentPage: 1,
-  pageSize: 50,
-  totalCount: 0,
-  totalPages: 1,
-  hasNext: false,
-  hasPrev: false,
-  offset: 0,
 };
 
 export const useStockCalculator = () => {
@@ -37,25 +25,13 @@ export const useStockCalculator = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(50);
 
   // 使用 App.useApp() 获取带上下文的消息实例
   const { message } = App.useApp();
   const { t } = useTranslation();
 
-  // 获取全部历史记录
-  const allHistoryResult = useLiveQuery(() => calculationRepository.getAll({ limit: 1000 }), []);
-  const allHistory: CalculationHistory[] = allHistoryResult?.data ?? [];
-  const isLoadingHistory = allHistory.length === 0;
-
-  // 获取分页历史记录
-  const paginatedHistoryResult = useLiveQuery(
-    () => calculationRepository.getAll({ limit: pageSize, offset: (currentPage - 1) * pageSize }),
-    [currentPage, pageSize],
-  );
-
-  const pagination = paginatedHistoryResult?.pagination ?? DEFAULT_PAGINATION;
+  // 使用分页历史 Hook
+  const { history, isLoadingHistory, pagination, paginationControls } = useHistoryPagination();
 
   // 防抖计算函数 ref
   const debouncedCalculateRef = useRef(
@@ -143,36 +119,18 @@ export const useStockCalculator = () => {
     setResults(historyItem.results);
   }, []);
 
-  // 分页控制
-  const goToPage = useCallback((page: number) => {
-    setCurrentPage(page);
-  }, []);
-
-  const nextPage = useCallback(() => {
-    setCurrentPage((prev) => prev + 1);
-  }, []);
-
-  const prevPage = useCallback(() => {
-    setCurrentPage((prev) => Math.max(1, prev - 1));
-  }, []);
-
-  const changePageSize = useCallback((size: number) => {
-    setPageSize(size);
-    setCurrentPage(1);
-  }, []);
-
   // 打开历史抽屉
   const openHistoryDrawer = useCallback(() => {
     setHistoryDrawerVisible(true);
   }, []);
 
-  // 使用 useMemo 缓存返回值
+  // 使用 useMemo 缓存返回值，减少依赖数组长度
   return useMemo(
     () => ({
       results,
       error,
       setError,
-      history: allHistory,
+      history,
       isLoadingHistory,
       historyDrawerVisible,
       setHistoryDrawerVisible,
@@ -189,17 +147,12 @@ export const useStockCalculator = () => {
       isClearing,
       isCalculating,
       pagination,
-      currentPage,
-      pageSize,
-      goToPage,
-      nextPage,
-      prevPage,
-      changePageSize,
+      ...paginationControls, // 展开 paginationControls: currentPage, pageSize, goToPage, nextPage, prevPage, changePageSize
     }),
     [
       results,
       error,
-      allHistory,
+      history,
       isLoadingHistory,
       historyDrawerVisible,
       handleCalculate,
@@ -213,12 +166,7 @@ export const useStockCalculator = () => {
       isClearing,
       isCalculating,
       pagination,
-      currentPage,
-      pageSize,
-      goToPage,
-      nextPage,
-      prevPage,
-      changePageSize,
+      paginationControls,
     ],
   );
 };

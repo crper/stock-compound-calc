@@ -1,3 +1,5 @@
+import i18n from "@/i18n";
+
 export enum ErrorType {
   VALIDATION = "VALIDATION",
   CALCULATION = "CALCULATION",
@@ -8,7 +10,7 @@ export enum ErrorType {
 export class AppError extends Error {
   public readonly type: ErrorType;
   public readonly code?: string;
-  public readonly context?: Record<string, any>;
+  public readonly context?: Record<string, unknown>;
   public readonly timestamp: Date;
 
   constructor(type: ErrorType, message: string, code?: string, context?: Record<string, any>) {
@@ -25,18 +27,13 @@ export class AppError extends Error {
   }
 
   toUserMessage(): string {
-    switch (this.type) {
-      case ErrorType.VALIDATION:
-        return `输入验证失败: ${this.message}`;
-      case ErrorType.CALCULATION:
-        return `计算错误: ${this.message}`;
-      case ErrorType.NETWORK:
-        return "网络连接异常，请检查网络后重试";
-      case ErrorType.SYSTEM:
-        return "系统异常，请联系管理员";
-      default:
-        return "未知错误，请稍后重试";
+    const prefix = i18n.t(`common.errors.types.${this.type.toLowerCase()}`);
+
+    if (this.type === ErrorType.NETWORK || this.type === ErrorType.SYSTEM) {
+      return prefix;
     }
+
+    return `${prefix}: ${this.message}`;
   }
 
   toLogFormat(): {
@@ -59,11 +56,11 @@ export class AppError extends Error {
 }
 
 export const ErrorFactory = {
-  validation(message: string, fieldName?: string, value?: any): AppError {
+  validation(message: string, fieldName?: string, value?: unknown): AppError {
     return new AppError(ErrorType.VALIDATION, message, "VALIDATION_ERROR", { fieldName, value });
   },
 
-  calculation(message: string, params?: Record<string, any>): AppError {
+  calculation(message: string, params?: Record<string, unknown>): AppError {
     return new AppError(ErrorType.CALCULATION, message, "CALCULATION_ERROR", { params });
   },
 

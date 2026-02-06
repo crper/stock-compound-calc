@@ -25,6 +25,10 @@ export const zhCN: { translation: TranslationResources } = {
         expandMore: "展开详情",
         retry: "重试",
       },
+      languages: {
+        chinese: "中文",
+        english: "English",
+      },
       footer: {
         copyright: "©2026 股价收益计算器",
         disclaimer: "仅供参考，不构成投资建议",
@@ -65,6 +69,15 @@ export const zhCN: { translation: TranslationResources } = {
         details: "错误详情（点击展开）",
         tryAgain: "重试",
         goHome: "返回首页",
+      },
+      errors: {
+        types: {
+          validation: "输入验证失败",
+          calculation: "计算错误",
+          network: "网络连接异常，请检查网络后重试",
+          system: "系统异常，请联系管理员",
+          unknown: "未知错误，请稍后重试",
+        },
       },
     },
     stockCalculator: {
@@ -175,6 +188,8 @@ export const zhCN: { translation: TranslationResources } = {
           bar: "柱状图",
           line: "曲线图",
         },
+        limitUp: "涨停",
+        limitDown: "跌停",
       },
       errors: {
         inputError: "输入错误",

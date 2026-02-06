@@ -25,6 +25,10 @@ export interface TranslationResources {
       expandMore: string;
       retry: string;
     };
+    languages: {
+      chinese: string;
+      english: string;
+    };
     footer: {
       copyright: string;
       disclaimer: string;
@@ -65,6 +69,15 @@ export interface TranslationResources {
       details: string;
       tryAgain: string;
       goHome: string;
+    };
+    errors: {
+      types: {
+        validation: string;
+        calculation: string;
+        network: string;
+        system: string;
+        unknown: string;
+      };
     };
   };
   stockCalculator: {
@@ -175,6 +188,8 @@ export interface TranslationResources {
         bar: string;
         line: string;
       };
+      limitUp: string;
+      limitDown: string;
     };
     errors: {
       inputError: string;
