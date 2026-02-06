@@ -78,6 +78,7 @@ export const HeaderContent: React.FC = () => {
             color={tag.color}
             text={tag.label}
             style={{ fontSize: "11px", padding: "2px 4px" }}
+            className="dark:text-gray-200"
           />
         ))}
       </Flex>
