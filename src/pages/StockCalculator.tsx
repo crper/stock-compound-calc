@@ -13,7 +13,6 @@ import {
   ResultsDisplay,
   HistoryDrawer,
   ErrorBoundary,
-  NavMenu,
   PageContainer,
 } from "@/components";
 
@@ -40,7 +39,7 @@ export const StockCalculator: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <PageContainer showNavMenu navMenu={<NavMenu isMobile={isMobile} />}>
+      <PageContainer>
         {error && (
           <Alert
             title={t("stockCalculator.errors.inputError")}

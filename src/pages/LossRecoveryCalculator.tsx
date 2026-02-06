@@ -12,7 +12,6 @@ import {
   RecoveryForm,
   RecoveryResult,
   RecoveryTable,
-  NavMenu,
   ErrorBoundary,
   PageContainer,
 } from "@/components";
@@ -42,7 +41,7 @@ export const LossRecoveryCalculator: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <PageContainer showNavMenu navMenu={<NavMenu isMobile={isMobile} />}>
+      <PageContainer>
         <Row gutter={[32, 32]} className="flex-1 items-start">
           <Col xs={24} lg={8}>
             <div className="h-full animate-[slideIn_0.4s_ease-out]">

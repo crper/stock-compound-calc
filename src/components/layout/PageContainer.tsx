@@ -1,6 +1,6 @@
 /**
  * 页面统一容器组件
- * 整合背景装饰、导航菜单、内容卡片
+ * 整合背景装饰、内容卡片
  * 消除页面级布局重复
  */
 import React from "react";
@@ -11,12 +11,10 @@ import { useResponsive } from "@/hooks/useResponsive";
 
 interface PageContainerProps {
   children: React.ReactNode;
-  navMenu?: React.ReactNode;
-  showNavMenu?: boolean;
 }
 
 export const PageContainer: React.FC<PageContainerProps> = React.memo(
-  ({ children, navMenu, showNavMenu = false }) => {
+  ({ children }) => {
     const { isMobile } = useResponsive();
     const cardPadding = isMobile
       ? LAYOUT_CONSTANTS.pagePadding.mobile
@@ -26,13 +24,6 @@ export const PageContainer: React.FC<PageContainerProps> = React.memo(
       <div className="w-full relative overflow-hidden">
         {/* 背景装饰 */}
         <BackgroundDecor />
-
-        {/* 导航菜单容器 */}
-        {showNavMenu && navMenu && (
-          <div className="relative z-10">
-            {navMenu}
-          </div>
-        )}
 
         {/* 主内容卡片 */}
         <div className="relative z-10">

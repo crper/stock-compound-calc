@@ -13,14 +13,12 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { NavMenu, ErrorBoundary, PageContainer } from "@/components";
-import { useResponsive } from "@/hooks/useResponsive";
+import { ErrorBoundary, PageContainer } from "@/components";
 
 const { Title, Paragraph, Text } = Typography;
 
 export const About: React.FC = React.memo(() => {
   const { t } = useTranslation();
-  const { isMobile } = useResponsive();
 
   const techStack = [
     { category: t("about.techStack.backend"), items: [t("about.techStack.list.bun")] },
@@ -74,7 +72,7 @@ export const About: React.FC = React.memo(() => {
 
   return (
     <ErrorBoundary>
-      <PageContainer showNavMenu navMenu={<NavMenu isMobile={isMobile} />}>
+      <PageContainer>
         {/* Tech Stack */}
         <div className="mb-8">
           <Title level={4} className="mb-4 dark:text-white flex items-center gap-2">

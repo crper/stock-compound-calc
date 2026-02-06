@@ -13,11 +13,7 @@ import { useTranslation } from "react-i18next";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { LanguageSelector } from "@/components/navigation/LanguageSelector";
 
-export interface NavigationMenuProps {
-  onClose?: () => void;
-}
-
-export const NavigationMenu: React.FC<NavigationMenuProps> = ({ onClose }) => {
+export const NavigationMenu: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
@@ -42,25 +38,24 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({ onClose }) => {
 
   const handleMenuClick = ({ key }: { key: string }) => {
     void navigate(key);
-    onClose?.();
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <Flex gap={12} align="center">
       <Menu
         mode="horizontal"
         selectedKeys={[location.pathname]}
         items={menuItems}
         onClick={handleMenuClick}
-        className="border-0 bg-transparent flex-1"
-        style={{ minWidth: "400px" }}
+        className="border-0 bg-transparent"
+        style={{ flex: 1, minWidth: 0 }}
       />
       
-      <Space size="small" className="border-l border-gray-200 dark:border-gray-700 pl-4">
+      <Space size="small" className="border-l border-gray-200 dark:border-gray-700 pl-4 flex-shrink-0">
         <ThemeToggle />
         <LanguageSelector />
       </Space>
-    </div>
+    </Flex>
   );
 };
 
