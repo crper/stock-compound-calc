@@ -2,7 +2,7 @@
  * 导航菜单组件 - 使用 Ant Design Menu 系统
  * 提供响应式导航功能
  */
-import { Menu, Space } from "antd";
+import { Menu, Space, Flex } from "antd";
 import {
   LineChartOutlined,
   CalculatorOutlined,
