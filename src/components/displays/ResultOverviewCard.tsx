@@ -65,10 +65,8 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
                 color={isUp ? "success" : "error"}
                 className="m-0 text-xs font-medium rounded-full px-3 py-0.5"
               >
-
                 {params.boardCount}
                 {t("stockCalculator.results.overview.days")}
-              
               </Tag>
             )}
           </div>

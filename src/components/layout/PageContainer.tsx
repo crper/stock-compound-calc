@@ -13,27 +13,23 @@ interface PageContainerProps {
   children: React.ReactNode;
 }
 
-export const PageContainer: React.FC<PageContainerProps> = React.memo(
-  ({ children }) => {
-    const { isMobile } = useResponsive();
-    const cardPadding = isMobile
-      ? LAYOUT_CONSTANTS.pagePadding.mobile
-      : LAYOUT_CONSTANTS.pagePadding.desktop;
+export const PageContainer: React.FC<PageContainerProps> = React.memo(({ children }) => {
+  const { isMobile } = useResponsive();
+  const cardPadding = isMobile
+    ? LAYOUT_CONSTANTS.pagePadding.mobile
+    : LAYOUT_CONSTANTS.pagePadding.desktop;
 
-    return (
-      <div className="w-full relative overflow-hidden">
-        {/* 背景装饰 */}
-        <BackgroundDecor />
+  return (
+    <div className="w-full relative overflow-hidden">
+      {/* 背景装饰 */}
+      <BackgroundDecor />
 
-        {/* 主内容卡片 */}
-        <div className="relative z-10">
-          <ContentCard padding={cardPadding}>
-            {children}
-          </ContentCard>
-        </div>
+      {/* 主内容卡片 */}
+      <div className="relative z-10">
+        <ContentCard padding={cardPadding}>{children}</ContentCard>
       </div>
-    );
-  }
-);
+    </div>
+  );
+});
 
 PageContainer.displayName = "PageContainer";

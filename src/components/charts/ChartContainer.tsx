@@ -82,7 +82,11 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
   }, [results]);
 
   return (
-    <Flex vertical gap={LAYOUT_CONSTANTS.spacing.md} className="bg-gray-50 dark:bg-gray-700/30 rounded-2xl p-5 border border-gray-100 dark:border-gray-700">
+    <Flex
+      vertical
+      gap={LAYOUT_CONSTANTS.spacing.md}
+      className="bg-gray-50 dark:bg-gray-700/30 rounded-2xl p-5 border border-gray-100 dark:border-gray-700"
+    >
       <Flex justify="space-between" align="center" wrap gap={LAYOUT_CONSTANTS.spacing.md}>
         <Title
           level={5}

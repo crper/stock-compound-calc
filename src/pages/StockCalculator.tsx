@@ -69,11 +69,7 @@ export const StockCalculator: React.FC = () => {
 
           <Col xs={24} lg={12} xl={14} xxl={15}>
             <div className="h-full animate-[slideIn_0.4s_ease-out_0.1s_both]">
-              <ResultsDisplay
-                results={results}
-                isMobile={isMobile}
-                params={currentParams}
-              />
+              <ResultsDisplay results={results} isMobile={isMobile} params={currentParams} />
             </div>
           </Col>
         </Row>

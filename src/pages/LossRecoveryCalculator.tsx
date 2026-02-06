@@ -3,7 +3,19 @@
  * 使用 PageContainer 统一布局管理
  */
 import React from "react";
-import { Card, Row, Col, Drawer, Empty, Tag, FloatButton, Popconfirm, Button, App, Typography } from "antd";
+import {
+  Card,
+  Row,
+  Col,
+  Drawer,
+  Empty,
+  Tag,
+  FloatButton,
+  Popconfirm,
+  Button,
+  App,
+  Typography,
+} from "antd";
 import { HistoryOutlined, DeleteOutlined, ClearOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useLossRecovery } from "@/hooks/useLossRecovery";
@@ -76,7 +88,12 @@ export const LossRecoveryCalculator: React.FC = () => {
               </span>
               {history.length > 0 && (
                 <Tag className="rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800">
-                  {history.length} {t("stockCalculator.history.recordCount", { count: history.length }).split(" ")[1]}
+                  {history.length}{" "}
+                  {
+                    t("stockCalculator.history.recordCount", { count: history.length }).split(
+                      " ",
+                    )[1]
+                  }
                 </Tag>
               )}
             </div>

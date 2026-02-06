@@ -2,13 +2,12 @@
  * 关键指标网格组件
  * 4列网格展示翻倍天数、盈亏回撤、10倍天数、年化收益
  */
-import { Tooltip, Typography, Row, Col } from "antd";
+import { Tooltip, Typography } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { formatPercentage } from "@/utils/formatters";
 import type { KeyMetrics } from "@/types";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { LAYOUT_CONSTANTS } from "@/constants/layout";
 
 const { Text } = Typography;
 
@@ -29,8 +28,8 @@ interface MetricItemProps {
 
 const MetricItem: React.FC<MetricItemProps> = React.memo(
   ({ label, value, tooltip, colorClass, bgClass }) => (
-    <div className={`text-center p-3 rounded-lg border ${bgClass} ${colorClass}`}>
-      <div className="flex items-center justify-center gap-1 mb-1">
+    <div className={`text-center p-3 rounded-lg border ${bgClass} ${colorClass} min-w-[120px]`}>
+      <div className="flex items-center justify-center gap-1 mb-1 flex-wrap">
         <Text className="text-xs text-gray-500 dark:text-gray-400">{label}</Text>
         {tooltip && (
           <Tooltip title={tooltip}>
@@ -38,7 +37,7 @@ const MetricItem: React.FC<MetricItemProps> = React.memo(
           </Tooltip>
         )}
       </div>
-      <Text className="text-base font-bold">{value}</Text>
+      <Text className="text-base font-bold leading-tight">{value}</Text>
     </div>
   ),
 );
@@ -46,11 +45,9 @@ const MetricItem: React.FC<MetricItemProps> = React.memo(
 MetricItem.displayName = "MetricItem";
 
 export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
-  ({ metrics, dailyReturn, boardCount, isMobile }) => {
+  ({ metrics, dailyReturn, boardCount }) => {
     const { t } = useTranslation();
     if (!metrics) return null;
-
-    const gutter = isMobile ? LAYOUT_CONSTANTS.gutter.mobile : LAYOUT_CONSTANTS.gutter.desktop;
 
     const items: MetricItemProps[] = [];
 
@@ -124,13 +121,18 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
           </Tooltip>
         </div>
 
-        <Row gutter={gutter}>
+        <div
+          className="grid gap-3"
+          style={{
+            gridTemplateColumns: `repeat(auto-fit, minmax(140px, 1fr))`,
+          }}
+        >
           {items.map((item, index) => (
-            <Col key={index} xs={12} md={12} lg={6}>
+            <div key={index}>
               <MetricItem {...item} />
-            </Col>
+            </div>
           ))}
-        </Row>
+        </div>
       </div>
     );
   },

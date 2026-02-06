@@ -3,9 +3,7 @@
  * 包含 Logo、标题、页面相关标签
  */
 import { Badge, Flex } from "antd";
-import {
-  LineChartOutlined,
-} from "@ant-design/icons";
+import { LineChartOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -28,20 +26,14 @@ export const HeaderContent: React.FC = () => {
 
   const getPageTags = () => {
     if (isMobile) return [];
-    
+
     switch (pathname) {
       case "/recovery":
-        return [
-          { label: t("common.tags.lossRecovery"), color: "lime" },
-        ];
+        return [{ label: t("common.tags.lossRecovery"), color: "lime" }];
       case "/about":
-        return [
-          { label: t("common.tags.info"), color: "purple" },
-        ];
+        return [{ label: t("common.tags.info"), color: "purple" }];
       default:
-        return [
-          { label: t("common.tags.limitUp"), color: "green" },
-        ];
+        return [{ label: t("common.tags.limitUp"), color: "green" }];
     }
   };
 

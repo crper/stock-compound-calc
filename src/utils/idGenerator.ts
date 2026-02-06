@@ -12,5 +12,3 @@ export const generateId = (): string => {
   const randomStr = Math.random().toString(36).slice(2, 13);
   return `${timestamp}-${randomStr}`;
 };
-
-

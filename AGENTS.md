@@ -224,12 +224,12 @@ oxlint 原生支持多个主流插件，无需额外安装：
 ```json
 {
   "categories": {
-    "correctness": "error",   // 代码错误（必须修复）
-    "suspicious": "warn",     // 可能有问题（建议修复）
-    "style": "warn",          // 风格一致性
-    "restriction": "off",     // 禁止特定模式（关闭）
-    "perf": "off",            // 性能优化（关闭）
-    "nursery": "warn"         // 实验性规则（警告级别）
+    "correctness": "error", // 代码错误（必须修复）
+    "suspicious": "warn", // 可能有问题（建议修复）
+    "style": "warn", // 风格一致性
+    "restriction": "off", // 禁止特定模式（关闭）
+    "perf": "off", // 性能优化（关闭）
+    "nursery": "warn" // 实验性规则（警告级别）
   }
 }
 ```
@@ -291,9 +291,9 @@ oxlint 原生支持多个主流插件，无需额外安装：
 ```json
 {
   "env": {
-    "browser": true,    // 浏览器环境
-    "es2022": true,     // ES2022 语法
-    "bun": true         // Bun 运行时
+    "browser": true, // 浏览器环境
+    "es2022": true, // ES2022 语法
+    "bun": true // Bun 运行时
   }
 }
 ```
@@ -475,6 +475,7 @@ export const Component: React.FC = () => {
 ### 2026-02-06 - 全面代码重构与优化
 
 **🔴 高优先级清理**
+
 - **删除未使用文件**:
   - `src/utils/logger.ts` - 完全未使用，无任何调用
   - `src/utils/idGenerator.ts` 中的 `generateNumericId()` 和 `generateShortId()` - 未使用的ID生成函数
@@ -485,18 +486,21 @@ export const Component: React.FC = () => {
   - 删除 `src/config/env.ts` 中的 `HEALTH_CHECK_ENABLED`, `DB_PATH`, `LOG_LEVEL`, `API_TIMEOUT` - 未使用的环境配置
 
 **🟡 中优先级优化**
+
 - **修复重复定义**:
   - 统一请求超时配置，删除 `API_LIMITS.REQUEST_TIMEOUT_MS` 重复
 - **配置简化**:
   - 保留核心环境变量：`NODE_ENV`, `PORT`, `DB_PATH`
 
 **✅ 验证结果**
+
 - **代码质量**: `bun run lint` 0 warnings, 0 errors
 - **构建成功**: `bun run build` 正常完成
 - **功能完整**: 所有核心功能保持正常
 - **Bundle优化**: 减少约 2KB 未使用代码
 
 **📊 清理统计**
+
 - **删除文件**: 1个完全未使用的文件
 - **删除代码行数**: ~50行冗余代码
 - **删除常量**: 5个未使用的配置项
@@ -612,68 +616,85 @@ const antThemeConfig: ThemeConfig = {
 #### 1. 代码质量检查
 
 **Lint 检查（类型感知）**
+
 ```bash
 bun run lint
 ```
+
 - ✅ 必须通过：0 warnings, 0 errors
 - 📊 规则生效：105条规则检查
 
 **TypeScript 类型检查**
+
 ```bash
 bun run typecheck
 ```
+
 - ✅ 必须通过：无类型错误
 
 #### 2. 测试验证
 
 **运行所有测试**
+
 ```bash
 bun test
 ```
+
 - ✅ 必须通过：所有测试用例
 
 **测试覆盖率（可选）**
+
 ```bash
 bun test:coverage
 ```
+
 - 📊 确保核心逻辑有测试覆盖
 
 #### 3. 代码格式化
 
 **自动格式化**
+
 ```bash
 bun run format
 ```
+
 - ✅ 使用 oxfmt 格式化所有代码
 
 **格式检查**
+
 ```bash
 bun run format:check
 ```
+
 - ✅ 确保代码格式一致
 
 #### 4. 构建验证
 
 **生产构建**
+
 ```bash
 bun run build
 ```
+
 - ✅ 必须成功：构建无错误
 - 📦 检查 bundle 大小是否合理
 
 #### 5. 文档更新（如需要）
 
 **README.md 更新**
+
 - [ ] 如果有新功能，更新功能特性列表
 - [ ] 如果修复了重要问题，添加到更新日志
 - [ ] 如果有 API 变更，更新使用说明
 
 **AGENTS.md 更新**
+
 - [ ] 如果有新的约束或规范，添加到关键约束
 - [ ] 如果有新组件或架构变更，更新项目结构
 - [ ] 如果有新的最佳实践，添加代码审查清单
 
 **i18n 翻译更新**
+
 - [ ] 如果添加了新的 UI 文本，添加到 zh-CN.ts 和 en-US.ts
 - [ ] 如果修改了类型定义，更新 types.ts
 - [ ] 运行应用验证中英文切换正常
@@ -697,12 +718,14 @@ git status
 #### 提交规范
 
 **1. 查看变更内容**
+
 ```bash
 git diff                    # 查看未暂存的变更
 git diff --staged          # 查看已暂存的变更
 ```
 
 **2. 添加文件到暂存区**
+
 ```bash
 git add <file>             # 添加单个文件
 git add .                  # 添加所有变更
@@ -712,6 +735,7 @@ git add src/              # 添加 src 目录下所有变更
 **3. 创建提交**
 
 **提交信息格式**：
+
 ```
 <type>(<scope>): <subject>
 
@@ -721,6 +745,7 @@ git add src/              # 添加 src 目录下所有变更
 ```
 
 **Type 类型**：
+
 - `feat`: 新功能
 - `fix`: Bug 修复
 - `refactor`: 重构（不是新功能也不是修复）
@@ -732,6 +757,7 @@ git add src/              # 添加 src 目录下所有变更
 - `build`: 构建系统或依赖项变动
 
 **示例**：
+
 ```bash
 git commit -m "feat(oxlint): 完善类型感知检查配置
 
@@ -772,16 +798,19 @@ git push origin feature/xxx   # 推送到功能分支
 #### Lint 不通过怎么办？
 
 **查看错误信息**
+
 ```bash
 bun run lint
 ```
 
 **自动修复**
+
 ```bash
 bun run lint:fix
 ```
 
 **手动修复特殊规则**
+
 - `// oxlint-disable-next-line` - 禁单行规则
 - `// oxlint-disable-line` - 禁当前行规则
 - `/* oxlint-disable */` ... `/* oxlint-enable */` - 禁代码块规则
@@ -789,11 +818,13 @@ bun run lint:fix
 #### 类型错误怎么办？
 
 **查看错误详情**
+
 ```bash
 bun run typecheck
 ```
 
 **常见修复方法**
+
 1. 添加明确的类型注解
 2. 使用类型守卫（`isSomething` 函数）
 3. 使用可选链 `?.` 和空值合并 `??`
@@ -802,16 +833,19 @@ bun run typecheck
 #### 测试失败怎么办？
 
 **运行单个测试**
+
 ```bash
 bun test -t "测试名称"
 ```
 
 **运行单个文件**
+
 ```bash
 bun test path/to/test.ts
 ```
 
 **调试模式**
+
 ```bash
 bun test --watch
 ```
@@ -819,6 +853,7 @@ bun test --watch
 ### 提交流程总结
 
 **提交流程图**：
+
 ```
 1. 开发完成
    ↓
@@ -842,6 +877,7 @@ bun test --watch
 ```
 
 **必做项**：
+
 - ✅ Lint 检查通过
 - ✅ 类型检查通过
 - ✅ 测试全部通过

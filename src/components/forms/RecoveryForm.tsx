@@ -115,26 +115,26 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
             </div>
           </Form.Item>
 
-            <div className="space-y-3">
-              <Text strong className="text-gray-500 dark:text-gray-400 text-base lg:text-sm">
-                {t("recoveryCalculator.form.presets.label")}
-              </Text>
-              <Space wrap>
-                {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((preset) => (
-                  <button
-                    key={preset}
-                    onClick={() => handleSliderChange(preset)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
-                      value === preset
-                        ? "bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-lg"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                    }`}
-                  >
-                    {preset}%
-                  </button>
-                ))}
-              </Space>
-            </div>
+          <div className="space-y-3">
+            <Text strong className="text-gray-500 dark:text-gray-400 text-base lg:text-sm">
+              {t("recoveryCalculator.form.presets.label")}
+            </Text>
+            <Space wrap>
+              {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((preset) => (
+                <button
+                  key={preset}
+                  onClick={() => handleSliderChange(preset)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                    value === preset
+                      ? "bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-lg"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  {preset}%
+                </button>
+              ))}
+            </Space>
+          </div>
         </div>
       </Form>
     </Card>

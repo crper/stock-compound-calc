@@ -3,11 +3,7 @@
  * 为移动端优化的导航体验
  */
 import { Menu } from "antd";
-import {
-  LineChartOutlined,
-  CalculatorOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
+import { LineChartOutlined, CalculatorOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -16,9 +12,7 @@ export interface MobileNavigationProps {
   onClose: () => void;
 }
 
-export const MobileNavigation: React.FC<MobileNavigationProps> = ({
-  onClose,
-}) => {
+export const MobileNavigation: React.FC<MobileNavigationProps> = ({ onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();

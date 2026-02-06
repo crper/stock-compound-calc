@@ -39,8 +39,6 @@ export const PRESET_VALUES = {
   BEIJING_STOCK_EXCHANGE: 30,
 } as const;
 
-
-
 /**
  * Decimal 配置常量
  */

@@ -8,6 +8,7 @@ import { MenuOutlined } from "@ant-design/icons";
 import { Outlet } from "react-router-dom";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@/theme";
 import { HeaderContent } from "./HeaderContent";
 import { FooterContent } from "./FooterContent";
 import { NavigationMenu } from "./NavigationMenu";
@@ -15,6 +16,7 @@ import { NavigationMenu } from "./NavigationMenu";
 export const MainLayout: React.FC = () => {
   const { isMobile } = useResponsive();
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const [mobileMenuVisible, setMobileMenuVisible] = React.useState(false);
 
   const handleMobileMenuClose = () => {
@@ -29,11 +31,12 @@ export const MainLayout: React.FC = () => {
     <Layout className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* 头部区域 */}
       <Layout.Header
-        className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700"
-        style={{ 
+        className="shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors duration-300"
+        style={{
           padding: "0 16px",
           height: "64px",
           lineHeight: "64px",
+          backgroundColor: theme === "dark" ? "#1f2937" : "#ffffff",
         }}
       >
         <Flex justify="space-between" align="center" style={{ height: "100%" }}>
@@ -68,7 +71,7 @@ export const MainLayout: React.FC = () => {
         className="mobile-navigation-drawer"
         width={280}
       >
-        <NavigationMenu onClose={handleMobileMenuClose} />
+        <NavigationMenu isDrawer onClose={handleMobileMenuClose} />
       </Drawer>
 
       {/* 内容区域 */}

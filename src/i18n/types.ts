@@ -221,20 +221,20 @@ export interface TranslationResources {
         almostImpossible: string;
       };
     };
-      table: {
-        title: string;
-        range: string;
-        columns: {
-          loss: string;
-          required: string;
-          multiplier: string;
-        };
-        formula: string;
+    table: {
+      title: string;
+      range: string;
+      columns: {
+        loss: string;
+        required: string;
+        multiplier: string;
       };
-      history: {
-        title: string;
-      };
+      formula: string;
     };
+    history: {
+      title: string;
+    };
+  };
   about: {
     title: string;
     subtitle: string;

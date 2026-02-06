@@ -119,9 +119,7 @@ export const About: React.FC = React.memo(() => {
                       {feature.title}
                     </Text>
                   </div>
-                  <Text className="text-gray-600 dark:text-gray-300 text-sm">
-                    {feature.desc}
-                  </Text>
+                  <Text className="text-gray-600 dark:text-gray-300 text-sm">{feature.desc}</Text>
                 </Flex>
               </div>
             ))}
@@ -135,9 +133,7 @@ export const About: React.FC = React.memo(() => {
           <Title level={4} className="mb-4 dark:text-white flex items-center gap-2">
             <Tag color="purple">{t("about.developer.title")}</Tag>
           </Title>
-          <Paragraph className="dark:text-gray-300">
-            {t("about.developer.description")}
-          </Paragraph>
+          <Paragraph className="dark:text-gray-300">{t("about.developer.description")}</Paragraph>
           <a
             href="https://github.com/crper"
             target="_blank"
