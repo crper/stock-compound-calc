@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { StockCalculator } from "@/pages/StockCalculator";
 import { LossRecoveryCalculator } from "@/pages/LossRecoveryCalculator";
 import { About } from "@/pages/About";
@@ -10,7 +10,7 @@ import React from "react";
 // App 主组件
 export const App: React.FC = React.memo(() => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <ThemeProvider>
         <Routes>
           <Route path="/" element={<MainLayout />}>
@@ -21,7 +21,7 @@ export const App: React.FC = React.memo(() => {
           </Route>
         </Routes>
       </ThemeProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 });
 
