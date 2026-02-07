@@ -10,7 +10,6 @@ import {
   Drawer,
   Empty,
   Tag,
-  FloatButton,
   Popconfirm,
   Button,
   App,
@@ -26,7 +25,9 @@ import {
   RecoveryTable,
   ErrorBoundary,
   PageContainer,
+  HistoryFloatButton,
 } from "@/components";
+import { PRIMARY_COLORS } from "@/constants/colors";
 
 const { Text } = Typography;
 
@@ -79,7 +80,7 @@ export const LossRecoveryCalculator: React.FC = () => {
       <Drawer
         title={
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
+            <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${PRIMARY_COLORS.tailwind.from} ${PRIMARY_COLORS.tailwind.to} flex items-center justify-center`}>
               <HistoryOutlined className="text-white text-lg" />
             </div>
             <div className="flex items-center gap-2">
@@ -207,19 +208,11 @@ export const LossRecoveryCalculator: React.FC = () => {
       </Drawer>
 
       {/* 浮动按钮 - 移动端显示 */}
-      {isMobile && history.length > 0 && (
-        <FloatButton
-          icon={<HistoryOutlined />}
-          onClick={openHistoryDrawer}
-          badge={{ count: history.length }}
-          style={{
-            right: 24,
-            bottom: 24,
-            boxShadow: "0 4px 14px rgba(102, 126, 234, 0.4)",
-          }}
-          tooltip={t("common.tooltips.historyButton")}
-        />
-      )}
+      <HistoryFloatButton
+        count={history.length}
+        onClick={openHistoryDrawer}
+        visible={isMobile}
+      />
     </ErrorBoundary>
   );
 };

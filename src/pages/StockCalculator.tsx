@@ -3,8 +3,7 @@
  * 使用 PageContainer 统一布局管理
  */
 import React from "react";
-import { Alert, Row, Col, FloatButton, Form } from "antd";
-import { HistoryOutlined } from "@ant-design/icons";
+import { Alert, Row, Col, Form } from "antd";
 import { useTranslation } from "react-i18next";
 import { useStockCalculator } from "@/hooks/useStockCalculator";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -14,6 +13,7 @@ import {
   HistoryDrawer,
   ErrorBoundary,
   PageContainer,
+  HistoryFloatButton,
 } from "@/components";
 
 export const StockCalculator: React.FC = () => {
@@ -86,19 +86,11 @@ export const StockCalculator: React.FC = () => {
       />
 
       {/* 浮动按钮 - 移动端显示 */}
-      {isMobile && history.length > 0 && (
-        <FloatButton
-          icon={<HistoryOutlined />}
-          onClick={openHistoryDrawer}
-          badge={{ count: history.length }}
-          style={{
-            right: 24,
-            bottom: 24,
-            boxShadow: "0 4px 14px rgba(102, 126, 234, 0.4)",
-          }}
-          tooltip={t("common.tooltips.historyButton")}
-        />
-      )}
+      <HistoryFloatButton
+        count={history.length}
+        onClick={openHistoryDrawer}
+        visible={isMobile}
+      />
     </ErrorBoundary>
   );
 };

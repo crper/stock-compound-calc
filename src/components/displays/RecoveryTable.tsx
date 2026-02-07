@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Decimal from "decimal.js";
 import { Table, Card, Typography, Space } from "antd";
@@ -24,7 +24,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
   const { t } = useTranslation();
   const { isMobile } = useResponsive();
 
-  const generateData = (): TableData[] => {
+  const data = useMemo((): TableData[] => {
     const data: TableData[] = [];
     for (let i = 1; i <= 100; i++) {
       const metrics = calculateRecovery(i);
@@ -36,9 +36,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       });
     }
     return data;
-  };
-
-  const data = generateData();
+  }, []);
 
   const getRowClassName = (record: TableData): string => {
     const diff = Math.abs(record.lossPercent - currentValue);

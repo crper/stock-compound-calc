@@ -15,7 +15,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { CHART_CONFIG } from "@/constants";
 import type { CalculationResult } from "@/types";
 import { formatCurrency } from "@/utils/formatters";
@@ -115,9 +115,14 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
     );
     const commonLegend = <Legend wrapperStyle={{ fontSize: 12 }} />;
 
-    const priceTickFormatter = (value: number) =>
-      formatCurrency(value, { compact: true, decimals: 1 });
-    const priceTooltipFormatter = (value: unknown) => `¥${(Number(value) || 0).toFixed(2)}`;
+    const priceTickFormatter = useCallback(
+      (value: number) => formatCurrency(value, { compact: true, decimals: 1 }),
+      []
+    );
+    const priceTooltipFormatter = useCallback(
+      (value: unknown) => `¥${(Number(value) || 0).toFixed(2)}`,
+      []
+    );
 
     if (chartType === "LINE") {
       return (

@@ -19,3 +19,18 @@ export const TREND_COLORS = {
     iconColor: "text-[#ff4d4f] dark:text-red-400",
   },
 } as const;
+
+/**
+ * 主色调配置
+ * 用于渐变、按钮、图标等高亮元素
+ */
+export const PRIMARY_COLORS = {
+  start: "#667eea",
+  end: "#764ba2",
+  gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+  shadow: "0 4px 14px rgba(102, 126, 234, 0.4)",
+  tailwind: {
+    from: "from-[#667eea]",
+    to: "to-[#764ba2]",
+  },
+} as const;

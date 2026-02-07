@@ -60,7 +60,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
 
         return {
           validateStatus: isValid ? ("success" as const) : ("error" as const),
-          help: isValid ? "" : getFieldErrorMessage(fieldName),
+          help: isValid ? "" : getFieldErrorMessage(fieldName, value),
         };
       },
       [isFieldValid, dailyReturnValue, boardCountValue, initialPriceValue, stockQuantityValue],

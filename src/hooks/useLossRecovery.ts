@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import Decimal from "decimal.js";
+import { useTranslation } from "react-i18next";
 import { calculateRecovery } from "@/utils/lossRecovery";
 import { ErrorHandler, ErrorFactory } from "@/utils/errorHandler";
 import { generateId } from "@/utils/idGenerator";
@@ -62,6 +63,7 @@ const loadPersistedHistory = (): RecoveryHistoryItem[] => {
 };
 
 export const useLossRecovery = () => {
+  const { i18n } = useTranslation();
   const [lossPercent, setLossPercent] = useState<number>(20);
   const [history, setHistory] = useState<RecoveryHistoryItem[]>([]);
   const [historyDrawerVisible, setHistoryDrawerVisible] = useState(false);
@@ -92,7 +94,7 @@ export const useLossRecovery = () => {
       requiredGain: gain.isFinite() ? gain.toFixed(2) : "∞",
       multiplier: mult.isFinite() ? mult.toFixed(2) : "∞",
       timestamp: Date.now(),
-      createdAt: new Date().toLocaleString("zh-CN"),
+      createdAt: new Date().toLocaleString(i18n.language),
     };
 
     setHistory((prev) => {
@@ -100,7 +102,7 @@ export const useLossRecovery = () => {
       persistHistory(updated);
       return updated;
     });
-  }, []);
+  }, [i18n.language]);
 
   // 处理亏损百分比变化 - 带防抖
   const handleLossChange = useCallback(

@@ -14,7 +14,7 @@ export const isFieldValid = (value: unknown, fieldName: keyof CalculationParams)
   return result.success;
 };
 
-export const getFieldErrorMessage = (fieldName: keyof CalculationParams): string => {
-  const errors = CalculationParamsSchema.shape[fieldName].safeParse(undefined);
-  return errors.success ? "" : errors.error.issues[0]?.message || "输入值无效";
+export const getFieldErrorMessage = (fieldName: keyof CalculationParams, value: unknown): string => {
+  const result = CalculationParamsSchema.shape[fieldName].safeParse(value);
+  return result.success ? "" : result.error.issues[0]?.message || "输入值无效";
 };
