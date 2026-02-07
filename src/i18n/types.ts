@@ -7,9 +7,6 @@ export interface TranslationResources {
       stockCalculator: string;
       lossRecovery: string;
       about: string;
-      stockCalculatorSubtitle: string;
-      lossRecoverySubtitle: string;
-      aboutSubtitle: string;
       menuTitle: string;
     };
     buttons: {
@@ -34,26 +31,15 @@ export interface TranslationResources {
       disclaimer: string;
     };
     tags: {
-      realTime: string;
       history: string;
-      visualization: string;
-      limitUp: string;
-      limitDown: string;
       recoveryAnalysis: string;
-      quickLookup: string;
-      riskAssessment: string;
     };
     tooltips: {
-      themeToggle: {
-        light: string;
-        dark: string;
-      };
       languageToggle: string;
       historyButton: string;
     };
     empty: {
       noHistory: string;
-      noResults: string;
       noData: string;
     };
     messages: {
@@ -68,22 +54,9 @@ export interface TranslationResources {
       description: string;
       details: string;
       tryAgain: string;
-      goHome: string;
-    };
-    errors: {
-      types: {
-        validation: string;
-        calculation: string;
-        network: string;
-        system: string;
-        unknown: string;
-      };
     };
   };
   stockCalculator: {
-    title: string;
-    subtitle: string;
-    description: string;
     form: {
       title: string;
       initialPrice: string;
@@ -93,12 +66,10 @@ export interface TranslationResources {
       units: {
         yuan: string;
         shares: string;
-        percent: string;
         days: string;
       };
       placeholders: {
         initialPrice: string;
-        stockQuantity: string;
       };
       tooltips: {
         initialPrice: string;
@@ -110,9 +81,6 @@ export interface TranslationResources {
       };
       presets: {
         label: string;
-        mainBoard: string;
-        starMarket: string;
-        bex: string;
       };
       initialMarketValue: string;
     };
@@ -125,7 +93,6 @@ export interface TranslationResources {
         consecutiveUp: string;
         consecutiveDown: string;
         days: string;
-        finalPrice: string;
       };
       metrics: {
         doubleDays: string;
@@ -136,9 +103,7 @@ export interface TranslationResources {
         annualizedReturn: string;
         annualizedTooltip: string;
         title: string;
-        tooltip: string;
         dynamicTooltip: string;
-        doubleAction: string;
       };
       positionChange: {
         title: string;
@@ -170,8 +135,6 @@ export interface TranslationResources {
       confirmClear: string;
       confirmClearDesc: string;
       noMatch: string;
-      initialParams: string;
-      boardDays: string;
       holding: string;
       limitUpProfit: string;
       limitDownLoss: string;
@@ -197,8 +160,6 @@ export interface TranslationResources {
   };
   recoveryCalculator: {
     title: string;
-    subtitle: string;
-    description: string;
     form: {
       title: string;
       currentLoss: string;
@@ -227,14 +188,6 @@ export interface TranslationResources {
           desc: string;
         };
       };
-      difficultyLevels: {
-        noLoss: string;
-        easy: string;
-        medium: string;
-        hard: string;
-        veryHard: string;
-        almostImpossible: string;
-      };
     };
     table: {
       title: string;
@@ -251,8 +204,6 @@ export interface TranslationResources {
     };
   };
   about: {
-    title: string;
-    subtitle: string;
     description: string;
     techStack: {
       title: string;

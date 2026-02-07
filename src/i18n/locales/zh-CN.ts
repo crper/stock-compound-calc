@@ -7,9 +7,6 @@ export const zhCN: { translation: TranslationResources } = {
         stockCalculator: "股价连板计算器",
         lossRecovery: "亏损回本计算器",
         about: "关于",
-        stockCalculatorSubtitle: "智能分析连板收益，实时计算投资回报",
-        lossRecoverySubtitle: "快速计算亏损回本所需涨幅，制定合理止损策略",
-        aboutSubtitle: "了解项目技术栈、开发团队和使用指南",
         menuTitle: "导航菜单",
       },
       buttons: {
@@ -34,26 +31,15 @@ export const zhCN: { translation: TranslationResources } = {
         disclaimer: "仅供参考，不构成投资建议",
       },
       tags: {
-        realTime: "实时计算",
         history: "历史记录",
-        visualization: "数据可视化",
-        limitUp: "涨停",
-        limitDown: "跌停",
         recoveryAnalysis: "回本分析",
-        quickLookup: "1-100%速查",
-        riskAssessment: "风险评估",
       },
       tooltips: {
-        themeToggle: {
-          light: "切换到亮色模式",
-          dark: "切换到暗色模式",
-        },
         languageToggle: "切换语言",
         historyButton: "查看历史记录",
       },
       empty: {
         noHistory: "暂无历史记录",
-        noResults: "暂无结果",
         noData: "暂无数据",
       },
       messages: {
@@ -68,22 +54,9 @@ export const zhCN: { translation: TranslationResources } = {
         description: "很抱歉，应用程序遇到了一个意外错误。",
         details: "错误详情（点击展开）",
         tryAgain: "重试",
-        goHome: "返回首页",
-      },
-      errors: {
-        types: {
-          validation: "输入验证失败",
-          calculation: "计算错误",
-          network: "网络连接异常，请检查网络后重试",
-          system: "系统异常，请联系管理员",
-          unknown: "未知错误，请稍后重试",
-        },
       },
     },
     stockCalculator: {
-      title: "股价收益计算器",
-      subtitle: "智能分析连板收益，实时计算投资回报",
-      description: "支持涨停/跌停双向计算",
       form: {
         title: "计算参数",
         initialPrice: "初始股价",
@@ -93,12 +66,10 @@ export const zhCN: { translation: TranslationResources } = {
         units: {
           yuan: "元",
           shares: "股",
-          percent: "%",
           days: "天",
         },
         placeholders: {
           initialPrice: "请输入初始股价",
-          stockQuantity: "选填，默认为100股",
         },
         tooltips: {
           initialPrice: "请输入股票的起始价格，最大支持10亿",
@@ -110,9 +81,6 @@ export const zhCN: { translation: TranslationResources } = {
         },
         presets: {
           label: "快速设置：",
-          mainBoard: "A股主板",
-          starMarket: "科创板",
-          bex: "北交所",
         },
         initialMarketValue: "初始持仓市值",
       },
@@ -125,7 +93,6 @@ export const zhCN: { translation: TranslationResources } = {
           consecutiveUp: "连续涨停",
           consecutiveDown: "连续跌停",
           days: "天",
-          finalPrice: "最终股价",
         },
         metrics: {
           doubleDays: "翻倍天数",
@@ -133,9 +100,7 @@ export const zhCN: { translation: TranslationResources } = {
           tenXDays: "10倍天数",
           annualizedReturn: "年化收益",
           title: "关键指标",
-          tooltip: "关键指标帮助您快速评估投资潜力和风险",
-          dynamicTooltip: "以 {{return}}% 涨跌幅，需要 {{days}} 天{{action}}",
-          doubleAction: "翻倍",
+          dynamicTooltip: "以 {{return}}% 涨跌幅，需要 {{days}} 天翻倍",
           breakEvenTooltip: "回到初始价需要 {{return}}% 的反向变动",
           tenXTooltip: "以 {{return}}% 涨跌幅，需要 {{days}} 天达到10倍",
           annualizedTooltip: "按 {{days}} 天计算的年化收益率",
@@ -170,8 +135,6 @@ export const zhCN: { translation: TranslationResources } = {
         confirmClear: "确认清空",
         confirmClearDesc: "确定要清空所有历史记录吗？此操作不可恢复。",
         noMatch: "未找到匹配的记录",
-        initialParams: "初始参数",
-        boardDays: "天",
         holding: "持仓 {{count}} 股",
         limitUpProfit: "涨停收益",
         limitDownLoss: "跌停收益",
@@ -197,8 +160,6 @@ export const zhCN: { translation: TranslationResources } = {
     },
     recoveryCalculator: {
       title: "亏损回本计算器",
-      subtitle: "智能计算回本所需涨幅，提供完整速查表",
-      description: "计算亏损后回本所需的涨幅",
       form: {
         title: "亏损百分比",
         currentLoss: "当前亏损",
@@ -227,14 +188,6 @@ export const zhCN: { translation: TranslationResources } = {
             desc: "亏损超过80%后，回本几乎不可能，建议及时止损",
           },
         },
-        difficultyLevels: {
-          noLoss: "无需回本",
-          easy: "容易",
-          medium: "中等",
-          hard: "困难",
-          veryHard: "非常难",
-          almostImpossible: "几乎不可能",
-        },
       },
       table: {
         title: "速查表",
@@ -251,8 +204,6 @@ export const zhCN: { translation: TranslationResources } = {
       },
     },
     about: {
-      title: "关于",
-      subtitle: "关于本应用",
       description: "一款专业的股票收益计算工具，帮助投资者快速计算连板收益、回本涨幅等关键指标。",
       techStack: {
         title: "技术栈",

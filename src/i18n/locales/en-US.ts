@@ -7,11 +7,6 @@ export const enUS: { translation: TranslationResources } = {
         stockCalculator: "Stock Calculator",
         lossRecovery: "Loss Recovery",
         about: "About",
-        stockCalculatorSubtitle:
-          "Intelligent analysis of consecutive limit returns, real-time investment calculation",
-        lossRecoverySubtitle:
-          "Quickly calculate required gains for loss recovery, set reasonable stop-loss strategies",
-        aboutSubtitle: "Learn about the project tech stack, development team, and usage guide",
         menuTitle: "Navigation Menu",
       },
       buttons: {
@@ -36,26 +31,15 @@ export const enUS: { translation: TranslationResources } = {
         disclaimer: "For reference only, not investment advice",
       },
       tags: {
-        realTime: "Real-time",
         history: "History",
-        visualization: "Visualization",
-        limitUp: "Limit Up",
-        limitDown: "Limit Down",
         recoveryAnalysis: "Recovery Analysis",
-        quickLookup: "1-100% Lookup",
-        riskAssessment: "Risk Assessment",
       },
       tooltips: {
-        themeToggle: {
-          light: "Switch to light mode",
-          dark: "Switch to dark mode",
-        },
         languageToggle: "Switch language",
         historyButton: "View history",
       },
       empty: {
         noHistory: "No history records",
-        noResults: "No results",
         noData: "No data available",
       },
       messages: {
@@ -70,23 +54,9 @@ export const enUS: { translation: TranslationResources } = {
         description: "Sorry, the application encountered an unexpected error.",
         details: "Error details (click to expand)",
         tryAgain: "Try Again",
-        goHome: "Go Home",
-      },
-      errors: {
-        types: {
-          validation: "Validation failed",
-          calculation: "Calculation error",
-          network: "Network connection error, please check your network and try again",
-          system: "System error, please contact administrator",
-          unknown: "Unknown error, please try again later",
-        },
       },
     },
     stockCalculator: {
-      title: "Stock Return Calculator",
-      subtitle:
-        "Intelligent analysis of consecutive limit returns, real-time investment calculation",
-      description: "Support both limit up and limit down calculations",
       form: {
         title: "Calculation Parameters",
         initialPrice: "Initial Price",
@@ -96,12 +66,10 @@ export const enUS: { translation: TranslationResources } = {
         units: {
           yuan: "CNY",
           shares: "shares",
-          percent: "%",
           days: "days",
         },
         placeholders: {
           initialPrice: "Enter initial stock price",
-          stockQuantity: "Optional, default is 100 shares",
         },
         tooltips: {
           initialPrice: "Enter the starting price of the stock, max 1 billion",
@@ -113,9 +81,6 @@ export const enUS: { translation: TranslationResources } = {
         },
         presets: {
           label: "Quick settings: ",
-          mainBoard: "A-Share Main",
-          starMarket: "STAR Market",
-          bex: "BEX",
         },
         initialMarketValue: "Initial Market Value",
       },
@@ -128,7 +93,6 @@ export const enUS: { translation: TranslationResources } = {
           consecutiveUp: "Consecutive Limit Up",
           consecutiveDown: "Consecutive Limit Down",
           days: "days",
-          finalPrice: "Final Price",
         },
         metrics: {
           doubleDays: "Double Days",
@@ -136,9 +100,7 @@ export const enUS: { translation: TranslationResources } = {
           tenXDays: "10x Days",
           annualizedReturn: "Annualized Return",
           title: "Key Metrics",
-          tooltip: "Key metrics help you quickly assess investment potential and risk",
-          dynamicTooltip: "With {{return}}% daily return, need {{days}} days to {{action}}",
-          doubleAction: "double",
+          dynamicTooltip: "With {{return}}% daily return, need {{days}} days to double",
           breakEvenTooltip: "Need {{return}}% reverse movement to return to initial price",
           tenXTooltip: "With {{return}}% daily return, need {{days}} days to reach 10x",
           annualizedTooltip: "Annualized return calculated based on {{days}} days",
@@ -173,8 +135,6 @@ export const enUS: { translation: TranslationResources } = {
         confirmClear: "Confirm Clear",
         confirmClearDesc: "Are you sure you want to clear all history? This cannot be undone.",
         noMatch: "No matching records found",
-        initialParams: "Initial Parameters",
-        boardDays: "days",
         holding: "Holding {{count}} shares",
         limitUpProfit: "Limit Up Profit",
         limitDownLoss: "Limit Down Loss",
@@ -200,8 +160,6 @@ export const enUS: { translation: TranslationResources } = {
     },
     recoveryCalculator: {
       title: "Loss Recovery Calculator",
-      subtitle: "Calculate required gain for recovery, with complete 1-100% lookup table",
-      description: "Calculate the gain needed to recover from losses",
       form: {
         title: "Loss Percentage",
         currentLoss: "Current Loss",
@@ -230,14 +188,6 @@ export const enUS: { translation: TranslationResources } = {
             desc: "After loss exceeds 80%, recovery is almost impossible, consider cutting losses",
           },
         },
-        difficultyLevels: {
-          noLoss: "No Loss",
-          easy: "Easy",
-          medium: "Medium",
-          hard: "Hard",
-          veryHard: "Very Hard",
-          almostImpossible: "Almost Impossible",
-        },
       },
       table: {
         title: "Quick Lookup",
@@ -254,8 +204,6 @@ export const enUS: { translation: TranslationResources } = {
       },
     },
     about: {
-      title: "About",
-      subtitle: "About This App",
       description:
         "A professional stock return calculator that helps investors quickly calculate key metrics like consecutive limit returns and recovery gains.",
       techStack: {
