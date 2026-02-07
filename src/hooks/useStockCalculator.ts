@@ -3,7 +3,7 @@ import { App } from "antd";
 import { useTranslation } from "react-i18next";
 import type { CalculationParams, CalculationResult, CalculationHistory } from "@/types";
 import { ErrorHandler } from "@/utils/errorHandler";
-import { isFieldValid, getFieldErrorMessage } from "@/utils/validator";
+import { isFieldValid, getFieldValidationKey } from "@/utils/validator";
 import { DEFAULT_VALUES, UI_CONSTANTS } from "@/constants";
 import { calculationService } from "@/services/calculationService";
 import { debounce } from "es-toolkit";
@@ -140,7 +140,7 @@ export const useStockCalculator = () => {
       deleteHistory: handleDeleteHistory,
       openHistoryDrawer,
       isFieldValid,
-      getFieldErrorMessage,
+      getFieldValidationKey,
       handleValuesChange,
       currentParams,
       isSaving,

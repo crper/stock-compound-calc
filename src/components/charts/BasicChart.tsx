@@ -117,17 +117,17 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
 
     const priceTickFormatter = useCallback(
       (value: number) => formatCurrency(value, { compact: true, decimals: 1 }),
-      []
+      [],
     );
     const priceTooltipFormatter = useCallback(
       (value: unknown) => `¥${(Number(value) || 0).toFixed(2)}`,
-      []
+      [],
     );
 
     if (chartType === "LINE") {
       return (
-        <div style={{ width: "100%", height: config.height }}>
-          <ResponsiveContainer width="100%" height="100%">
+        <div style={{ width: "100%", minWidth: 0, height: config.height, minHeight: config.height }}>
+          <ResponsiveContainer width="100%" height={config.height} debounce={1}>
             <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               {commonGrid}
               {commonXAxis}
@@ -159,8 +159,8 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
     }
 
     return (
-      <div style={{ width: "100%", height: config.height }}>
-        <ResponsiveContainer width="100%" height="100%">
+      <div style={{ width: "100%", minWidth: 0, height: config.height, minHeight: config.height }}>
+        <ResponsiveContainer width="100%" height={config.height} debounce={1}>
           <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             {commonGrid}
             {commonXAxis}

@@ -69,19 +69,16 @@ export const FORM_CONFIG = {
   PRESETS: [
     {
       value: PRESET_VALUES.A_STOCK_MAIN_BOARD,
-      label: "A股主板",
       subLabel: "10%",
       color: "#1890ff",
     },
     {
       value: PRESET_VALUES.STAR_MARKET,
-      label: "科创板",
       subLabel: "20%",
       color: "#52c41a",
     },
     {
       value: PRESET_VALUES.BEIJING_STOCK_EXCHANGE,
-      label: "北交所",
       subLabel: "30%",
       color: "#fa8c16",
     },

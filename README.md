@@ -33,6 +33,7 @@
 - **深色模式**：支持主题切换
 - **响应式设计**：适配手机和桌面端
 - **历史管理**：支持查看、加载、删除历史记录
+- **类型安全国际化**：使用 i18next 官方类型安全模式，提供完整的 IDE 自动补全
 
 ## 技术栈
 
@@ -168,7 +169,7 @@ src/
 │   └── useStockCalculator.ts # 连板收益计算
 ├── i18n/            # 国际化配置
 │   ├── index.ts                # i18n 初始化
-│   ├── types.ts                # 类型定义
+│   ├── i18next.d.ts            # 类型声明
 │   └── locales/                # 翻译文件
 │       ├── zh-CN.ts            # 简体中文
 │       └── en-US.ts            # 英文
@@ -238,6 +239,37 @@ await db.calculations.put({
 import { useLiveQuery } from "dexie-react-hooks";
 
 const history = useLiveQuery(() => calculationRepository.getAll({ limit: 50 }), []);
+```
+
+### 国际化类型安全
+
+使用 i18next 官方类型安全模式，提供完整的键值自动补全：
+
+```typescript
+import { useTranslation } from "react-i18next";
+
+const { t } = useTranslation();
+
+// IDE 可提供完整的键值自动补全
+const title = t("stockCalculator.form.title");
+const price = t("stockCalculator.form.initialPrice");
+
+// 变量插值
+const message = t("stockCalculator.results.finalPrice.value", { value: 100 });
+```
+
+类型声明文件 (`i18n/i18next.d.ts`) 使用官方标准模式：
+
+```typescript
+import "i18next";
+import { resources, defaultNS } from "./index";
+
+declare module "i18next" {
+  interface CustomTypeOptions {
+    defaultNS: typeof defaultNS;
+    resources: typeof resources["zh-CN"];
+  }
+}
 ```
 
 ## 部署
@@ -321,3 +353,31 @@ NODE_ENV=production
 - **nursery**: 开发中的实验性规则
 
 更多详情见 [AGENTS.md](./AGENTS.md)。
+
+## 更新日志
+
+### 2026-02-08
+
+**i18n 类型安全重构**
+- 采用 i18next 官方类型安全模式，使用 `as const` 和 `CustomTypeOptions`
+- 实现完整的翻译键 IDE 自动补全支持
+- 添加错误类型翻译：`common.errors.types.{validation|calculation|network|system}`
+- 优化错误处理逻辑，使用类型安全的 switch 语句替代模板字符串
+
+**移动端优化**
+- 历史记录 Drawer 移动端尺寸调整为 85%，避免全屏遮挡
+- 表单组件支持响应式尺寸（Input、Select、DatePicker）
+- PC 端布局宽度从 1280px 扩展至 1600px
+
+**技术改进**
+- 清理未使用的导入（FooterContent 中的 Space）
+- 使用 `Form.useWatch` 替代 `form.getFieldValue` 避免警告
+- 图表容器添加防抖机制 (debounce=1)
+- Drawer size 属性废弃 API 迁移完成
+
+**代码质量**
+- oxlint 类型感知检查：0 warnings, 0 errors
+- 测试覆盖率：86 个测试全部通过
+- 生产构建成功，bundle 大小优化
+
+

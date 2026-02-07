@@ -3,18 +3,7 @@
  * 使用 PageContainer 统一布局管理
  */
 import React from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Drawer,
-  Empty,
-  Tag,
-  Popconfirm,
-  Button,
-  App,
-  Typography,
-} from "antd";
+import { Card, Row, Col, Drawer, Empty, Tag, Popconfirm, Button, App, Typography } from "antd";
 import { HistoryOutlined, DeleteOutlined, ClearOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useLossRecovery } from "@/hooks/useLossRecovery";
@@ -64,7 +53,7 @@ export const LossRecoveryCalculator: React.FC = () => {
 
           <Col xs={24} lg={8}>
             <div className="h-full animate-[slideIn_0.4s_ease-out_0.1s_both]">
-              <RecoveryResult lossPercent={lossPercent} />
+              <RecoveryResult lossPercent={lossPercent} isMobile={isMobile} />
             </div>
           </Col>
 
@@ -80,7 +69,9 @@ export const LossRecoveryCalculator: React.FC = () => {
       <Drawer
         title={
           <div className="flex items-center gap-3">
-            <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${PRIMARY_COLORS.tailwind.from} ${PRIMARY_COLORS.tailwind.to} flex items-center justify-center`}>
+            <div
+              className={`w-9 h-9 rounded-xl bg-gradient-to-br ${PRIMARY_COLORS.tailwind.from} ${PRIMARY_COLORS.tailwind.to} flex items-center justify-center`}
+            >
               <HistoryOutlined className="text-white text-lg" />
             </div>
             <div className="flex items-center gap-2">
@@ -208,11 +199,7 @@ export const LossRecoveryCalculator: React.FC = () => {
       </Drawer>
 
       {/* 浮动按钮 - 移动端显示 */}
-      <HistoryFloatButton
-        count={history.length}
-        onClick={openHistoryDrawer}
-        visible={isMobile}
-      />
+      <HistoryFloatButton count={history.length} onClick={openHistoryDrawer} visible={isMobile} />
     </ErrorBoundary>
   );
 };

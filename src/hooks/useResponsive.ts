@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 
 export interface ResponsiveConfig {
   isMobile: boolean;
-  size: "large" | "middle";
+  size: "large" | "middle" | "small";
   fontSize: {
     base: number;
     small: number;
@@ -16,11 +16,11 @@ export interface ResponsiveConfig {
 // 常量缓存，避免每次渲染重新创建
 const MOBILE_CONFIG: ResponsiveConfig = {
   isMobile: true,
-  size: "large",
+  size: "small",
   fontSize: { base: 16, small: 12, large: 18 },
   spacing: 12,
   cardSize: "default",
-  buttonSize: "middle",
+  buttonSize: "small",
 };
 
 const DESKTOP_CONFIG: ResponsiveConfig = {

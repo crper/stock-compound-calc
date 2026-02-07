@@ -11,10 +11,11 @@ type ChartType = "BAR" | "LINE";
 interface ChartTypeSelectorProps {
   value: ChartType;
   onChange: (type: ChartType) => void;
+  isMobile?: boolean;
 }
 
 export const ChartTypeSelector: React.FC<ChartTypeSelectorProps> = React.memo(
-  ({ value, onChange }) => {
+  ({ value, onChange, isMobile = false }) => {
     const { t } = useTranslation();
     return (
       <Segmented
@@ -32,6 +33,7 @@ export const ChartTypeSelector: React.FC<ChartTypeSelectorProps> = React.memo(
         ]}
         value={value}
         onChange={(val) => onChange(val as ChartType)}
+        size={isMobile ? "small" : "middle"}
       />
     );
   },

@@ -1,6 +1,6 @@
-import type { TranslationResources } from "../types";
+import "i18next";
 
-export const zhCN: { translation: TranslationResources } = {
+export const zhCN = {
   translation: {
     common: {
       navigation: {
@@ -33,10 +33,16 @@ export const zhCN: { translation: TranslationResources } = {
       tags: {
         history: "历史记录",
         recoveryAnalysis: "回本分析",
+        info: "关于页面",
+        limitUp: "涨停计算",
       },
       tooltips: {
         languageToggle: "切换语言",
         historyButton: "查看历史记录",
+        themeToggle: {
+          light: "浅色主题",
+          dark: "深色主题",
+        },
       },
       empty: {
         noHistory: "暂无历史记录",
@@ -55,6 +61,14 @@ export const zhCN: { translation: TranslationResources } = {
         details: "错误详情（点击展开）",
         tryAgain: "重试",
       },
+      errors: {
+        types: {
+          validation: "验证错误",
+          calculation: "计算错误",
+          network: "网络错误",
+          system: "系统错误",
+        },
+      },
     },
     stockCalculator: {
       form: {
@@ -67,9 +81,11 @@ export const zhCN: { translation: TranslationResources } = {
           yuan: "元",
           shares: "股",
           days: "天",
+          percent: "%",
         },
         placeholders: {
           initialPrice: "请输入初始股价",
+          stockQuantity: "请输入持有的股票数量（可选）",
         },
         tooltips: {
           initialPrice: "请输入股票的起始价格，最大支持10亿",
@@ -81,6 +97,9 @@ export const zhCN: { translation: TranslationResources } = {
         },
         presets: {
           label: "快速设置：",
+          mainBoard: "A股主板",
+          starMarket: "科创板",
+          bex: "北交所",
         },
         initialMarketValue: "初始持仓市值",
       },
@@ -116,6 +135,9 @@ export const zhCN: { translation: TranslationResources } = {
           title: "股价变化",
           initial: "初始",
           final: "最终",
+        },
+        finalPrice: {
+          label: "最终股价",
         },
       },
       history: {
@@ -173,6 +195,14 @@ export const zhCN: { translation: TranslationResources } = {
         title: "回本分析",
         difficulty: {
           label: "回本难度",
+        },
+        difficultyLevels: {
+          noLoss: "无需回本",
+          easy: "容易",
+          medium: "中等",
+          hard: "困难",
+          veryHard: "非常难",
+          almostImpossible: "几乎不可能",
         },
         currentLoss: "当前亏损",
         requiredGain: "需要上涨",
@@ -271,7 +301,7 @@ export const zhCN: { translation: TranslationResources } = {
       boardCount: {
         integer: "连板数量必须为整数",
         min: "连板数量至少为1天",
-        max: "连板数量最多为3650天",
+        max: "联板数量最多为3650天",
       },
       dailyReturn: {
         min: "涨跌幅不能小于-99%",
@@ -286,4 +316,4 @@ export const zhCN: { translation: TranslationResources } = {
       atLeastOneRecord: "至少选择一条记录",
     },
   },
-};
+} as const;

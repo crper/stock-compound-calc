@@ -4,6 +4,7 @@ import {
   formatRecoveryNumber,
   getDifficultyLevel,
   isValidLossPercent,
+  DifficultyLevel,
 } from "../lossRecovery";
 import Decimal from "decimal.js";
 
@@ -186,116 +187,116 @@ describe("formatRecoveryNumber", () => {
 });
 
 describe("getDifficultyLevel", () => {
-  describe("无需回本", () => {
-    it("should return '无需回本' for 0% loss", () => {
+  describe("no loss (无需回本)", () => {
+    it("should return 'noLoss' for 0% loss", () => {
       const result = getDifficultyLevel(0);
 
-      expect(result.text).toBe("无需回本");
+      expect(result.level).toBe(DifficultyLevel.NO_LOSS);
       expect(result.color).toBe("#52c41a");
       expect(result.bgColor).toBe("bg-green-50 dark:bg-green-900/20");
     });
   });
 
-  describe("容易", () => {
-    it("should return '容易' for small losses", () => {
+  describe("easy (容易)", () => {
+    it("should return 'easy' for small losses", () => {
       const result5 = getDifficultyLevel(5);
-      expect(result5.text).toBe("容易");
+      expect(result5.level).toBe(DifficultyLevel.EASY);
       expect(result5.color).toBe("#52c41a");
 
       const result9 = getDifficultyLevel(9);
-      expect(result9.text).toBe("容易");
+      expect(result9.level).toBe(DifficultyLevel.EASY);
     });
 
-    it("should not return '容易' for 10% loss", () => {
+    it("should not return 'easy' for 10% loss", () => {
       const result = getDifficultyLevel(10);
-      expect(result.text).not.toBe("容易");
+      expect(result.level).not.toBe(DifficultyLevel.EASY);
     });
   });
 
-  describe("中等", () => {
-    it("should return '中等' for moderate losses", () => {
+  describe("medium (中等)", () => {
+    it("should return 'medium' for moderate losses", () => {
       const result10 = getDifficultyLevel(10);
-      expect(result10.text).toBe("中等");
+      expect(result10.level).toBe(DifficultyLevel.MEDIUM);
       expect(result10.color).toBe("#1677ff");
 
       const result20 = getDifficultyLevel(20);
-      expect(result20.text).toBe("中等");
+      expect(result20.level).toBe(DifficultyLevel.MEDIUM);
 
       const result24 = getDifficultyLevel(24);
-      expect(result24.text).toBe("中等");
+      expect(result24.level).toBe(DifficultyLevel.MEDIUM);
     });
 
-    it("should not return '中等' for 25% loss", () => {
+    it("should not return 'medium' for 25% loss", () => {
       const result = getDifficultyLevel(25);
-      expect(result.text).not.toBe("中等");
+      expect(result.level).not.toBe(DifficultyLevel.MEDIUM);
     });
   });
 
-  describe("困难", () => {
-    it("should return '困难' for high losses", () => {
+  describe("hard (困难)", () => {
+    it("should return 'hard' for large losses", () => {
       const result25 = getDifficultyLevel(25);
-      expect(result25.text).toBe("困难");
+      expect(result25.level).toBe(DifficultyLevel.HARD);
       expect(result25.color).toBe("#faad14");
 
       const result40 = getDifficultyLevel(40);
-      expect(result40.text).toBe("困难");
+      expect(result40.level).toBe(DifficultyLevel.HARD);
 
       const result49 = getDifficultyLevel(49);
-      expect(result49.text).toBe("困难");
+      expect(result49.level).toBe(DifficultyLevel.HARD);
     });
 
-    it("should not return '困难' for 50% loss", () => {
+    it("should not return 'hard' for 50% loss", () => {
       const result = getDifficultyLevel(50);
-      expect(result.text).not.toBe("困难");
+      expect(result.level).not.toBe(DifficultyLevel.HARD);
     });
   });
 
-  describe("非常难", () => {
-    it("should return '非常难' for very high losses", () => {
+  describe("very hard (非常难)", () => {
+    it("should return 'veryHard' for very large losses", () => {
       const result50 = getDifficultyLevel(50);
-      expect(result50.text).toBe("非常难");
+      expect(result50.level).toBe(DifficultyLevel.VERY_HARD);
       expect(result50.color).toBe("#fa541c");
 
       const result60 = getDifficultyLevel(60);
-      expect(result60.text).toBe("非常难");
+      expect(result60.level).toBe(DifficultyLevel.VERY_HARD);
 
       const result74 = getDifficultyLevel(74);
-      expect(result74.text).toBe("非常难");
+      expect(result74.level).toBe(DifficultyLevel.VERY_HARD);
     });
 
-    it("should not return '非常难' for 75% loss", () => {
+    it("should not return 'veryHard' for 75% loss", () => {
       const result = getDifficultyLevel(75);
-      expect(result.text).not.toBe("非常难");
+      expect(result.level).not.toBe(DifficultyLevel.VERY_HARD);
     });
   });
 
-  describe("几乎不可能", () => {
-    it("should return '几乎不可能' for extreme losses", () => {
+  describe("almost impossible (几乎不可能)", () => {
+    it("should return 'almostImpossible' for extreme losses", () => {
       const result75 = getDifficultyLevel(75);
-      expect(result75.text).toBe("几乎不可能");
+      expect(result75.level).toBe(DifficultyLevel.ALMOST_IMPOSSIBLE);
       expect(result75.color).toBe("#ff4d4f");
 
       const result90 = getDifficultyLevel(90);
-      expect(result90.text).toBe("几乎不可能");
+      expect(result90.level).toBe(DifficultyLevel.ALMOST_IMPOSSIBLE);
 
       const result99 = getDifficultyLevel(99);
-      expect(result99.text).toBe("几乎不可能");
+      expect(result99.level).toBe(DifficultyLevel.ALMOST_IMPOSSIBLE);
     });
   });
 
   describe("边界情况", () => {
     it("should handle boundary values correctly", () => {
-      expect(getDifficultyLevel(0).text).toBe("无需回本");
-      expect(getDifficultyLevel(0.01).text).toBe("容易");
-      expect(getDifficultyLevel(9.99).text).toBe("容易");
-      expect(getDifficultyLevel(10).text).toBe("中等");
-      expect(getDifficultyLevel(24.99).text).toBe("中等");
-      expect(getDifficultyLevel(25).text).toBe("困难");
-      expect(getDifficultyLevel(49.99).text).toBe("困难");
-      expect(getDifficultyLevel(50).text).toBe("非常难");
-      expect(getDifficultyLevel(74.99).text).toBe("非常难");
-      expect(getDifficultyLevel(75).text).toBe("几乎不可能");
-      expect(getDifficultyLevel(100).text).toBe("几乎不可能");
+      expect(getDifficultyLevel(0).level).toBe(DifficultyLevel.NO_LOSS);
+      expect(getDifficultyLevel(0.01).level).toBe(DifficultyLevel.EASY);
+      expect(getDifficultyLevel(9.99).level).toBe(DifficultyLevel.EASY);
+      expect(getDifficultyLevel(10).level).toBe(DifficultyLevel.MEDIUM);
+      expect(getDifficultyLevel(24.99).level).toBe(DifficultyLevel.MEDIUM);
+      expect(getDifficultyLevel(25).level).toBe(DifficultyLevel.HARD);
+      expect(getDifficultyLevel(49.99).level).toBe(DifficultyLevel.HARD);
+      expect(getDifficultyLevel(50).level).toBe(DifficultyLevel.VERY_HARD);
+      expect(getDifficultyLevel(74.99).level).toBe(DifficultyLevel.VERY_HARD);
+      expect(getDifficultyLevel(75).level).toBe(DifficultyLevel.ALMOST_IMPOSSIBLE);
+      expect(getDifficultyLevel(100).level).toBe(DifficultyLevel.ALMOST_IMPOSSIBLE);
     });
   });
 });

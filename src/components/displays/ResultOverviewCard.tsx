@@ -80,7 +80,9 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
       >
         {/* 摘要区 - 始终显示 */}
         <div className={`text-center p-5 rounded-lg border ${colors.bg} ${colors.border}`}>
-          <Text className="block text-xs text-gray-500 dark:text-gray-400 mb-2">最终股价</Text>
+          <Text className="block text-xs text-gray-500 dark:text-gray-400 mb-2">
+            {t("stockCalculator.results.finalPrice.label")}
+          </Text>
           <div
             className={`font-bold mb-1 font-mono tracking-tight ${colors.text} ${
               result.finalPrice >= 10000000 ? "text-2xl" : "text-3xl"

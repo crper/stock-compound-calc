@@ -21,16 +21,21 @@ export const LANGUAGE_NAMES: Record<Language, string> = {
   [LANGUAGES.EN_US]: "English",
 };
 
-// 初始化 i18n
+// i18next 官方推荐的类型定义方式
+export const defaultNS = "translation";
+export const resources = {
+  [LANGUAGES.ZH_CN]: zhCN,
+  [LANGUAGES.EN_US]: enUS,
+} as const;
+
+// 初始化 i18next
 void i18n
   .use(initReactI18next)
   .use(LanguageDetector)
   .init({
-    resources: {
-      [LANGUAGES.ZH_CN]: zhCN,
-      [LANGUAGES.EN_US]: enUS,
-    },
+    resources,
     fallbackLng: LANGUAGES.EN_US,
+    defaultNS,
     detection: {
       order: ["localStorage", "navigator"],
       lookupLocalStorage: LANGUAGE_STORAGE_KEY,

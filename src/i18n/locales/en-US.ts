@@ -1,6 +1,6 @@
-import type { TranslationResources } from "../types";
+import "i18next";
 
-export const enUS: { translation: TranslationResources } = {
+export const enUS = {
   translation: {
     common: {
       navigation: {
@@ -33,10 +33,16 @@ export const enUS: { translation: TranslationResources } = {
       tags: {
         history: "History",
         recoveryAnalysis: "Recovery Analysis",
+        info: "About Page",
+        limitUp: "Limit Up Calc",
       },
       tooltips: {
         languageToggle: "Switch language",
         historyButton: "View history",
+        themeToggle: {
+          light: "Light theme",
+          dark: "Dark theme",
+        },
       },
       empty: {
         noHistory: "No history records",
@@ -55,6 +61,14 @@ export const enUS: { translation: TranslationResources } = {
         details: "Error details (click to expand)",
         tryAgain: "Try Again",
       },
+      errors: {
+        types: {
+          validation: "Validation Error",
+          calculation: "Calculation Error",
+          network: "Network Error",
+          system: "System Error",
+        },
+      },
     },
     stockCalculator: {
       form: {
@@ -67,9 +81,11 @@ export const enUS: { translation: TranslationResources } = {
           yuan: "CNY",
           shares: "shares",
           days: "days",
+          percent: "%",
         },
         placeholders: {
           initialPrice: "Enter initial stock price",
+          stockQuantity: "Enter the number of shares held (optional)",
         },
         tooltips: {
           initialPrice: "Enter the starting price of the stock, max 1 billion",
@@ -81,6 +97,9 @@ export const enUS: { translation: TranslationResources } = {
         },
         presets: {
           label: "Quick settings: ",
+          mainBoard: "A-Share Main Board",
+          starMarket: "STAR Market",
+          bex: "BSE",
         },
         initialMarketValue: "Initial Market Value",
       },
@@ -116,6 +135,9 @@ export const enUS: { translation: TranslationResources } = {
           title: "Price Change",
           initial: "Initial",
           final: "Final",
+        },
+        finalPrice: {
+          label: "Final Price",
         },
       },
       history: {
@@ -173,6 +195,14 @@ export const enUS: { translation: TranslationResources } = {
         title: "Recovery Analysis",
         difficulty: {
           label: "Recovery Difficulty",
+        },
+        difficultyLevels: {
+          noLoss: "No Loss",
+          easy: "Easy",
+          medium: "Medium",
+          hard: "Hard",
+          veryHard: "Very Hard",
+          almostImpossible: "Almost Impossible",
         },
         currentLoss: "Current Loss",
         requiredGain: "Required Gain",
@@ -288,4 +318,4 @@ export const enUS: { translation: TranslationResources } = {
       atLeastOneRecord: "Please select at least one record",
     },
   },
-};
+} as const;

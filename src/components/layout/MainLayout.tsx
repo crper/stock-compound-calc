@@ -69,14 +69,17 @@ export const MainLayout: React.FC = () => {
         onClose={handleMobileMenuClose}
         open={mobileMenuVisible}
         className="mobile-navigation-drawer"
-        width={280}
+        size="default"
+        styles={{
+          body: { padding: "16px" },
+        }}
       >
         <NavigationMenu isDrawer onClose={handleMobileMenuClose} />
       </Drawer>
 
       {/* 内容区域 */}
       <Layout.Content className="flex-1">
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-8" style={{ maxWidth: 1600 }}>
           <Outlet />
         </div>
       </Layout.Content>

@@ -86,11 +86,7 @@ export const StockCalculator: React.FC = () => {
       />
 
       {/* 浮动按钮 - 移动端显示 */}
-      <HistoryFloatButton
-        count={history.length}
-        onClick={openHistoryDrawer}
-        visible={isMobile}
-      />
+      <HistoryFloatButton count={history.length} onClick={openHistoryDrawer} visible={isMobile} />
     </ErrorBoundary>
   );
 };

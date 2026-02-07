@@ -10,30 +10,28 @@ interface HistoryFloatButtonProps {
   visible?: boolean;
 }
 
-export const HistoryFloatButton: React.FC<HistoryFloatButtonProps> = React.memo(({
-  count,
-  onClick,
-  visible = true,
-}) => {
-  const { t } = useTranslation();
+export const HistoryFloatButton: React.FC<HistoryFloatButtonProps> = React.memo(
+  ({ count, onClick, visible = true }) => {
+    const { t } = useTranslation();
 
-  if (!visible || count === 0) {
-    return null;
-  }
+    if (!visible || count === 0) {
+      return null;
+    }
 
-  return (
-    <FloatButton
-      icon={<HistoryOutlined />}
-      onClick={onClick}
-      badge={{ count }}
-      style={{
-        right: 24,
-        bottom: 24,
-        boxShadow: PRIMARY_COLORS.shadow,
-      }}
-      tooltip={t("common.tooltips.historyButton")}
-    />
-  );
-});
+    return (
+      <FloatButton
+        icon={<HistoryOutlined />}
+        onClick={onClick}
+        badge={{ count }}
+        style={{
+          right: 24,
+          bottom: 24,
+          boxShadow: PRIMARY_COLORS.shadow,
+        }}
+        tooltip={t("common.tooltips.historyButton")}
+      />
+    );
+  },
+);
 
 HistoryFloatButton.displayName = "HistoryFloatButton";

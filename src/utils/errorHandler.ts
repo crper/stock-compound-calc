@@ -27,13 +27,26 @@ export class AppError extends Error {
   }
 
   toUserMessage(): string {
-    const prefix = i18n.t(`common.errors.types.${this.type.toLowerCase()}`);
+    const prefix = this.getErrorTypePrefix();
 
     if (this.type === ErrorType.NETWORK || this.type === ErrorType.SYSTEM) {
       return prefix;
     }
 
     return `${prefix}: ${this.message}`;
+  }
+
+  private getErrorTypePrefix(): string {
+    switch (this.type) {
+      case ErrorType.VALIDATION:
+        return i18n.t("common.errors.types.validation");
+      case ErrorType.CALCULATION:
+        return i18n.t("common.errors.types.calculation");
+      case ErrorType.NETWORK:
+        return i18n.t("common.errors.types.network");
+      case ErrorType.SYSTEM:
+        return i18n.t("common.errors.types.system");
+    }
   }
 
   toLogFormat(): {

@@ -35,7 +35,7 @@ export const calculationService = {
 
   clearHistory: async (): Promise<ApiResponse<{ message: string }>> => {
     await calculationRepository.clear();
-    return { success: true, data: { message: "已清除所有记录" } };
+    return { success: true, data: { message: "History cleared" } };
   },
 
   deleteHistory: async (ids: string[]): Promise<ApiResponse<{ deletedCount: number }>> => {

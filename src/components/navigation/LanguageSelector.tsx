@@ -2,9 +2,11 @@ import React from "react";
 import { Segmented } from "antd";
 import { useTranslation } from "react-i18next";
 import { LANGUAGES, type Language } from "@/i18n";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export const LanguageSelector: React.FC = React.memo(() => {
   const { i18n, t } = useTranslation();
+  const { isMobile } = useResponsive();
 
   const currentLanguage = i18n.language as Language;
 
@@ -28,7 +30,7 @@ export const LanguageSelector: React.FC = React.memo(() => {
       value={currentLanguage}
       onChange={handleLanguageChange}
       options={options}
-      size="large"
+      size={isMobile ? "small" : "large"}
       style={{
         background: "var(--colorBgContainer)",
         border: "1px solid var(--colorBorderSecondary)",

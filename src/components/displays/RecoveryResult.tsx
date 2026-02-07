@@ -9,31 +9,20 @@ const { Title, Text } = Typography;
 
 interface RecoveryResultProps {
   lossPercent: number;
+  isMobile?: boolean;
 }
 
-export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossPercent }) => {
+export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossPercent, isMobile = false }) => {
   const { t } = useTranslation();
   const metrics = calculateRecovery(lossPercent);
   const difficulty = getDifficultyLevel(lossPercent);
 
-  const getDifficultyTranslationKey = (text: string): string => {
-    const keyMap: Record<string, string> = {
-      无需回本: "recoveryCalculator.results.difficultyLevels.noLoss",
-      容易: "recoveryCalculator.results.difficultyLevels.easy",
-      中等: "recoveryCalculator.results.difficultyLevels.medium",
-      困难: "recoveryCalculator.results.difficultyLevels.hard",
-      非常难: "recoveryCalculator.results.difficultyLevels.veryHard",
-      几乎不可能: "recoveryCalculator.results.difficultyLevels.almostImpossible",
-    };
-    return keyMap[text] || text;
-  };
-
   return (
     <Card
-      size="default"
+      size={isMobile ? "small" : "default"}
       title={
         <div className="flex items-center justify-between">
-          <Title level={4} className="!m-0 dark:text-gray-100 text-lg lg:text-base font-semibold">
+          <Title level={4} className={`!m-0 dark:text-gray-100 ${isMobile ? "text-base" : "text-lg lg:text-base"} font-semibold`}>
             {t("recoveryCalculator.results.title")}
           </Title>
         </div>
@@ -64,7 +53,7 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(({ lossP
                   color: "#fff",
                 }}
               >
-                {t(getDifficultyTranslationKey(difficulty.text))}
+                {t(`recoveryCalculator.results.difficultyLevels.${difficulty.level}`)}
               </div>
             </div>
           </Flex>

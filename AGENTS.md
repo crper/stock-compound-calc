@@ -1,7 +1,7 @@
 # AGENTS.md - AI 编码指南
 
 **项目:** 股票计算器 (Bun + React 19 + TypeScript + IndexedDB + Dexie + React Router + Tailwind v4 + Ant Design v6 + i18next)
-**最后更新:** 2026-02-06
+**最后更新:** 2026-02-08
 
 ## 🛠 核心命令
 
@@ -425,11 +425,44 @@ A: 在 `rules` 中设置 `"rule-name": "off"`，或在特定文件中使用 `// 
 
 翻译文件位于 `src/i18n/locales/`，按命名空间组织：
 
-- `common` - 通用文本（导航、按钮、页脚）
+- `common` - 通用文本（导航、按钮、页脚、错误类型）
 - `stockCalculator` - 股价连板计算器
 - `recoveryCalculator` - 亏损回本计算器
 - `about` - 关于页面
 - `validation` - 表单验证错误
+
+**文件结构**
+
+```
+src/i18n/
+├── index.ts          # i18n 初始化与 exports
+├── i18next.d.ts      # 类型声明（官方标准模式）
+└── locales/
+    ├── zh-CN.ts      # 简体中文（使用 as const）
+    └── en-US.ts      # 英文（使用 as const）
+```
+
+**类型安全实现**
+
+项目使用 i18next 官方类型安全模式，提供完整的 IDE 自动补全：
+
+1. **翻译文件**：使用 `as const` 断言确保字面量类型推断
+2. **类型声明**：通过 `i18next.d.ts` 扩展 `CustomTypeOptions` 接口
+3. **导出资源**：在 `index.ts` 中导出 `resources` 和 `defaultNS`
+
+**类型声明示例** (`src/i18n/i18next.d.ts`):
+
+```typescript
+import "i18next";
+import { resources, defaultNS } from "./index";
+
+declare module "i18next" {
+  interface CustomTypeOptions {
+    defaultNS: typeof defaultNS;
+    resources: typeof resources["zh-CN"];
+  }
+}
+```
 
 **使用示例**
 
@@ -439,8 +472,28 @@ import { useTranslation } from "react-i18next";
 export const Component: React.FC = () => {
   const { t } = useTranslation();
 
+  // IDE 可提供完整的键值自动补全
   return <Button>{t("common.buttons.confirm")}</Button>;
 };
+```
+
+**错误处理类型安全**
+
+错误消息使用类型安全的 switch 语句，避免模板字符串类型推断问题：
+
+```typescript
+private getErrorTypePrefix(): string {
+  switch (this.type) {
+    case ErrorType.VALIDATION:
+      return i18n.t("common.errors.types.validation");
+    case ErrorType.CALCULATION:
+      return i18n.t("common.errors.types.calculation");
+    case ErrorType.NETWORK:
+      return i18n.t("common.errors.types.network");
+    case ErrorType.SYSTEM:
+      return i18n.t("common.errors.types.system");
+  }
+}
 ```
 
 **语言策略**
@@ -455,6 +508,7 @@ export const Component: React.FC = () => {
 2. 先在 `zh-CN.ts` 和 `en-US.ts` 中添加对应的翻译键
 3. 使用 `t("namespace.key")` 引用翻译
 4. 变量插值使用 `t("key", { variable: value })`
+5. 新增翻译键后，IDE 自动提供类型检查和补全
 
 ## ⚠️ 关键约束
 
@@ -505,6 +559,72 @@ export const Component: React.FC = () => {
 - **删除代码行数**: ~50行冗余代码
 - **删除常量**: 5个未使用的配置项
 - **优化文件**: 3个配置文件精简
+
+### 2026-02-08 - i18n 类型安全重构与移动端优化
+
+**🟡 类型安全重构**
+
+- **i18next 官方模式**:
+  - 采用官方类型安全模式（`as const` + `CustomTypeOptions`）
+  - 删除手动类型定义文件 `src/i18n/types.ts`
+  - 删除不必要的 barrel export `src/i18n/locales/index.ts`
+  - 创建 `src/i18n/i18next.d.ts` 使用官方扩展模式
+  - 在翻译文件中添加 `import "i18next"` 确保类型推断
+
+- **错误处理优化**:
+  - 修复 errorHandler.ts 模板字符串类型错误
+  - 使用类型安全的 switch 语句替代动态键合成
+  - 添加缺失的错误类型翻译：`common.errors.types.{validation|calculation|network|system}`
+  - 在 `zh-CN.ts` 和 `en-US.ts` 中统一错误前缀模式
+
+**🟢 移动端体验提升**
+
+- **历史记录 Drawer**:
+  - 移动端从 100% 调整为 85% 避免全屏遮挡
+  - 所有表单组件支持响应式尺寸
+  - 卡片、输入框、选择器等根据 `isMobile` 动态调整尺寸
+  - 减少内边距、间距和字体大小
+
+- **PC 布局扩展**:
+  - 内容区域宽度从 `max-w-7xl` (1280px) 扩展至 1600px
+  - 提供更多内容展示空间
+
+- **组件响应式优化**:
+  - ThemeToggle, LanguageSelector: `isMobile ? "small" : "large"`
+  - ChartTypeSelector: `isMobile ? "small" : "middle"`
+  - 所有表单和结果组件传递 `isMobile` prop
+
+**🔧 技术改进**
+
+- **废弃 API 迁移**:
+  - MainLayout Drawer: `width={280}` → `size="default"`
+  - 验证所有 `Space direction` 已替换为 `Flex vertical`
+  - 验证所有 `Statistic valueStyle` 已替换为 `styles.content`
+  - 验证所有 `Alert message` 已替换为 `title`
+
+- **性能优化**:
+  - BasicChart: 添加 `debounce={1}` 优化性能
+  - 图表容器使用 `minHeight` 防止零高度警告
+  - 使用 `Form.useWatch` 监听表单值避免警告
+
+- **代码清理**:
+  - FooterContent: 删除未使用的 `Space` 导入
+
+**✅ 验证结果**
+
+- **代码质量**: `bun run lint` 0 warnings, 0 errors
+- **构建成功**: `bun run build` 编译成功
+- **功能完整**: 所有核心功能保持正常
+- **测试覆盖**: 86 个测试全部通过
+- **类型安全**: IDE 可提供完整的翻译键自动补全
+
+**📊 重构统计**
+
+- **删除文件**: 2个未使用/冗余文件
+- **新增文件**: 1个类型声明文件
+- **修改文件**: 15+ 组件和配置文件
+- **类型改进**: i18next 从手动类型推断升级为官方类型安全模式
+- **移动端优化**: 适配更小的屏幕尺寸
 
 ## 🎨 Ant Design 主题配置最佳实践
 

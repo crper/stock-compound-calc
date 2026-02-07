@@ -56,7 +56,9 @@ const ChartWrapper: React.FC<{
         </LoadingState>
       }
     >
-      <BasicChart results={results} isMobile={isMobile} chartType={chartType} />
+      <div style={{ minHeight: isMobile ? 300 : 400 }}>
+        <BasicChart results={results} isMobile={isMobile} chartType={chartType} />
+      </div>
     </Suspense>
   );
 });
@@ -106,7 +108,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({ resul
           <span className="text-xl">📊</span>
           <span>{t("stockCalculator.charts.title")}</span>
         </Title>
-        <ChartTypeSelector value={chartType} onChange={setChartType} />
+        <ChartTypeSelector value={chartType} onChange={setChartType} isMobile={isMobile} />
       </Flex>
 
       {hasError && (

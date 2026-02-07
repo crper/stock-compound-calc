@@ -87,22 +87,25 @@ export const useLossRecovery = () => {
   }, []);
 
   // 保存历史记录 - 使用 useCallback 但依赖数组为空
-  const saveHistory = useCallback((loss: number, gain: Decimal, mult: Decimal) => {
-    const newItem: RecoveryHistoryItem = {
-      id: generateId(),
-      lossPercent: loss,
-      requiredGain: gain.isFinite() ? gain.toFixed(2) : "∞",
-      multiplier: mult.isFinite() ? mult.toFixed(2) : "∞",
-      timestamp: Date.now(),
-      createdAt: new Date().toLocaleString(i18n.language),
-    };
+  const saveHistory = useCallback(
+    (loss: number, gain: Decimal, mult: Decimal) => {
+      const newItem: RecoveryHistoryItem = {
+        id: generateId(),
+        lossPercent: loss,
+        requiredGain: gain.isFinite() ? gain.toFixed(2) : "∞",
+        multiplier: mult.isFinite() ? mult.toFixed(2) : "∞",
+        timestamp: Date.now(),
+        createdAt: new Date().toLocaleString(i18n.language),
+      };
 
-    setHistory((prev) => {
-      const updated = [newItem, ...prev].slice(0, MAX_HISTORY_ITEMS);
-      persistHistory(updated);
-      return updated;
-    });
-  }, [i18n.language]);
+      setHistory((prev) => {
+        const updated = [newItem, ...prev].slice(0, MAX_HISTORY_ITEMS);
+        persistHistory(updated);
+        return updated;
+      });
+    },
+    [i18n.language],
+  );
 
   // 处理亏损百分比变化 - 带防抖
   const handleLossChange = useCallback(
