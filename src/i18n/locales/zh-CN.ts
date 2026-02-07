@@ -299,6 +299,14 @@ export const zhCN: { translation: TranslationResources } = {
         description: "本应用由 crper 开发维护",
         github: "GitHub",
       },
+      sponsor: {
+        title: "支持项目",
+        description: "如果您觉得这个工具对您有帮助，欢迎支持开发者继续维护和改进",
+        paypal: "PayPal",
+        paypalUrl: "paypal.me/xcrper",
+        wechat: "微信支付",
+        alipay: "支付宝",
+      },
       disclaimer: {
         title: "免责声明",
         content: "本应用仅供学习和参考使用，计算结果不构成任何投资建议。股市有风险，投资需谨慎。",

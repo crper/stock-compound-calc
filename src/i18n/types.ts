@@ -299,6 +299,14 @@ export interface TranslationResources {
       description: string;
       github: string;
     };
+    sponsor: {
+      title: string;
+      description: string;
+      paypal: string;
+      paypalUrl: string;
+      wechat: string;
+      alipay: string;
+    };
     disclaimer: {
       title: string;
       content: string;

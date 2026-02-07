@@ -303,6 +303,14 @@ export const enUS: { translation: TranslationResources } = {
         description: "This app is developed and maintained by crper",
         github: "GitHub",
       },
+      sponsor: {
+        title: "Support Project",
+        description: "If you find this tool helpful, consider supporting the developer",
+        paypal: "PayPal",
+        paypalUrl: "paypal.me/xcrper",
+        wechat: "WeChat Pay",
+        alipay: "Alipay",
+      },
       disclaimer: {
         title: "Disclaimer",
         content:

@@ -3,7 +3,7 @@
  * 使用 PageContainer 统一布局管理
  */
 import React from "react";
-import { Tag, Divider, Flex, Typography } from "antd";
+import { Tag, Divider, Flex, Typography, Card } from "antd";
 import {
   GithubOutlined,
   CalculatorOutlined,
@@ -11,9 +11,12 @@ import {
   BarChartOutlined,
   HistoryOutlined,
   WarningOutlined,
+  HeartOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { ErrorBoundary, PageContainer } from "@/components";
+import alipayImg from "@/assets/sponsor/sponsor_alipay.jpg";
+import wechatImg from "@/assets/sponsor/sponsor_wechat.jpg";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -147,6 +150,83 @@ export const About: React.FC = React.memo(() => {
 
         <Divider className="dark:border-gray-600" />
 
+        {/* Sponsor */}
+        <div className="mb-8">
+          <Title level={4} className="mb-4 dark:text-white flex items-center gap-2">
+            <Tag color="red">
+              <HeartOutlined className="mr-1" />
+              {t("about.sponsor.title")}
+            </Tag>
+          </Title>
+          <Paragraph className="dark:text-gray-300 mb-4">
+            {t("about.sponsor.description")}
+          </Paragraph>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* PayPal */}
+            <a
+              href="https://paypal.me/xcrper"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block"
+            >
+              <Card
+                className="h-full text-center hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
+                bodyStyle={{ padding: "20px" }}
+              >
+                <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                  <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.956 0h6.515c3.337 0 4.928 1.617 5.284 3.385.079.393.127.802.127 1.224 0 3.918-2.65 5.607-6.256 5.607h-2.07c-.56 0-.912-.325-1.007-.788L7.076 21.337zm7.615-14.26c-.356-1.77-1.95-3.388-5.285-3.388H2.47a.641.641 0 0 0-.632.74L4.945 21.337h4.606l2.748-13.022c.095.463.447.788 1.007.788h2.07c3.606 0 6.256-1.689 6.256-5.607 0-.422-.048-.831-.127-1.224h-.001z" />
+                  </svg>
+                </div>
+                <Text strong className="text-blue-600 dark:text-blue-400 block mb-1">
+                  {t("about.sponsor.paypal")}
+                </Text>
+                <Text className="text-xs text-gray-500 dark:text-gray-400">
+                  {t("about.sponsor.paypalUrl")}
+                </Text>
+              </Card>
+            </a>
+
+            {/* WeChat */}
+            <Card
+              className="text-center overflow-hidden"
+              bodyStyle={{ padding: 0 }}
+              cover={
+                <div className="aspect-square bg-white dark:bg-gray-900 flex items-center justify-center p-4">
+                  <img
+                    src={wechatImg}
+                    alt={t("about.sponsor.wechat")}
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                  />
+                </div>
+              }
+            >
+              <Text className="text-xs">{t("about.sponsor.wechat")}</Text>
+            </Card>
+
+            {/* Alipay */}
+            <Card
+              className="text-center overflow-hidden"
+              bodyStyle={{ padding: 0 }}
+              cover={
+                <div className="aspect-square bg-white dark:bg-gray-900 flex items-center justify-center p-4">
+                  <img
+                    src={alipayImg}
+                    alt={t("about.sponsor.alipay")}
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                  />
+                </div>
+              }
+            >
+              <Text className="text-xs">{t("about.sponsor.alipay")}</Text>
+            </Card>
+          </div>
+        </div>
+
+        <Divider className="dark:border-gray-600" />
+
         {/* Disclaimer */}
         <div>
           <Title level={4} className="mb-4 dark:text-white flex items-center gap-2">
@@ -163,5 +243,7 @@ export const About: React.FC = React.memo(() => {
     </ErrorBoundary>
   );
 });
+
+About.displayName = "About";
 
 About.displayName = "About";

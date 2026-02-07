@@ -15,3 +15,11 @@ declare module "*.module.css" {
   const classes: { readonly [key: string]: string };
   export = classes;
 }
+
+declare module "*.jpg" {
+  /**
+   * A path to the JPG file
+   */
+  const path: `${string}.jpg`;
+  export = path;
+}
