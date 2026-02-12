@@ -31,6 +31,7 @@ import {
 } from "antd";
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import type { CalculationHistory } from "@/types";
 import { TREND_COLORS } from "@/constants";
 import { formatCurrency, formatDate, formatPercentage } from "@/utils/formatters";
@@ -325,7 +326,7 @@ interface HistoryCardProps {
   selected?: boolean;
   onSelect?: (checked: boolean) => void;
   onClick: () => void;
-  t: (key: string, options?: Record<string, unknown>) => string;
+  t: TFunction;
 }
 
 const HistoryCard: React.FC<HistoryCardProps> = React.memo(
@@ -421,7 +422,7 @@ interface HistoryResultCellProps {
   };
   type: "up" | "down";
   hasStockQuantity: boolean;
-  t: (key: string, options?: Record<string, unknown>) => string;
+  t: TFunction;
   isMobile?: boolean;
 }
 

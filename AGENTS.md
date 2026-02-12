@@ -1,7 +1,7 @@
 # AGENTS.md - AI 编码指南
 
 **项目:** 股票计算器 (Bun + React 19 + TypeScript + IndexedDB + Dexie + React Router + Tailwind v4 + Ant Design v6 + i18next)
-**最后更新:** 2026-02-08
+**最后更新:** 2026-02-12
 
 ## 🛠 核心命令
 

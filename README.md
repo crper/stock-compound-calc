@@ -41,14 +41,14 @@
 
 - **React 19.2.4** - UI 框架
 - **React Router 7.13.0** - 路由管理
-- **Ant Design 6.2.3** - UI 组件库
+- **Ant Design 6.3.0** - UI 组件库
 - **Tailwind CSS 4.1.18** - 样式方案
 - **Dexie.js 4.3.0** - IndexedDB 客户端
 - **Dexie React Hooks 4.2.0** - 响应式数据查询
 - **Recharts 3.7.0** - 数据可视化
 - **Day.js 1.11.19** - 日期处理
 - **react-i18next 16.5.4** - 国际化框架
-- **i18next 25.8.4** - 国际化核心
+- **i18next 25.8.6** - 国际化核心
 - **i18next-browser-languagedetector 8.2.0** - 浏览器语言检测
 
 ### 后端（简化）
@@ -60,9 +60,9 @@
 
 ### 开发工具
 
-- **TypeScript** - 类型安全
-- **oxlint** - 快速代码检查（类型感知，支持100+ ESLint规则）
-- **oxfmt** - 代码格式化
+- **TypeScript 5.9.3** - 类型安全
+- **oxlint 1.47.0** - 快速代码检查（类型感知，支持100+ ESLint规则）
+- **oxfmt 0.28.0** - 代码格式化
 
 ## 快速开始
 
@@ -355,6 +355,23 @@ NODE_ENV=production
 更多详情见 [AGENTS.md](./AGENTS.md)。
 
 ## 更新日志
+
+### 2026-02-12
+
+**依赖更新**
+- antd 6.2.3 → 6.3.0
+- i18next 25.8.4 → 25.8.6
+- oxlint 1.43.0 → 1.47.0
+- oxlint-tsgolint 0.11.4 → 0.11.5
+- @types/react 19.2.10 → 19.2.14
+- @types/bun 更新到最新
+
+**类型安全优化**
+- 定义 `ValidationKey` 联合类型，实现验证键的类型安全
+- 移除 `as never` 类型断言，使用规范类型推断
+- 删除废弃的 `getFieldErrorMessage` 函数
+- 修复 package.json 中 typecheck 命令（`bun run tsc` → `bunx tsc`）
+- 添加缺失的翻译键：`common.tags.lossRecovery`、`stockCalculator.results.metrics.tooltip`
 
 ### 2026-02-08
 

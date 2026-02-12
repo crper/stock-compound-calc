@@ -1,13 +1,13 @@
-import type { FormInstance } from "antd/es/form";
-import type { CalculationParams } from "@/types";
-import type { InputNumberProps } from "antd";
-import { Alert, Button, Card, Form, InputNumber, Slider, Space, Typography } from "antd";
-import React, { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useResponsive } from "@/hooks/useResponsive";
-import { getFieldValidationKey } from "@/utils/validator";
 import { FORM_CONFIG } from "@/constants";
 import { CARD_STYLES, SLIDER_STYLES } from "@/constants/uiPatterns";
+import { useResponsive } from "@/hooks/useResponsive";
+import type { CalculationParams } from "@/types";
+import { getFieldValidationKey } from "@/utils/validator";
+import type { InputNumberProps } from "antd";
+import { Alert, Button, Card, Form, InputNumber, Slider, Space, Typography } from "antd";
+import type { FormInstance } from "antd/es/form";
+import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const { Text, Title } = Typography;
 

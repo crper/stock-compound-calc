@@ -33,6 +33,7 @@ export const enUS = {
       tags: {
         history: "History",
         recoveryAnalysis: "Recovery Analysis",
+        lossRecovery: "Loss Recovery",
         info: "About Page",
         limitUp: "Limit Up Calc",
       },
@@ -119,6 +120,7 @@ export const enUS = {
           tenXDays: "10x Days",
           annualizedReturn: "Annualized Return",
           title: "Key Metrics",
+          tooltip: "Key investment metrics calculated based on current parameters",
           dynamicTooltip: "With {{return}}% daily return, need {{days}} days to double",
           breakEvenTooltip: "Need {{return}}% reverse movement to return to initial price",
           tenXTooltip: "With {{return}}% daily return, need {{days}} days to reach 10x",

@@ -14,10 +14,22 @@ export const isFieldValid = (value: unknown, fieldName: keyof CalculationParams)
   return result.success;
 };
 
-/**
- * 获取字段的 i18n 翻译键
- */
-export const getFieldValidationKey = (fieldName: keyof CalculationParams, value: unknown): string | null => {
+export type ValidationKey =
+  | "validation.price.min"
+  | "validation.price.max"
+  | "validation.boardCount.integer"
+  | "validation.boardCount.min"
+  | "validation.boardCount.max"
+  | "validation.dailyReturn.min"
+  | "validation.dailyReturn.max"
+  | "validation.stockQuantity.integer"
+  | "validation.stockQuantity.min"
+  | "validation.stockQuantity.max";
+
+export const getFieldValidationKey = (
+  fieldName: keyof CalculationParams,
+  value: unknown,
+): ValidationKey | null => {
   if (isFieldValid(value, fieldName)) {
     return null;
   }
@@ -54,16 +66,4 @@ export const getFieldValidationKey = (fieldName: keyof CalculationParams, value:
   }
 
   return null;
-};
-
-/**
- * 获取字段的错误消息（用于向后兼容）
- * @deprecated 请使用 getFieldValidationKey 结合 t() 函数获取国际化错误消息
- */
-export const getFieldErrorMessage = (
-  fieldName: keyof CalculationParams,
-  value: unknown,
-): string => {
-  const result = CalculationParamsSchema.shape[fieldName].safeParse(value);
-  return result.success ? "" : result.error.issues[0]?.message || "输入值无效";
 };

@@ -33,6 +33,7 @@ export const zhCN = {
       tags: {
         history: "历史记录",
         recoveryAnalysis: "回本分析",
+        lossRecovery: "亏损回本",
         info: "关于页面",
         limitUp: "涨停计算",
       },
@@ -119,6 +120,7 @@ export const zhCN = {
           tenXDays: "10倍天数",
           annualizedReturn: "年化收益",
           title: "关键指标",
+          tooltip: "基于当前参数计算的关键投资指标",
           dynamicTooltip: "以 {{return}}% 涨跌幅，需要 {{days}} 天翻倍",
           breakEvenTooltip: "回到初始价需要 {{return}}% 的反向变动",
           tenXTooltip: "以 {{return}}% 涨跌幅，需要 {{days}} 天达到10倍",
