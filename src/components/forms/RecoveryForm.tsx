@@ -52,7 +52,10 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
       size={isMobile ? "small" : "default"}
       title={
         <div className="flex items-center justify-between">
-          <Title level={4} className={`!m-0 dark:text-gray-100 ${isMobile ? "text-base" : "text-lg lg:text-base"} font-semibold`}>
+          <Title
+            level={4}
+            className={`!m-0 dark:text-gray-100 ${isMobile ? "text-base" : "text-lg lg:text-base"} font-semibold`}
+          >
             {t("recoveryCalculator.form.title")}
           </Title>
         </div>

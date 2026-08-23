@@ -61,7 +61,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
         const validationKey = getFieldValidationKey(fieldName, value);
         return {
           validateStatus: isValid ? ("success" as const) : ("error" as const),
-          help: isValid ? "" : (validationKey ? t(validationKey) : ""),
+          help: isValid ? "" : validationKey ? t(validationKey) : "",
         };
       },
       [isFieldValid, dailyReturnValue, boardCountValue, initialPriceValue, stockQuantityValue],
@@ -306,32 +306,32 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                   const isHovered = hoveredPreset === preset.value;
 
                   return (
-                      <Button
-                        key={preset.value}
-                        size={isMobile ? "small" : buttonSize}
-                        type={isActive ? "primary" : "default"}
-                        className="rounded-xl transition-all duration-300"
-                        style={{
-                          borderColor: isActive ? preset.color : isHovered ? preset.color : undefined,
-                          backgroundColor: isActive ? preset.color : undefined,
-                          backgroundImage: isActive ? "none" : undefined,
-                          fontWeight: isActive ? "600" : "normal",
-                          boxShadow: isActive
-                            ? `0 4px 14px ${preset.color}50`
-                            : isHovered
-                              ? `0 4px 12px ${preset.color}25`
-                              : "0 2px 6px rgba(0, 0, 0, 0.05)",
-                          transform: isHovered
-                            ? "translateY(-3px) scale(1.02)"
-                            : "translateY(0) scale(1)",
-                          borderRadius: "12px",
-                          padding: "0 16px",
-                          height: isMobile ? "36px" : "40px",
-                        }}
-                        onClick={() => handlePresetChange(preset.value)}
-                        onMouseEnter={() => setHoveredPreset(preset.value)}
-                        onMouseLeave={() => setHoveredPreset(null)}
-                      >
+                    <Button
+                      key={preset.value}
+                      size={isMobile ? "small" : buttonSize}
+                      type={isActive ? "primary" : "default"}
+                      className="rounded-xl transition-all duration-300"
+                      style={{
+                        borderColor: isActive ? preset.color : isHovered ? preset.color : undefined,
+                        backgroundColor: isActive ? preset.color : undefined,
+                        backgroundImage: isActive ? "none" : undefined,
+                        fontWeight: isActive ? "600" : "normal",
+                        boxShadow: isActive
+                          ? `0 4px 14px ${preset.color}50`
+                          : isHovered
+                            ? `0 4px 12px ${preset.color}25`
+                            : "0 2px 6px rgba(0, 0, 0, 0.05)",
+                        transform: isHovered
+                          ? "translateY(-3px) scale(1.02)"
+                          : "translateY(0) scale(1)",
+                        borderRadius: "12px",
+                        padding: "0 16px",
+                        height: isMobile ? "36px" : "40px",
+                      }}
+                      onClick={() => handlePresetChange(preset.value)}
+                      onMouseEnter={() => setHoveredPreset(preset.value)}
+                      onMouseLeave={() => setHoveredPreset(null)}
+                    >
                       {preset.value === 10
                         ? t("stockCalculator.form.presets.mainBoard")
                         : preset.value === 20

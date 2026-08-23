@@ -59,21 +59,45 @@ export function formatRecoveryNumber(
 
 export function getDifficultyLevel(lossPercent: number): DifficultyInfo {
   if (lossPercent === 0) {
-    return { level: DifficultyLevel.NO_LOSS, color: "#52c41a", bgColor: "bg-green-50 dark:bg-green-900/20" };
+    return {
+      level: DifficultyLevel.NO_LOSS,
+      color: "#52c41a",
+      bgColor: "bg-green-50 dark:bg-green-900/20",
+    };
   }
   if (lossPercent < 10) {
-    return { level: DifficultyLevel.EASY, color: "#52c41a", bgColor: "bg-green-50 dark:bg-green-900/20" };
+    return {
+      level: DifficultyLevel.EASY,
+      color: "#52c41a",
+      bgColor: "bg-green-50 dark:bg-green-900/20",
+    };
   }
   if (lossPercent < 25) {
-    return { level: DifficultyLevel.MEDIUM, color: "#1677ff", bgColor: "bg-blue-50 dark:bg-blue-900/20" };
+    return {
+      level: DifficultyLevel.MEDIUM,
+      color: "#1677ff",
+      bgColor: "bg-blue-50 dark:bg-blue-900/20",
+    };
   }
   if (lossPercent < 50) {
-    return { level: DifficultyLevel.HARD, color: "#faad14", bgColor: "bg-yellow-50 dark:bg-yellow-900/20" };
+    return {
+      level: DifficultyLevel.HARD,
+      color: "#faad14",
+      bgColor: "bg-yellow-50 dark:bg-yellow-900/20",
+    };
   }
   if (lossPercent < 75) {
-    return { level: DifficultyLevel.VERY_HARD, color: "#fa541c", bgColor: "bg-orange-50 dark:bg-orange-900/20" };
+    return {
+      level: DifficultyLevel.VERY_HARD,
+      color: "#fa541c",
+      bgColor: "bg-orange-50 dark:bg-orange-900/20",
+    };
   }
-  return { level: DifficultyLevel.ALMOST_IMPOSSIBLE, color: "#ff4d4f", bgColor: "bg-red-50 dark:bg-red-900/20" };
+  return {
+    level: DifficultyLevel.ALMOST_IMPOSSIBLE,
+    color: "#ff4d4f",
+    bgColor: "bg-red-50 dark:bg-red-900/20",
+  };
 }
 
 export function isValidLossPercent(value: unknown): value is number {

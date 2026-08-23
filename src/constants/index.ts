@@ -40,20 +40,6 @@ export const PRESET_VALUES = {
 } as const;
 
 /**
- * Decimal 配置常量
- */
-export const DECIMAL_CONFIG = {
-  /** 计算精度 */
-  PRECISION: 28,
-  /** 舍入模式：四舍五入 */
-  ROUNDING: 1,
-  /** 科学计数法负指数阈值 */
-  TO_EXP_NEG: -7,
-  /** 科学计数法正指数阈值 */
-  TO_EXP_POS: 21,
-} as const;
-
-/**
  * 图表配置常量
  */
 export const CHART_CONFIG = {

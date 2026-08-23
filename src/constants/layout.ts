@@ -43,7 +43,3 @@ export const LAYOUT_CONSTANTS = {
     constrained: 1400,
   } as const,
 } as const;
-
-/** 导出快捷方式 */
-export const SPACING = LAYOUT_CONSTANTS.spacing;
-export const BREAKPOINTS = LAYOUT_CONSTANTS.breakpoints;

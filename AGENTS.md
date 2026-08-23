@@ -39,7 +39,7 @@ bun test:coverage        # 运行测试并生成覆盖率报告
 
 ### 组件交互模式
 
-- **路由导航**: 使用 React Router 实现页面切换，导航组件位于 `src/client/components/navigation/NavMenu.tsx`
+- **路由导航**: 使用 HashRouter（GitHub Pages 子路径友好），桌面端用 `src/components/layout/NavigationMenu.tsx`，移动端用 `src/components/layout/MobileTabBar.tsx`
 - **响应式布局**: 使用 Ant Design 的 `Row`/`Col` 组件实现响应式网格
 - **渐进式反馈**: 表单验证采用实时反馈，错误提示使用 Ant Design `Alert`
 - **加载状态**: 计算过程中显示加载指示器
@@ -459,7 +459,7 @@ import { resources, defaultNS } from "./index";
 declare module "i18next" {
   interface CustomTypeOptions {
     defaultNS: typeof defaultNS;
-    resources: typeof resources["zh-CN"];
+    resources: (typeof resources)["zh-CN"];
   }
 }
 ```

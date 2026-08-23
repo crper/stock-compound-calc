@@ -21,12 +21,3 @@ export const CALCULATION_LIMITS = {
   /** 最大增长因子（用于年化计算） */
   MAX_GROWTH_FACTOR: 1e6,
 } as const;
-
-export const API_LIMITS = {
-  /** 默认分页大小 */
-  DEFAULT_PAGE_SIZE: 50,
-  /** 最大分页大小 */
-  MAX_PAGE_SIZE: 100,
-  /** 不分页时最大返回记录数 */
-  MAX_HISTORY_WITHOUT_PAGINATION: 1000,
-} as const;

@@ -126,7 +126,9 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
 
     if (chartType === "LINE") {
       return (
-        <div style={{ width: "100%", minWidth: 0, height: config.height, minHeight: config.height }}>
+        <div
+          style={{ width: "100%", minWidth: 0, height: config.height, minHeight: config.height }}
+        >
           <ResponsiveContainer width="100%" height={config.height} debounce={1}>
             <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               {commonGrid}

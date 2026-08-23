@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import { UI_CONSTANTS } from "@/constants";
 
 export interface ResponsiveConfig {
   isMobile: boolean;
@@ -35,7 +36,9 @@ const DESKTOP_CONFIG: ResponsiveConfig = {
 // 节流延迟常量
 const RESIZE_THROTTLE_MS = 100;
 
-export const useResponsive = (breakpoint: number = 768): ResponsiveConfig => {
+export const useResponsive = (
+  breakpoint: number = UI_CONSTANTS.RESPONSIVE_BREAKPOINT,
+): ResponsiveConfig => {
   const [isMobile, setIsMobile] = useState(() =>
     typeof window === "undefined" ? false : window.innerWidth < breakpoint,
   );

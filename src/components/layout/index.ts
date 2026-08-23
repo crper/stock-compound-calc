@@ -10,8 +10,7 @@ export { FooterContent } from "./FooterContent";
 
 export { NavigationMenu } from "./NavigationMenu";
 
-export { MobileNavigation } from "./MobileNavigation";
-export type { MobileNavigationProps } from "./MobileNavigation";
+export { MobileTabBar } from "./MobileTabBar";
 
 export { PageContainer } from "./PageContainer";
 

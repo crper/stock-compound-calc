@@ -140,15 +140,21 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
       <Drawer
         title={
           <Flex align="center" gap={isMobile ? 8 : 12} wrap>
-            <div className={`${isMobile ? "w-8 h-8" : "w-9 h-9"} rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center flex-shrink-0`}>
+            <div
+              className={`${isMobile ? "w-8 h-8" : "w-9 h-9"} rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center flex-shrink-0`}
+            >
               <HistoryOutlined className={`${isMobile ? "text-base" : "text-lg"} text-white`} />
             </div>
             <Flex align="center" gap={8} wrap style={{ minWidth: 0 }}>
-              <span className={`${isMobile ? "text-base" : "text-lg"} font-semibold text-gray-800 dark:text-gray-100 truncate`}>
+              <span
+                className={`${isMobile ? "text-base" : "text-lg"} font-semibold text-gray-800 dark:text-gray-100 truncate`}
+              >
                 {t("stockCalculator.history.title")}
               </span>
               {filteredHistory.length > 0 && (
-                <Tag className={` rounded-full ${isMobile ? "px-2 py-0.5 text-[11px]" : "px-2.5 py-0.5 text-xs"} font-medium bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800 flex-shrink-0`}>
+                <Tag
+                  className={` rounded-full ${isMobile ? "px-2 py-0.5 text-[11px]" : "px-2.5 py-0.5 text-xs"} font-medium bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800 flex-shrink-0`}
+                >
                   {t("stockCalculator.history.recordCount", { count: filteredHistory.length })}
                 </Tag>
               )}
@@ -162,7 +168,10 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
         className="backdrop-blur-sm"
         styles={{
           body: { padding: 0 },
-          header: { borderBottom: "1px solid #f0f0f0", padding: isMobile ? "12px 16px" : "16px 20px" },
+          header: {
+            borderBottom: "1px solid #f0f0f0",
+            padding: isMobile ? "12px 16px" : "16px 20px",
+          },
         }}
         extra={
           selectedIds.size > 0 ? (
@@ -209,7 +218,9 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
         <div className="flex flex-col h-full">
           {/* 筛选区 */}
           {history.length > 0 && (
-            <div className={`${isMobile ? "px-3 py-2" : "px-4 py-3"} border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30`}>
+            <div
+              className={`${isMobile ? "px-3 py-2" : "px-4 py-3"} border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30`}
+            >
               <div className={`flex flex-col ${isMobile ? "gap-2" : "gap-3"}`}>
                 {/* 搜索和筛选 */}
                 <div className="flex gap-2">
@@ -359,30 +370,41 @@ const HistoryCard: React.FC<HistoryCardProps> = React.memo(
           <div className="flex-1 min-w-0">
             {/* 头部：时间和参数 */}
             <div className={`flex items-center justify-between ${isMobile ? "mb-1.5" : "mb-2"}`}>
-              <div className={`flex items-center gap-2 ${isMobile ? "text-[11px]" : "text-xs"} text-gray-500 dark:text-gray-400`}>
+              <div
+                className={`flex items-center gap-2 ${isMobile ? "text-[11px]" : "text-xs"} text-gray-500 dark:text-gray-400`}
+              >
                 <ClockCircleOutlined />
                 <span>{datePart}</span>
                 <span className="text-gray-300">{timePart}</span>
               </div>
-              <Tag className={`${isMobile ? "text-[11px]" : "text-xs"} m-0 bg-blue-50 text-blue-600 border-blue-200`}>
+              <Tag
+                className={`${isMobile ? "text-[11px]" : "text-xs"} m-0 bg-blue-50 text-blue-600 border-blue-200`}
+              >
                 {item.params.dailyReturn}%
               </Tag>
             </div>
 
             {/* 主体：价格和天数 */}
             <div className={`flex items-baseline gap-2 ${isMobile ? "mb-2" : "mb-3"}`}>
-              <span className={`${isMobile ? "text-base" : "text-lg"} font-bold text-gray-800 dark:text-gray-100`}>
+              <span
+                className={`${isMobile ? "text-base" : "text-lg"} font-bold text-gray-800 dark:text-gray-100`}
+              >
                 {formatCurrency(item.params.initialPrice, {
                   compact: item.params.initialPrice >= 1000000,
                 })}
               </span>
               <span className={`${isMobile ? "text-xs" : "text-sm"} text-gray-400`}>×</span>
-              <span className={`${isMobile ? "text-xs" : "text-sm"} text-gray-600 dark:text-gray-300`}>
+              <span
+                className={`${isMobile ? "text-xs" : "text-sm"} text-gray-600 dark:text-gray-300`}
+              >
                 {item.params.boardCount} {t("stockCalculator.form.units.days")}
               </span>
               {hasStockQuantity && (
-                <span className={`${isMobile ? "text-[11px]" : "text-xs"} text-gray-500 dark:text-gray-400 ml-2`}>
-                  ({t("stockCalculator.history.holding", { count: item.params.stockQuantity })})
+                <span
+                  className={`${isMobile ? "text-[11px]" : "text-xs"} text-gray-500 dark:text-gray-400 ml-2`}
+                >
+                  ({t("stockCalculator.history.holding", { count: item.params.stockQuantity ?? 0 })}
+                  )
                 </span>
               )}
             </div>
@@ -432,7 +454,9 @@ const HistoryResultCell: React.FC<HistoryResultCellProps> = React.memo(
     const colors = isUp ? TREND_COLORS.up : TREND_COLORS.down;
 
     return (
-      <div className={`rounded-lg ${colors.bg} border ${colors.border} ${isMobile ? "p-2" : "p-2.5"}`}>
+      <div
+        className={`rounded-lg ${colors.bg} border ${colors.border} ${isMobile ? "p-2" : "p-2.5"}`}
+      >
         <div className="flex items-center justify-between">
           <div className={`flex items-center ${isMobile ? "gap-1" : "gap-1.5"}`}>
             {isUp ? (
@@ -446,12 +470,16 @@ const HistoryResultCell: React.FC<HistoryResultCellProps> = React.memo(
                 : t("stockCalculator.history.limitDownLoss")}
             </Text>
           </div>
-          <div className={`${isMobile ? "text-[11px]" : "text-xs"} font-medium ${colors.iconColor}`}>
+          <div
+            className={`${isMobile ? "text-[11px]" : "text-xs"} font-medium ${colors.iconColor}`}
+          >
             {formatPercentage(result.totalReturn, { multiply: false })}
           </div>
         </div>
         <div className={`mt-${isMobile ? "1" : "1.5"} flex items-baseline justify-between`}>
-          <span className={`${isMobile ? "text-sm" : "text-sm"} font-semibold text-gray-800 dark:text-gray-100`}>
+          <span
+            className={`${isMobile ? "text-sm" : "text-sm"} font-semibold text-gray-800 dark:text-gray-100`}
+          >
             {formatCurrency(result.finalPrice, { compact: result.finalPrice >= 1000000 })}
           </span>
           {hasStockQuantity && result.positionGain !== undefined && (
