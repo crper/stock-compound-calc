@@ -245,5 +245,3 @@ export const About: React.FC = React.memo(() => {
 });
 
 About.displayName = "About";
-
-About.displayName = "About";

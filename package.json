@@ -1,7 +1,14 @@
 {
-  "name": "bun-react-template",
-  "version": "0.1.0",
+  "name": "stock-compound-calc",
+  "version": "1.0.0",
   "private": true,
+  "description": "股票投资计算工具集：连板收益计算器 + 亏损回本计算器（React 19 + Bun + TypeScript）",
+  "homepage": "https://crper.github.io/stock-compound-calc/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crper/stock-compound-calc.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "bun --hot src/index.html",

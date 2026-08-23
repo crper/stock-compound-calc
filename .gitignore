@@ -24,13 +24,11 @@ dist-ssr
 *.sw?
 .loki/
 *.db
-bun.lock
 
 # AI agent generated files
 findings.md
 progress.md
 task_plan.md
 server.log
-
-
 todo.md
+.workbuddy/

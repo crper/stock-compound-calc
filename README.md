@@ -1,6 +1,14 @@
 # 股票计算器
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![React 19](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7-3178c6.svg)](https://www.typescriptlang.org)
+[![Bun](https://img.shields.io/badge/Bun-1.4-f472b6.svg)](https://bun.sh)
+[![Deploy](https://github.com/crper/stock-compound-calc/actions/workflows/deploy.yml/badge.svg)](https://github.com/crper/stock-compound-calc/actions/workflows/deploy.yml)
+
 基于 React 19 + Bun + TypeScript 的股票投资计算工具集，包含连板收益计算器和亏损回本计算器，支持高精度计算、历史记录管理和数据可视化。已优化移动端体验，支持手机浏览器直接访问，可平滑移植到小程序。
+
+**在线体验**：<https://crper.github.io/stock-compound-calc/>
 
 ## 功能特性
 
@@ -515,3 +523,11 @@ NODE_ENV=production
 - oxlint 类型感知检查：0 warnings, 0 errors
 - 测试覆盖率：86 个测试全部通过
 - 生产构建成功，bundle 大小优化
+
+## 许可证
+
+本项目基于 [MIT License](./LICENSE) 开源，可自由用于个人学习与商业用途，转载请注明出处。
+
+## 免责声明
+
+本项目仅供学习和研究使用，不构成任何投资建议。股市有风险，投资需谨慎。开发者不对使用本工具产生的任何直接或间接损失承担责任。
