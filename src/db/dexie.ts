@@ -10,14 +10,12 @@ export interface CalculationEntity {
   finalPriceUp: number;
   totalReturnUp: number;
   totalGainUp: number;
-  detailsUp: string;
   dailyDetailsUp: string;
   positionValueUp?: string;
   positionGainUp?: number;
   finalPriceDown: number;
   totalReturnDown: number;
   totalGainDown: number;
-  detailsDown: string;
   dailyDetailsDown: string;
   keyMetricsUp?: string;
   keyMetricsDown?: string;

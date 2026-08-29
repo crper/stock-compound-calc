@@ -5,14 +5,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Only one Pages deployment at a time; let an in-progress deploy finish
+# instead of cancelling it halfway through.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
   build:
@@ -20,38 +20,52 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      # Installs Vite+ (`vp`). The `vp` version is auto-detected from the
+      # `vite-plus` entry in package.json (0.3.0), so it stays in sync with
+      # local dev. Pin an exact release tag: the moving `v1` tag is frozen
+      # at v1.15.0 and receives no updates.
+      - name: Setup Vite+ (vp)
+        id: setup-vp
+        uses: voidzero-dev/setup-vp@v1.18.0
         with:
-          bun-version: 1.4.0
+          # Vite+ requires Node ^20.19 || ^22.18 || >=24.11
+          node-version: "24"
+          cache: true
+          # Install runs as an explicit step below so `--frozen-lockfile` applies
+          run-install: false
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: vp install --frozen-lockfile
 
-      - name: i18n key consistency check
-        run: bun run scripts/check-i18n.ts
+      - name: Format check
+        run: vp run format:check
 
       - name: Lint
-        run: bun run lint
+        run: vp run lint
 
       - name: Type check
-        run: bun run typecheck
+        run: vp run typecheck
+
+      - name: i18n key consistency check
+        run: vp run check:i18n
 
       - name: Test
-        run: bun test
+        run: vp test run
 
       - name: Build
-        run: bun run build
+        run: vp run build
 
       - name: Disable Jekyll processing
         run: touch dist/.nojekyll
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
+          # Hidden files are skipped by default, which would drop `.nojekyll`
+          include-hidden-files: true
 
   deploy:
     name: Deploy
@@ -60,7 +74,10 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

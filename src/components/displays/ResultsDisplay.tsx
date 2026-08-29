@@ -48,7 +48,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = React.memo(
     if (!results) {
       return (
         <Card
-          size={isMobile ? "default" : "small"}
+          size={isMobile ? "medium" : "small"}
           style={{
             height: "100%",
             borderRadius: "16px",

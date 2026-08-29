@@ -45,19 +45,20 @@ export const LossRecoveryCalculator: React.FC = () => {
     <ErrorBoundary>
       <PageContainer>
         <Row gutter={[32, 32]} className="flex-1 items-start">
-          <Col xs={24} lg={8}>
+          {/* 手机单列 / 平板：表单与结果并排、速查表整行 / 桌面三列 */}
+          <Col xs={24} md={12} lg={8}>
             <div className="h-full animate-[slideIn_0.4s_ease-out]">
               <RecoveryForm value={lossPercent} onChange={handleLossChange} />
             </div>
           </Col>
 
-          <Col xs={24} lg={8}>
+          <Col xs={24} md={12} lg={8}>
             <div className="h-full animate-[slideIn_0.4s_ease-out_0.1s_both]">
               <RecoveryResult lossPercent={lossPercent} isMobile={isMobile} />
             </div>
           </Col>
 
-          <Col xs={24} lg={8}>
+          <Col xs={24} md={24} lg={8}>
             <div className="h-full animate-[slideIn_0.4s_ease-out_0.2s_both]">
               <RecoveryTable currentValue={lossPercent} />
             </div>
@@ -80,12 +81,7 @@ export const LossRecoveryCalculator: React.FC = () => {
               </span>
               {history.length > 0 && (
                 <Tag className="rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800">
-                  {history.length}{" "}
-                  {
-                    t("stockCalculator.history.recordCount", { count: history.length }).split(
-                      " ",
-                    )[1]
-                  }
+                  {t("common.historyCount", { count: history.length })}
                 </Tag>
               )}
             </div>
@@ -183,6 +179,7 @@ export const LossRecoveryCalculator: React.FC = () => {
                       danger
                       size="small"
                       icon={<DeleteOutlined />}
+                      aria-label={t("common.buttons.delete")}
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteHistory([item.id]);

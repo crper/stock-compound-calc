@@ -7,13 +7,22 @@ export enum ErrorType {
   SYSTEM = "SYSTEM",
 }
 
+// 错误类型前缀映射：用 Record 保证枚举全量覆盖（新增枚举值时编译期报错）。
+// 每次调用时构建，避免模块加载期固化翻译结果导致切换语言后前缀过期
+const getErrorTypePrefixMap = (): Record<ErrorType, string> => ({
+  [ErrorType.VALIDATION]: i18n.t("common.errors.types.validation"),
+  [ErrorType.CALCULATION]: i18n.t("common.errors.types.calculation"),
+  [ErrorType.NETWORK]: i18n.t("common.errors.types.network"),
+  [ErrorType.SYSTEM]: i18n.t("common.errors.types.system"),
+});
+
 export class AppError extends Error {
   public readonly type: ErrorType;
   public readonly code?: string;
   public readonly context?: Record<string, unknown>;
   public readonly timestamp: Date;
 
-  constructor(type: ErrorType, message: string, code?: string, context?: Record<string, any>) {
+  constructor(type: ErrorType, message: string, code?: string, context?: Record<string, unknown>) {
     super(message);
     this.name = "AppError";
     this.type = type;
@@ -27,7 +36,7 @@ export class AppError extends Error {
   }
 
   toUserMessage(): string {
-    const prefix = this.getErrorTypePrefix();
+    const prefix = getErrorTypePrefixMap()[this.type];
 
     if (this.type === ErrorType.NETWORK || this.type === ErrorType.SYSTEM) {
       return prefix;
@@ -36,24 +45,11 @@ export class AppError extends Error {
     return `${prefix}: ${this.message}`;
   }
 
-  private getErrorTypePrefix(): string {
-    switch (this.type) {
-      case ErrorType.VALIDATION:
-        return i18n.t("common.errors.types.validation");
-      case ErrorType.CALCULATION:
-        return i18n.t("common.errors.types.calculation");
-      case ErrorType.NETWORK:
-        return i18n.t("common.errors.types.network");
-      case ErrorType.SYSTEM:
-        return i18n.t("common.errors.types.system");
-    }
-  }
-
   toLogFormat(): {
     type: ErrorType;
     message: string;
     code?: string;
-    context?: Record<string, any>;
+    context?: Record<string, unknown>;
     timestamp: string;
     stack?: string;
   } {
@@ -88,8 +84,8 @@ export const ErrorFactory = {
   },
 };
 
-export class ErrorHandler {
-  static handleUnknown(error: unknown): AppError {
+export const ErrorHandler = {
+  handleUnknown(error: unknown): AppError {
     if (error instanceof AppError) {
       return error;
     }
@@ -103,9 +99,9 @@ export class ErrorHandler {
     }
 
     return ErrorFactory.system("未知错误");
-  }
+  },
 
-  static log(error: AppError): void {
+  log(error: AppError): void {
     const logData = error.toLogFormat();
 
     if (process.env.NODE_ENV === "development") {
@@ -118,8 +114,8 @@ export class ErrorHandler {
         timestamp: logData.timestamp,
       });
     }
-  }
-}
+  },
+};
 
 export const createErrorBoundary = () => {
   return {

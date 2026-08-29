@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, expect, it } from "vite-plus/test";
 import {
   calculateRecovery,
   formatRecoveryNumber,
@@ -340,10 +340,10 @@ describe("isValidLossPercent", () => {
     });
 
     it("should return false for non-number types", () => {
-      expect(isValidLossPercent("50" as unknown)).toBe(false);
-      expect(isValidLossPercent(null as unknown)).toBe(false);
+      expect(isValidLossPercent("50")).toBe(false);
+      expect(isValidLossPercent(null)).toBe(false);
       expect(isValidLossPercent(undefined as unknown)).toBe(false);
-      expect(isValidLossPercent({} as unknown)).toBe(false);
+      expect(isValidLossPercent({})).toBe(false);
     });
 
     it("should return false for NaN", () => {

@@ -13,7 +13,6 @@ import {
 } from "@ant-design/icons";
 
 import type { Dayjs } from "dayjs";
-import dayjs from "dayjs";
 import {
   Button,
   Card,
@@ -39,6 +38,41 @@ import { formatCurrency, formatDate, formatPercentage } from "@/utils/formatters
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
+/** 取当天 00:00:00.000 的时间戳（dayjs 为不可变 API，startOf 返回新实例） */
+const startOfDay = (source: Dayjs): number => source.startOf("day").valueOf();
+
+/** 取当天 23:59:59.999 的时间戳 */
+const endOfDay = (source: Dayjs): number => source.endOf("day").valueOf();
+
+/**
+ * 按搜索词 / 日期区间 / 涨跌幅筛选历史记录。
+ * 抽成纯函数便于 React Compiler 校验 useMemo 的依赖，同时让筛选逻辑可单测。
+ */
+const filterHistory = (
+  history: CalculationHistory[],
+  searchValue: string,
+  dateRange: readonly [Dayjs | null, Dayjs | null],
+  dailyReturnFilter: number | undefined,
+): CalculationHistory[] => {
+  const rangeStart = dateRange[0] ? startOfDay(dateRange[0]) : null;
+  const rangeEnd = dateRange[1] ? endOfDay(dateRange[1]) : null;
+
+  return history.filter((item) => {
+    const matchesSearch =
+      searchValue === "" || item.params.initialPrice.toString().includes(searchValue);
+
+    const itemTime = item.timestamp.getTime();
+    const matchesDateRange =
+      (rangeStart === null || itemTime >= rangeStart) &&
+      (rangeEnd === null || itemTime <= rangeEnd);
+
+    const matchesDailyReturn =
+      dailyReturnFilter === undefined || item.params.dailyReturn === dailyReturnFilter;
+
+    return matchesSearch && matchesDateRange && matchesDailyReturn;
+  });
+};
+
 interface HistoryDrawerProps {
   visible: boolean;
   onClose: () => void;
@@ -46,7 +80,7 @@ interface HistoryDrawerProps {
   isMobile: boolean;
   onLoadHistory: (item: CalculationHistory) => void;
   onClearHistory: () => void;
-  onDeleteHistory?: (ids: string[]) => void;
+  onDeleteHistory?: (ids: string[]) => void | Promise<void>;
 }
 
 export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
@@ -59,6 +93,22 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
     const { message } = App.useApp();
+
+    // 派生数据先算，保证后面的事件处理函数只引用已声明的值
+    const filteredHistory = useMemo(
+      () => filterHistory(history, searchValue, dateRange, dailyReturnFilter),
+      [history, searchValue, dateRange, dailyReturnFilter],
+    );
+
+    const uniqueDailyReturns = useMemo(() => {
+      const returns = new Set(history.map((item) => item.params.dailyReturn));
+      return [...returns].toSorted((a, b) => a - b);
+    }, [history]);
+
+    const dailyReturnOptions = uniqueDailyReturns.map((value) => ({
+      label: `${value}%`,
+      value,
+    }));
 
     const handleClearHistory = async () => {
       setClearing(true);
@@ -76,15 +126,11 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
         return;
       }
 
-      if (onDeleteHistory) {
-        try {
-          onDeleteHistory(Array.from(selectedIds));
-          setSelectedIds(new Set());
-          message.success(t("common.messages.deleteSuccess", { count: selectedIds.size }));
-        } catch {
-          message.error(t("common.messages.deleteFailed"));
-        }
-      }
+      // 删除失败的错误提示由 useStockCalculator.handleDeleteHistory 内部处理（toast + 日志），
+      // 这里 await 成功后才清空选择并提示成功
+      await onDeleteHistory?.([...selectedIds]);
+      setSelectedIds(new Set());
+      message.success(t("common.messages.deleteSuccess", { count: selectedIds.size }));
     };
 
     const handleSelectAll = (checked: boolean) => {
@@ -106,35 +152,6 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
         return next;
       });
     };
-
-    const filteredHistory = useMemo(() => {
-      return history.filter((item) => {
-        const matchesSearch =
-          searchValue === "" || item.params.initialPrice.toString().includes(searchValue);
-
-        const itemDate = dayjs(item.timestamp).startOf("day");
-        const matchesDateRange =
-          !dateRange[0] ||
-          !dateRange[1] ||
-          (itemDate.isAfter(dateRange[0].startOf("day").subtract(1, "second")) &&
-            itemDate.isBefore(dateRange[1].endOf("day").add(1, "second")));
-
-        const matchesDailyReturn =
-          dailyReturnFilter === undefined || item.params.dailyReturn === dailyReturnFilter;
-
-        return matchesSearch && matchesDateRange && matchesDailyReturn;
-      });
-    }, [history, searchValue, dateRange, dailyReturnFilter]);
-
-    const uniqueDailyReturns = useMemo(() => {
-      const returns = new Set(history.map((item) => item.params.dailyReturn));
-      return Array.from(returns).sort((a, b) => a - b);
-    }, [history]);
-
-    const DailyReturnOptions = uniqueDailyReturns.map((value) => ({
-      label: `${value}%`,
-      value,
-    }));
 
     return (
       <Drawer
@@ -239,7 +256,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
                     onChange={setDailyReturnFilter}
                     options={[
                       { label: t("stockCalculator.history.filterAll"), value: undefined },
-                      ...DailyReturnOptions,
+                      ...dailyReturnOptions,
                     ]}
                     allowClear
                     style={{ width: isMobile ? 100 : 120 }}
@@ -348,7 +365,7 @@ const HistoryCard: React.FC<HistoryCardProps> = React.memo(
 
     return (
       <Card
-        size={isMobile ? "small" : "default"}
+        size={isMobile ? "small" : "medium"}
         hoverable
         onClick={onClick}
         className={`transition-all duration-200 dark:bg-gray-800 dark:border-gray-700 ${
@@ -361,9 +378,13 @@ const HistoryCard: React.FC<HistoryCardProps> = React.memo(
         <Flex align="flex-start" gap={isMobile ? 8 : 12}>
           {/* 复选框 */}
           {onSelect && (
-            <div className="pt-0.5" onClick={(e) => e.stopPropagation()}>
-              <Checkbox checked={selected} onChange={(e) => onSelect?.(e.target.checked)} />
-            </div>
+            <Checkbox
+              checked={selected}
+              aria-label={t("stockCalculator.history.selectRecord")}
+              className="pt-0.5"
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => onSelect?.(e.target.checked)}
+            />
           )}
 
           {/* 内容区 */}

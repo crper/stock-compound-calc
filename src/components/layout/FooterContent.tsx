@@ -17,7 +17,8 @@ export const FooterContent: React.FC = () => {
             <div className="text-gray-600 dark:text-gray-400 text-sm">
               {t("common.footer.copyright")}
             </div>
-            <div className="text-gray-500 dark:text-gray-400 text-xs">
+            {/* footer 底色为灰底，gray-500 在此仅有 4.49:1，差一点点达不到 AA */}
+            <div className="text-gray-600 dark:text-gray-400 text-xs">
               {t("common.footer.disclaimer")}
             </div>
           </Flex>

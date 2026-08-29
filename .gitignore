@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Test coverage output (vitest root is `src`, so this lands in src/coverage)
+coverage
+
+# 外部工具（Trae 等）落在仓库根目录的临时产物，与本项目无关。
+# 只忽略根目录的 .html，入口文件 src/index.html 不受影响。
+/*.html
+/.trae-html-share-packages/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

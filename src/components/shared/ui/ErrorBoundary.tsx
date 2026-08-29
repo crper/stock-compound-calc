@@ -12,7 +12,7 @@ interface Props {
   /** 子组件 */
   children: ReactNode;
   /** 自定义错误展示组件 */
-  fallback?: React.ComponentType<{ error: Error; retry: () => void }>;
+  fallback?: React.ComponentType<{ error: Error; onRetry: () => void }>;
 }
 
 interface State {
@@ -25,7 +25,10 @@ interface State {
 /**
  * 默认错误展示组件
  */
-const DefaultErrorFallback: React.FC<{ error: Error; retry: () => void }> = ({ error, retry }) => {
+const DefaultErrorFallback: React.FC<{ error: Error; onRetry: () => void }> = ({
+  error,
+  onRetry,
+}) => {
   const { t } = useTranslation();
   return (
     <div style={{ padding: "20px", textAlign: "center" }}>
@@ -56,7 +59,7 @@ const DefaultErrorFallback: React.FC<{ error: Error; retry: () => void }> = ({ e
         type="error"
         showIcon
         action={
-          <Button size="small" danger onClick={retry}>
+          <Button size="small" danger onClick={onRetry}>
             {t("common.buttons.retry")}
           </Button>
         }
@@ -92,9 +95,10 @@ export class ErrorBoundary extends Component<Props, State> {
   /**
    * 重试功能
    */
-  private handleRetry = () => {
+  private readonly handleRetry = () => {
     if (this.retryCount < this.maxRetries) {
       this.retryCount++;
+      // eslint-disable-next-line react/no-set-state -- 类组件错误边界的重试只能通过 setState 回到正常渲染分支
       this.setState({ hasError: false, error: null });
     } else {
       // 超过最大重试次数，刷新页面
@@ -105,7 +109,7 @@ export class ErrorBoundary extends Component<Props, State> {
   override render() {
     if (this.state.hasError && this.state.error) {
       const FallbackComponent = this.props.fallback || DefaultErrorFallback;
-      return <FallbackComponent error={this.state.error} retry={this.handleRetry} />;
+      return <FallbackComponent error={this.state.error} onRetry={this.handleRetry} />;
     }
 
     return this.props.children;

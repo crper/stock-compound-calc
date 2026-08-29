@@ -20,11 +20,12 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(
 
     return (
       <Card
-        size={isMobile ? "small" : "default"}
+        size={isMobile ? "small" : "medium"}
         title={
           <div className="flex items-center justify-between">
+            {/* 语义上用 h2（页面 h1 之后的第一个层级），视觉字号由 className 固定 */}
             <Title
-              level={4}
+              level={2}
               className={`!m-0 dark:text-gray-100 ${isMobile ? "text-base" : "text-lg lg:text-base"} font-semibold`}
             >
               {t("recoveryCalculator.results.title")}

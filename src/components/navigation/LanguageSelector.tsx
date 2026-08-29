@@ -8,10 +8,12 @@ export const LanguageSelector: React.FC = React.memo(() => {
   const { i18n, t } = useTranslation();
   const { isMobile } = useResponsive();
 
-  const currentLanguage = i18n.language as Language;
+  // 显式比较映射到受支持的语言，未知值兜底英文，避免不安全断言
+  const currentLanguage: Language =
+    i18n.language === LANGUAGES.ZH_CN ? LANGUAGES.ZH_CN : LANGUAGES.EN_US;
 
   const handleLanguageChange = (value: string) => {
-    void i18n.changeLanguage(value as Language);
+    void i18n.changeLanguage(value);
   };
 
   const options = [

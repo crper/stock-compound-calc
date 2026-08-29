@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import Decimal from "decimal.js";
+import type Decimal from "decimal.js";
 import { Table, Card, Typography, Space } from "antd";
 import { useResponsive } from "@/hooks/useResponsive";
 import type { ColumnsType } from "antd/es/table";
@@ -13,6 +13,12 @@ interface RecoveryTableProps {
   currentValue: number;
 }
 
+/** 用户开启「减少动态效果」时改用无动画滚动 */
+const prefersReducedMotion = (): boolean =>
+  typeof window !== "undefined" &&
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 interface TableData {
   key: string;
   lossPercent: number;
@@ -23,19 +29,34 @@ interface TableData {
 export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ currentValue }) => {
   const { t } = useTranslation();
   const { isMobile } = useResponsive();
+  const tableWrapperRef = useRef<HTMLDivElement>(null);
+
+  // 拖动滑块时把当前亏损档位滚到可视区中间，
+  // 否则 1~100% 的速查表里用户很难在 300px 高的视窗中找到自己那一行
+  useEffect(() => {
+    const body = tableWrapperRef.current?.querySelector<HTMLElement>(".ant-table-body");
+    const row = body?.querySelector<HTMLElement>(`[data-row-key="${Math.round(currentValue)}"]`);
+    if (!body || !row) return;
+
+    const centered = row.offsetTop - body.clientHeight / 2 + row.clientHeight / 2;
+    body.scrollTo({
+      top: Math.max(0, centered),
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+    });
+  }, [currentValue]);
 
   const data = useMemo((): TableData[] => {
-    const data: TableData[] = [];
+    const rows: TableData[] = [];
     for (let i = 1; i <= 100; i++) {
       const metrics = calculateRecovery(i);
-      data.push({
+      rows.push({
         key: i.toString(),
         lossPercent: metrics.lossPercent,
         requiredGain: metrics.requiredGain,
         multiplier: metrics.multiplier,
       });
     }
-    return data;
+    return rows;
   }, []);
 
   const getRowClassName = (record: TableData): string => {
@@ -97,11 +118,12 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
 
   return (
     <Card
-      size={isMobile ? "small" : "default"}
+      size={isMobile ? "small" : "medium"}
       title={
         <div className="flex items-center justify-between">
+          {/* 语义层级用 h2，视觉字号由 className 固定 */}
           <Title
-            level={4}
+            level={2}
             className={`!m-0 dark:text-gray-100 ${isMobile ? "text-base" : "text-lg lg:text-base"} font-semibold`}
           >
             {t("recoveryCalculator.table.title")}
@@ -123,13 +145,8 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
         body: CARD_STYLES.body.compact,
       }}
     >
-      <div
-        className="overflow-y-auto"
-        style={{
-          maxHeight: isMobile ? "300px" : "400px",
-          scrollBehavior: "smooth",
-        }}
-      >
+      {/* 滚动容器由 Table 的 scroll.y 提供，此处不再包一层 overflow，避免出现双重滚动条 */}
+      <div ref={tableWrapperRef}>
         <Table
           dataSource={data}
           columns={columns}

@@ -1,19 +1,27 @@
 import { z } from "zod";
+import { CALCULATION_LIMITS } from "@/constants";
 
+// 数值边界统一引用 CALCULATION_LIMITS，与 validator、表单 InputNumber 的 min/max 三处同源
 export const CalculationParamsSchema = z
   .object({
-    initialPrice: z.number().min(0.01, "股价必须大于0.01元").max(1000000000, "股价必须小于10亿"),
+    initialPrice: z
+      .number()
+      .min(CALCULATION_LIMITS.MIN_INITIAL_PRICE, "股价必须大于0.01元")
+      .max(CALCULATION_LIMITS.MAX_INITIAL_PRICE, "股价必须小于10亿"),
     boardCount: z
       .number()
       .int("连板数量必须为整数")
-      .min(1, "连板数量至少为1天")
-      .max(3650, "连板数量最多为3650天"),
-    dailyReturn: z.number().min(-99, "涨跌幅不能小于-99%").max(100, "涨跌幅不能大于100%"),
+      .min(CALCULATION_LIMITS.MIN_BOARD_COUNT, "连板数量至少为1天")
+      .max(CALCULATION_LIMITS.MAX_BOARD_COUNT, "连板数量最多为3650天"),
+    dailyReturn: z
+      .number()
+      .min(CALCULATION_LIMITS.MIN_DAILY_RETURN, "涨跌幅不能小于-99%")
+      .max(CALCULATION_LIMITS.MAX_DAILY_RETURN, "涨跌幅不能大于100%"),
     stockQuantity: z
       .number()
       .int("股票数量必须为整数")
-      .min(1, "股票数量至少为1股")
-      .max(10000000000, "股票数量最多为100亿股")
+      .min(CALCULATION_LIMITS.MIN_STOCK_QUANTITY, "股票数量至少为1股")
+      .max(CALCULATION_LIMITS.MAX_STOCK_QUANTITY, "股票数量最多为100亿股")
       .optional(),
   })
   .refine((data) => !(data.dailyReturn <= -99 && data.initialPrice > 0), {
@@ -50,7 +58,6 @@ export const CalculationResultSchema = z.object({
   finalPrice: z.number(),
   totalReturn: z.number(),
   totalGain: z.number(),
-  details: z.array(z.string()),
   dailyDetails: z.array(DailyDetailSchema),
   keyMetrics: KeyMetricsSchema.optional(),
   positionValue: PositionValueSchema.optional(),

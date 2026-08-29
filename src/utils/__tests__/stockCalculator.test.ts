@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, expect, it } from "vite-plus/test";
 import {
   calculateStockReturns,
   calculateBidirectionalReturns,
@@ -28,7 +28,6 @@ describe("calculateStockReturns", () => {
       expect(result.finalPrice).toBeCloseTo(16.1051, 3);
       expect(result.totalReturn).toBeCloseTo(61.05, 2);
       expect(result.totalGain).toBeCloseTo(6.1051, 3);
-      expect(result.details.length).toBe(5);
       expect(result.dailyDetails.length).toBe(5);
     });
 

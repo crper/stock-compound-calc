@@ -15,7 +15,6 @@ interface MetricsGridProps {
   metrics: KeyMetrics | undefined;
   dailyReturn: number;
   boardCount: number;
-  isMobile: boolean;
 }
 
 interface MetricItemProps {
@@ -129,7 +128,13 @@ export const MetricsGrid: React.FC<MetricsGridProps> = React.memo(
         >
           {items.map((item, index) => (
             <div key={index}>
-              <MetricItem {...item} />
+              <MetricItem
+                label={item.label}
+                value={item.value}
+                tooltip={item.tooltip}
+                colorClass={item.colorClass}
+                bgClass={item.bgClass}
+              />
             </div>
           ))}
         </div>

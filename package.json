@@ -2,7 +2,7 @@
   "name": "stock-compound-calc",
   "version": "1.0.0",
   "private": true,
-  "description": "股票投资计算工具集：连板收益计算器 + 亏损回本计算器（React 19 + Bun + TypeScript）",
+  "description": "股票投资计算工具集：连板收益计算器 + 亏损回本计算器（React 19 + Vite+ + TypeScript）",
   "homepage": "https://crper.github.io/stock-compound-calc/",
   "license": "MIT",
   "repository": {
@@ -11,44 +11,58 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "bun --hot src/index.html",
-    "start": "NODE_ENV=production bun run build.ts && bun run serve",
-    "serve": "bun -e \"const { serve } = require('bun'); serve({ static: { '/': './dist/index.html' }, fetch(req) { return new Response('Not Found', { status: 404 }); }, port: 3000 });\"",
-    "build": "bun run lint && bun run build.ts",
-    "test": "bun test",
-    "test:coverage": "bun test --coverage",
-    "lint": "oxlint --type-aware src",
-    "lint:fix": "oxlint --type-aware --fix src",
-    "format": "oxfmt .",
-    "format:check": "oxfmt --check .",
-    "typecheck": "bunx tsc --noEmit"
+    "dev": "vp dev",
+    "start": "vp build && vp preview",
+    "serve": "vp preview",
+    "build": "vp build",
+    "preview": "vp preview",
+    "test": "vp test run",
+    "test:watch": "vp test",
+    "test:coverage": "vp test run --coverage",
+    "lint": "vp lint --type-aware src",
+    "lint:fix": "vp lint --type-aware --fix src",
+    "format": "vp fmt src scripts vite.config.ts",
+    "format:check": "vp fmt --check src scripts vite.config.ts",
+    "typecheck": "tsc --noEmit",
+    "check:i18n": "node scripts/check-i18n.ts",
+    "prepare": "vp config"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.2",
-    "antd": "^6.6.1",
-    "bun-plugin-tailwind": "^0.1.2",
+    "antd": "^6.6.2",
     "dayjs": "^1.11.23",
     "decimal.js": "^10.6.0",
     "dexie": "^4.4.5",
     "dexie-react-hooks": "^4.4.0",
-    "es-toolkit": "^1.51.0",
+    "es-toolkit": "^1.52.0",
     "i18next": "^26.4.0",
     "i18next-browser-languagedetector": "^8.2.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-i18next": "^17.0.12",
-    "react-router-dom": "^7.18.2",
+    "react-router-dom": "^7.18.3",
     "recharts": "^3.10.1",
     "tailwindcss": "^4.3.3",
-    "zod": "^4.4.3"
+    "zod": "^4.5.2"
   },
   "devDependencies": {
-    "@types/bun": "^1.4.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
-    "oxfmt": "^0.64.0",
-    "oxlint": "^1.79.0",
-    "oxlint-tsgolint": "^7.0.2001",
-    "typescript": "^7.0.2"
+    "@types/react-dom": "^19.2.5",
+    "@vitejs/plugin-react": "^6.1.1",
+    "@vitest/coverage-v8": "4.1.11",
+    "typescript": "^7.0.2",
+    "vite-plus": "0.3.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.3.0",
+    "vitest": "4.1.11"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "onFail": "warn"
+    }
   }
 }

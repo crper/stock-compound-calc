@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import Decimal from "decimal.js";
+import { debounce } from "es-toolkit";
+import type Decimal from "decimal.js";
 import { useTranslation } from "react-i18next";
+import { z } from "zod";
 import { calculateRecovery } from "@/utils/lossRecovery";
 import { ErrorHandler, ErrorFactory } from "@/utils/errorHandler";
 import { generateId } from "@/utils/idGenerator";
@@ -17,6 +19,16 @@ export interface RecoveryHistoryItem {
   timestamp: number;
   createdAt: string;
 }
+
+// 运行时校验 schema：localStorage 数据不可信，读取时用 zod 逐字段校验
+const RecoveryHistoryItemSchema = z.object({
+  id: z.string(),
+  lossPercent: z.number(),
+  requiredGain: z.string(),
+  multiplier: z.string(),
+  timestamp: z.number(),
+  createdAt: z.string(),
+});
 
 // 持久化历史记录到 localStorage
 const persistHistory = (history: RecoveryHistoryItem[]): void => {
@@ -50,7 +62,9 @@ const loadPersistedHistory = (): RecoveryHistoryItem[] => {
     if (!stored) return [];
 
     try {
-      return JSON.parse(stored) as RecoveryHistoryItem[];
+      const result = RecoveryHistoryItemSchema.array().safeParse(JSON.parse(stored));
+      if (result.success) return result.data;
+      throw new Error("invalid history data");
     } catch {
       ErrorHandler.log(ErrorHandler.handleUnknown(new Error("历史记录数据损坏，已重置")));
       localStorage.removeItem(STORAGE_KEY);
@@ -65,26 +79,9 @@ const loadPersistedHistory = (): RecoveryHistoryItem[] => {
 export const useLossRecovery = () => {
   const { i18n } = useTranslation();
   const [lossPercent, setLossPercent] = useState<number>(20);
-  const [history, setHistory] = useState<RecoveryHistoryItem[]>([]);
+  // 首屏直接用 localStorage 惰性初始化，避免挂载后再 setState 触发二次渲染
+  const [history, setHistory] = useState<RecoveryHistoryItem[]>(loadPersistedHistory);
   const [historyDrawerVisible, setHistoryDrawerVisible] = useState(false);
-  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // 从 localStorage 加载历史记录 - 只在挂载时执行一次
-  useEffect(() => {
-    const stored = loadPersistedHistory();
-    if (stored.length > 0) {
-      setHistory(stored);
-    }
-  }, []);
-
-  // 清理定时器的 effect
-  useEffect(() => {
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, []);
 
   // 保存历史记录 - 使用 useCallback 但依赖数组为空
   const saveHistory = useCallback(
@@ -107,23 +104,34 @@ export const useLossRecovery = () => {
     [i18n.language],
   );
 
-  // 处理亏损百分比变化 - 带防抖
-  const handleLossChange = useCallback(
-    (value: number) => {
-      const clampedValue = Math.max(0, Math.min(99.9, value));
-      setLossPercent(clampedValue);
+  // saveHistory 依赖 i18n.language 会重建，用 ref 转发最新引用（在 effect 中更新，避免渲染期写 ref）
+  const saveHistoryRef = useRef(saveHistory);
+  useEffect(() => {
+    saveHistoryRef.current = saveHistory;
+  }, [saveHistory]);
 
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-
-      debounceTimerRef.current = setTimeout(() => {
-        const metrics = calculateRecovery(clampedValue);
-        saveHistory(clampedValue, metrics.requiredGain, metrics.multiplier);
-      }, DEBOUNCE_DELAY);
-    },
-    [saveHistory],
+  // 与 useStockCalculator 统一使用 es-toolkit debounce；最新 saveHistory 由调用方传入
+  const debouncedSaveRef = useRef(
+    debounce((loss: number, saveFn: (loss: number, gain: Decimal, mult: Decimal) => void) => {
+      const metrics = calculateRecovery(loss);
+      saveFn(loss, metrics.requiredGain, metrics.multiplier);
+    }, DEBOUNCE_DELAY),
   );
+
+  // 卸载时取消未触发的防抖保存
+  useEffect(() => {
+    const debouncedSave = debouncedSaveRef.current;
+    return () => {
+      debouncedSave.cancel();
+    };
+  }, []);
+
+  // 处理亏损百分比变化 - 带防抖
+  const handleLossChange = useCallback((value: number) => {
+    const clampedValue = Math.max(0, Math.min(99.9, value));
+    setLossPercent(clampedValue);
+    debouncedSaveRef.current(clampedValue, saveHistoryRef.current);
+  }, []);
 
   const clearHistory = useCallback(() => {
     setHistory([]);

@@ -3,6 +3,9 @@ import "i18next";
 export const enUS = {
   translation: {
     common: {
+      a11y: {
+        skipToContent: "Skip to main content",
+      },
       navigation: {
         stockCalculator: "Stock Calculator",
         lossRecovery: "Loss Recovery",
@@ -56,6 +59,7 @@ export const enUS = {
         clearSuccess: "History cleared successfully",
         clearFailed: "Failed to clear history",
       },
+      historyCount: "{{count}}",
       errorBoundary: {
         title: "Application Error",
         description: "Sorry, the application encountered an unexpected error.",
@@ -162,6 +166,7 @@ export const enUS = {
         holding: "Holding {{count}} shares",
         limitUpProfit: "Limit Up Profit",
         limitDownLoss: "Limit Down Loss",
+        selectRecord: "Select this history record",
       },
       charts: {
         title: "Data Visualization",
@@ -245,7 +250,8 @@ export const enUS = {
         database: "Database",
         tools: "Tools",
         list: {
-          bun: "Bun - Modern JavaScript runtime and build tool",
+          node: "Node.js - JavaScript runtime",
+          vitePlus: "Vite+ - Unified toolchain (build / test / lint / format)",
           react: "React 19 - Latest version of React framework",
           typescript: "TypeScript - Type-safe JavaScript superset",
           antd: "Ant Design v6 - Enterprise UI component library",

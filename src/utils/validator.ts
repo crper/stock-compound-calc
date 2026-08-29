@@ -1,4 +1,5 @@
 import { CalculationParamsSchema, type CalculationParams } from "@/schemas";
+import { CALCULATION_LIMITS } from "@/constants";
 import { ErrorFactory } from "./errorHandler";
 
 export const validateCalculationParams = (params: CalculationParams): void => {
@@ -39,28 +40,28 @@ export const getFieldValidationKey = (
   switch (fieldName) {
     case "initialPrice":
       if (numValue !== null) {
-        if (numValue < 0.01) return "validation.price.min";
-        if (numValue > 1000000000) return "validation.price.max";
+        if (numValue < CALCULATION_LIMITS.MIN_INITIAL_PRICE) return "validation.price.min";
+        if (numValue > CALCULATION_LIMITS.MAX_INITIAL_PRICE) return "validation.price.max";
       }
       break;
     case "boardCount":
       if (numValue !== null) {
         if (!Number.isInteger(numValue)) return "validation.boardCount.integer";
-        if (numValue < 1) return "validation.boardCount.min";
-        if (numValue > 3650) return "validation.boardCount.max";
+        if (numValue < CALCULATION_LIMITS.MIN_BOARD_COUNT) return "validation.boardCount.min";
+        if (numValue > CALCULATION_LIMITS.MAX_BOARD_COUNT) return "validation.boardCount.max";
       }
       break;
     case "dailyReturn":
       if (numValue !== null) {
-        if (numValue < -99) return "validation.dailyReturn.min";
-        if (numValue > 100) return "validation.dailyReturn.max";
+        if (numValue < CALCULATION_LIMITS.MIN_DAILY_RETURN) return "validation.dailyReturn.min";
+        if (numValue > CALCULATION_LIMITS.MAX_DAILY_RETURN) return "validation.dailyReturn.max";
       }
       break;
     case "stockQuantity":
       if (numValue !== null) {
         if (!Number.isInteger(numValue)) return "validation.stockQuantity.integer";
-        if (numValue < 1) return "validation.stockQuantity.min";
-        if (numValue > 10000000000) return "validation.stockQuantity.max";
+        if (numValue < CALCULATION_LIMITS.MIN_STOCK_QUANTITY) return "validation.stockQuantity.min";
+        if (numValue > CALCULATION_LIMITS.MAX_STOCK_QUANTITY) return "validation.stockQuantity.max";
       }
       break;
   }

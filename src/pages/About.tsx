@@ -24,7 +24,10 @@ export const About: React.FC = React.memo(() => {
   const { t } = useTranslation();
 
   const techStack = [
-    { category: t("about.techStack.backend"), items: [t("about.techStack.list.bun")] },
+    {
+      category: t("about.techStack.backend"),
+      items: [t("about.techStack.list.vitePlus"), t("about.techStack.list.node")],
+    },
     {
       category: t("about.techStack.frontend"),
       items: [
@@ -78,7 +81,7 @@ export const About: React.FC = React.memo(() => {
       <PageContainer>
         {/* Tech Stack */}
         <div className="mb-8">
-          <Title level={4} className="mb-4 dark:text-white flex items-center gap-2">
+          <Title level={2} className="!text-xl mb-4 dark:text-white flex items-center gap-2">
             <Tag color="blue">{t("about.techStack.title")}</Tag>
           </Title>
           <div className="space-y-4">
@@ -106,7 +109,7 @@ export const About: React.FC = React.memo(() => {
 
         {/* Features */}
         <div className="mb-8">
-          <Title level={4} className="mb-4 dark:text-white flex items-center gap-2">
+          <Title level={2} className="!text-xl mb-4 dark:text-white flex items-center gap-2">
             <Tag color="green">{t("about.features.title")}</Tag>
           </Title>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -133,7 +136,7 @@ export const About: React.FC = React.memo(() => {
 
         {/* Developer */}
         <div className="mb-8">
-          <Title level={4} className="mb-4 dark:text-white flex items-center gap-2">
+          <Title level={2} className="!text-xl mb-4 dark:text-white flex items-center gap-2">
             <Tag color="purple">{t("about.developer.title")}</Tag>
           </Title>
           <Paragraph className="dark:text-gray-300">{t("about.developer.description")}</Paragraph>
@@ -152,7 +155,7 @@ export const About: React.FC = React.memo(() => {
 
         {/* Sponsor */}
         <div className="mb-8">
-          <Title level={4} className="mb-4 dark:text-white flex items-center gap-2">
+          <Title level={2} className="!text-xl mb-4 dark:text-white flex items-center gap-2">
             <Tag color="red">
               <HeartOutlined className="mr-1" />
               {t("about.sponsor.title")}
@@ -161,17 +164,18 @@ export const About: React.FC = React.memo(() => {
           <Paragraph className="dark:text-gray-300 mb-4">
             {t("about.sponsor.description")}
           </Paragraph>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* PayPal */}
             <a
               href="https://paypal.me/xcrper"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={t("about.sponsor.paypal")}
               className="group block"
             >
               <Card
                 className="h-full text-center hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
-                bodyStyle={{ padding: "20px" }}
+                styles={{ body: { padding: 20, height: "100%" } }}
               >
                 <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                   <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
@@ -190,7 +194,7 @@ export const About: React.FC = React.memo(() => {
             {/* WeChat */}
             <Card
               className="text-center overflow-hidden"
-              bodyStyle={{ padding: 0 }}
+              styles={{ body: { padding: 12 } }}
               cover={
                 <div className="aspect-square bg-white dark:bg-gray-900 flex items-center justify-center p-4">
                   <img
@@ -208,7 +212,7 @@ export const About: React.FC = React.memo(() => {
             {/* Alipay */}
             <Card
               className="text-center overflow-hidden"
-              bodyStyle={{ padding: 0 }}
+              styles={{ body: { padding: 12 } }}
               cover={
                 <div className="aspect-square bg-white dark:bg-gray-900 flex items-center justify-center p-4">
                   <img
@@ -229,7 +233,7 @@ export const About: React.FC = React.memo(() => {
 
         {/* Disclaimer */}
         <div>
-          <Title level={4} className="mb-4 dark:text-white flex items-center gap-2">
+          <Title level={2} className="!text-xl mb-4 dark:text-white flex items-center gap-2">
             <Tag color="orange">
               <WarningOutlined className="mr-1" />
               {t("about.disclaimer.title")}

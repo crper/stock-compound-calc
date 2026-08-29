@@ -1,12 +1,16 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
+import { z } from "zod";
 import { zhCN } from "../src/i18n/locales/zh-CN.ts";
 import { enUS } from "../src/i18n/locales/en-US.ts";
 
 type TranslationKey = string;
 type TranslationPath = string[];
 
+// Object.entries 返回 [string, any][]，用 zod 收窄为 Record<string, unknown> 后再递归
+const NestedObjectSchema = z.record(z.string(), z.unknown());
+
 function extractKeys(
-  obj: Record<string, unknown>,
+  obj: object,
   path: TranslationPath = [],
 ): Map<TranslationKey, TranslationPath> {
   const keys = new Map<TranslationKey, TranslationPath>();
@@ -14,8 +18,9 @@ function extractKeys(
   for (const [key, value] of Object.entries(obj)) {
     const currentPath = [...path, key];
 
-    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-      const nestedKeys = extractKeys(value as Record<string, unknown>, currentPath);
+    const nested = NestedObjectSchema.safeParse(value);
+    if (nested.success) {
+      const nestedKeys = extractKeys(nested.data, currentPath);
       nestedKeys.forEach((v, k) => keys.set(k, v));
     } else {
       keys.set(currentPath.join("."), currentPath);
@@ -28,12 +33,12 @@ function extractKeys(
 function compareTranslations() {
   console.log("检查翻译键一致性...\n");
 
-  const zhKeys = extractKeys(zhCN.translation as unknown as Record<string, unknown>);
-  const enKeys = extractKeys(enUS.translation as unknown as Record<string, unknown>);
+  const zhKeys = extractKeys(zhCN.translation);
+  const enKeys = extractKeys(enUS.translation);
 
-  let missingInZh: TranslationKey[] = [];
-  let missingInEn: TranslationKey[] = [];
-  let commonKeys: TranslationKey[] = [];
+  const missingInZh: TranslationKey[] = [];
+  const missingInEn: TranslationKey[] = [];
+  const commonKeys: TranslationKey[] = [];
 
   zhKeys.forEach((_, key) => {
     if (!enKeys.has(key)) {

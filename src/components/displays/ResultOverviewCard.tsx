@@ -47,16 +47,12 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
 
     return (
       <Card
-        size={isMobile ? "default" : "small"}
+        size={isMobile ? "medium" : "small"}
         title={
           <div className="flex items-center justify-between text-base">
             <div className="flex items-center gap-2">
-              <div
-                className={`w-7 h-7 rounded-lg ${isUp ? "bg-red-100 dark:bg-red-900/30" : "bg-green-100 dark:bg-green-900/30"} flex items-center justify-center`}
-              >
-                <IconComponent
-                  className={`${isUp ? "text-red-500 dark:text-red-400" : "text-green-500 dark:text-green-400"}`}
-                />
+              <div className={`w-7 h-7 rounded-lg ${colors.bg} flex items-center justify-center`}>
+                <IconComponent className={colors.iconColor} />
               </div>
               <span className="font-semibold text-gray-800 dark:text-gray-100">{title}</span>
             </div>
@@ -129,7 +125,6 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
                 metrics={result.keyMetrics}
                 dailyReturn={params.dailyReturn}
                 boardCount={params.boardCount}
-                isMobile={isMobile}
               />
             )}
           </div>

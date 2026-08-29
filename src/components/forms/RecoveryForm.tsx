@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, Form, Slider, Typography, Space, Flex } from "antd";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -6,6 +6,15 @@ import { CARD_STYLES, SLIDER_STYLES } from "@/constants/uiPatterns";
 import { LAYOUT_CONSTANTS } from "@/constants/layout";
 
 const { Text, Title } = Typography;
+
+/** 按亏损程度返回警示色（纯函数，与组件状态无关，提升到模块作用域避免每次渲染重建） */
+const getColorByValue = (val: number): string => {
+  if (val < 20) return "#52c41a";
+  if (val < 40) return "#1677ff";
+  if (val < 60) return "#faad14";
+  if (val < 80) return "#fa541c";
+  return "#ff4d4f";
+};
 
 interface RecoveryFormProps {
   value: number;
@@ -16,44 +25,22 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
   const { t } = useTranslation();
   const { isMobile } = useResponsive(); // 响应式 hooks，用于获取设备信息
 
-  const handleSliderChange = useCallback(
-    (newValue: number) => {
-      onChange(newValue);
-    },
-    [onChange],
-  );
-
-  const marks: Record<number, string> = {
-    0: "0%",
-    10: "10%",
-    20: "20%",
-    30: "30%",
-    40: "40%",
-    50: "50%",
-    60: "60%",
-    70: "70%",
-    80: "80%",
-    90: "90%",
-    100: "100%",
-  };
-
-  const getColorByValue = (val: number): string => {
-    if (val < 20) return "#52c41a";
-    if (val < 40) return "#1677ff";
-    if (val < 60) return "#faad14";
-    if (val < 80) return "#fa541c";
-    return "#ff4d4f";
-  };
+  // 窄屏放不下 11 个刻度标签，会互相挤压重叠，这里只保留 5 个主刻度
+  const marks = useMemo<Record<number, string>>(() => {
+    const steps = isMobile ? [0, 25, 50, 75, 100] : [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    return Object.fromEntries(steps.map((step) => [step, `${step}%`]));
+  }, [isMobile]);
 
   const currentColor = getColorByValue(value);
 
   return (
     <Card
-      size={isMobile ? "small" : "default"}
+      size={isMobile ? "small" : "medium"}
       title={
         <div className="flex items-center justify-between">
+          {/* 语义层级用 h2，视觉字号由 className 固定 */}
           <Title
-            level={4}
+            level={2}
             className={`!m-0 dark:text-gray-100 ${isMobile ? "text-base" : "text-lg lg:text-base"} font-semibold`}
           >
             {t("recoveryCalculator.form.title")}
@@ -98,7 +85,8 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
                 step={0.1}
                 value={value}
                 marks={marks}
-                onChange={handleSliderChange}
+                ariaLabelForHandle={t("recoveryCalculator.form.currentLoss")}
+                onChange={onChange}
                 tooltip={{
                   formatter: (val) => `${Number(val).toFixed(1)}%`,
                   placement: "top",
@@ -123,19 +111,26 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
               {t("recoveryCalculator.form.presets.label")}
             </Text>
             <Space wrap>
-              {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((preset) => (
-                <button
-                  key={preset}
-                  onClick={() => handleSliderChange(preset)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
-                    value === preset
-                      ? "bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-lg"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  {preset}%
-                </button>
-              ))}
+              {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((preset) => {
+                const isActive = value === preset;
+                return (
+                  <button
+                    key={preset}
+                    // 位于 <Form> 内，不显式声明 type 会默认按 submit 处理
+                    type="button"
+                    aria-pressed={isActive}
+                    aria-label={`${t("recoveryCalculator.form.presets.label")} ${preset}%`}
+                    onClick={() => onChange(preset)}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                      isActive
+                        ? "bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-lg"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                    }`}
+                  >
+                    {preset}%
+                  </button>
+                );
+              })}
             </Space>
           </div>
         </div>

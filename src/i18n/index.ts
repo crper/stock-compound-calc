@@ -49,4 +49,6 @@ void i18n
     },
   });
 
-export default i18n;
+// 导出配置后的 i18next 单例：经本地别名中转，避免直接 re-export 未初始化的默认实例
+const appI18n = i18n;
+export default appI18n;

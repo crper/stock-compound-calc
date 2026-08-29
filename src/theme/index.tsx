@@ -19,10 +19,19 @@ interface ThemeContextType {
 const THEME_STORAGE_KEY = "app-theme";
 
 // 主题颜色常量
+// 说明：装饰性渐变仍用 #667eea → #764ba2（品牌观感），
+// 但交互主色改用更深一档的 #5a67d8 —— 白字在 #667eea 上只有 3.66:1，
+// 达不到 WCAG AA 的 4.5:1；#5a67d8 可达 4.78:1。
+// hover / active 继续加深（而非变浅），保证任何状态下的对比度都不过线。
 const THEME_COLORS = {
-  primary: "#667eea",
-  primaryHover: "#764ba2",
-  primaryActive: "#5a67d8",
+  primary: "#5a67d8",
+  primaryHover: "#4c51bf",
+  primaryActive: "#4338ca",
+  /** 选中态文字色：在浅色背景上需独立满足 AA，不能直接用主色 */
+  selectedText: "#4c51bf",
+  selectedTextDark: "#a5b4fc",
+  selectedBg: "#eef2ff",
+  selectedBgDark: "rgba(90, 103, 216, 0.18)",
 };
 
 // 深色模式 token
@@ -34,28 +43,30 @@ const DARK_TOKENS = {
   colorBorder: "#4b5563",
 };
 
+// 辅助文字色：antd 默认的 colorTextSecondary/Tertiary 是 rgba(0,0,0,.65)/(.45)，
+// 后者在白色底上只有约 3.5:1，达不到 WCAG AA。这里提到 #595959（≈6.9:1）与 #6b7280（≈4.9:1）。
+const LIGHT_TEXT_TOKENS = {
+  colorTextSecondary: "#595959",
+  colorTextTertiary: "#6b7280",
+};
+
 // 默认字体
 const DEFAULT_FONT_FAMILY = `-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif`;
 
 // 创建上下文
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-// Ant Design locale 映射
-const antLocales = {
-  [LANGUAGES.ZH_CN]: zhCN,
-  [LANGUAGES.EN_US]: enUS,
-};
-
 // ThemeProvider 组件
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo(({ children }) => {
   const [theme, setTheme] = useState<ThemeMode>(() => {
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    return (savedTheme as ThemeMode) || "light";
+    // 显式校验存储值，避免 localStorage 被手改成任意字符串
+    return savedTheme === "dark" ? "dark" : "light";
   });
 
   const { i18n } = useTranslation();
-  const currentLanguage = i18n.language as keyof typeof antLocales;
-  const antLocale = antLocales[currentLanguage] || enUS;
+  // 不做断言：直接用显式比较映射到 AntD locale，未知语言兜底英文
+  const antLocale = i18n.language === LANGUAGES.ZH_CN ? zhCN : enUS;
 
   // 切换主题
   const toggleTheme = useCallback(() => {
@@ -79,7 +90,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo
         colorPrimaryActive: THEME_COLORS.primaryActive,
         borderRadius: 8,
         fontFamily: DEFAULT_FONT_FAMILY,
-        ...(theme === "dark" ? DARK_TOKENS : {}),
+        ...(theme === "dark" ? DARK_TOKENS : LIGHT_TEXT_TOKENS),
       },
       components: {
         Layout: {
@@ -125,6 +136,18 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo
           railBg: theme === "dark" ? "#374151" : "#f5f5f5",
           handleColor: theme === "dark" ? "#667eea" : "#fff",
           handleBorderColor: theme === "dark" ? "#667eea" : "#e5e5e5",
+        },
+        Menu: {
+          // 选中项文字直接用主色会在深色下对比不足：
+          // antd 的深色算法会把 #5a67d8 压到 #505bbb（深底上仅 2.49:1）。
+          // 这里为垂直 / 水平菜单分别指定满足 AA 的选中色。
+          itemSelectedColor:
+            theme === "dark" ? THEME_COLORS.selectedTextDark : THEME_COLORS.selectedText,
+          itemSelectedBg: theme === "dark" ? THEME_COLORS.selectedBgDark : THEME_COLORS.selectedBg,
+          horizontalItemSelectedColor:
+            theme === "dark" ? THEME_COLORS.selectedTextDark : THEME_COLORS.selectedText,
+          horizontalItemSelectedBg:
+            theme === "dark" ? THEME_COLORS.selectedBgDark : THEME_COLORS.selectedBg,
         },
         Tag: {
           borderRadius: 12,

@@ -1,12 +1,12 @@
 /**
  * 现代化的主布局组件 - 使用 Ant Design Layout 系统
  * 统一管理 Header、Content、Footer 布局
- * 桌面端：水平导航菜单；移动端：底部 TabBar（小程序风格）
+ * 桌面端/平板端：水平导航菜单；手机端：底部 TabBar（小程序风格）
  */
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Layout, Button, Flex } from "antd";
 import { MoonOutlined, SunOutlined } from "@ant-design/icons";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/theme";
@@ -16,21 +16,43 @@ import { FooterContent } from "./FooterContent";
 import { NavigationMenu } from "./NavigationMenu";
 import { MobileTabBar } from "./MobileTabBar";
 
-export const MainLayout: React.FC = () => {
+/** 内容区最大宽度，超宽屏下避免文字行长过长影响阅读 */
+const CONTENT_MAX_WIDTH = 1600;
+
+export const MainLayout: React.FC = React.memo(() => {
   const { isMobile } = useResponsive();
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
+  const { pathname } = useLocation();
+
+  // 路由切换后把滚动位置恢复到顶部，并让主内容重新获得焦点，
+  // 否则从长页面跳转后会停在半屏位置，键盘/读屏用户会丢失上下文
+  const mainRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "auto" });
+    mainRef.current?.focus({ preventScroll: true });
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- 故意依赖 pathname：路由切换时恢复滚动并重新聚焦，effect 内无需读取 pathname
+  }, [pathname]);
 
   const nextLanguage: Language =
     i18n.language === LANGUAGES.ZH_CN ? LANGUAGES.EN_US : LANGUAGES.ZH_CN;
 
   return (
     <Layout className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      {/* 头部区域 */}
+      {/* 键盘用户的跳转链接：视觉隐藏，获得焦点时显示在顶部 */}
+      <a href="#main-content" className="skip-to-content">
+        {t("common.a11y.skipToContent", { defaultValue: "跳转到主要内容" })}
+      </a>
+
+      {/* 头部区域：吸顶，保证长页面滚动时导航始终可达 */}
       <Layout.Header
-        className={`shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors duration-300 ${
-          isMobile ? "!h-14" : ""
-        }`}
+        className="app-header shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors duration-300"
         style={{
           padding: "0 16px",
           height: isMobile ? "56px" : "64px",
@@ -44,7 +66,7 @@ export const MainLayout: React.FC = () => {
             <HeaderContent />
           </div>
 
-          {/* 右侧：桌面端导航菜单 / 移动端主题 + 语言快捷切换 */}
+          {/* 右侧：桌面/平板端导航菜单 / 手机端主题 + 语言快捷切换 */}
           <div style={{ flex: "0 0 auto", lineHeight: "normal" }}>
             {isMobile ? (
               <Flex gap={4} align="center">
@@ -71,14 +93,17 @@ export const MainLayout: React.FC = () => {
         </Flex>
       </Layout.Header>
 
-      {/* 内容区域：移动端预留底部 TabBar 空间 */}
-      <Layout.Content className="flex-1">
-        <div
-          className={`mx-auto w-full px-4 sm:px-6 lg:px-8 ${isMobile ? "py-4 pb-24" : "py-8"}`}
-          style={{ maxWidth: 1600 }}
-        >
-          <Outlet />
-        </div>
+      {/* 内容区域：手机端预留底部 TabBar 空间。
+          注意：antd 的 Layout.Content 本身就渲染成 <main>，这里直接复用它，
+          不要再嵌套一层 <main>，否则会出现重复/嵌套的 main landmark */}
+      <Layout.Content
+        id="main-content"
+        ref={mainRef}
+        tabIndex={-1}
+        className={`mx-auto w-full px-4 sm:px-6 lg:px-8 ${isMobile ? "py-4 pb-24" : "py-8"}`}
+        style={{ maxWidth: CONTENT_MAX_WIDTH }}
+      >
+        <Outlet />
       </Layout.Content>
 
       {/* 底部区域 */}
@@ -94,6 +119,6 @@ export const MainLayout: React.FC = () => {
       {isMobile && <MobileTabBar />}
     </Layout>
   );
-};
+});
 
 MainLayout.displayName = "MainLayout";

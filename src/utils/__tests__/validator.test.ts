@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, expect, it } from "vite-plus/test";
 import { CalculationParamsSchema, type CalculationParams } from "@/schemas";
 import { validateCalculationParams, isFieldValid } from "../validator";
 

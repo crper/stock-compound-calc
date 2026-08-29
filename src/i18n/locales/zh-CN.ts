@@ -3,6 +3,9 @@ import "i18next";
 export const zhCN = {
   translation: {
     common: {
+      a11y: {
+        skipToContent: "跳转到主要内容",
+      },
       navigation: {
         stockCalculator: "股价连板计算器",
         lossRecovery: "亏损回本计算器",
@@ -56,6 +59,7 @@ export const zhCN = {
         clearSuccess: "历史记录已清空",
         clearFailed: "清空历史记录失败",
       },
+      historyCount: "{{count}} 条",
       errorBoundary: {
         title: "应用程序遇到错误",
         description: "很抱歉，应用程序遇到了一个意外错误。",
@@ -162,6 +166,7 @@ export const zhCN = {
         holding: "持仓 {{count}} 股",
         limitUpProfit: "涨停收益",
         limitDownLoss: "跌停收益",
+        selectRecord: "选择该条历史记录",
       },
       charts: {
         title: "数据可视化",
@@ -244,7 +249,8 @@ export const zhCN = {
         database: "数据存储",
         tools: "工具库",
         list: {
-          bun: "Bun - 现代 JavaScript 运行时与构建工具",
+          node: "Node.js - JavaScript 运行时",
+          vitePlus: "Vite+ - 统一工具链（构建 / 测试 / Lint / 格式化）",
           react: "React 19 - 最新版 React 框架",
           typescript: "TypeScript - 类型安全的 JavaScript 超集",
           antd: "Ant Design v6 - 企业级 UI 组件库",

@@ -2,11 +2,12 @@
  * 股价收益计算器主页面组件
  * 使用 PageContainer 统一布局管理
  */
-import React from "react";
+import React, { useCallback } from "react";
 import { Alert, Row, Col, Form } from "antd";
 import { useTranslation } from "react-i18next";
 import { useStockCalculator } from "@/hooks/useStockCalculator";
 import { useResponsive } from "@/hooks/useResponsive";
+import type { CalculationHistory } from "@/types";
 import {
   CalculationForm,
   ResultsDisplay,
@@ -23,8 +24,8 @@ export const StockCalculator: React.FC = () => {
 
   const {
     results,
-    error,
-    setError,
+    errorMessage,
+    setErrorMessage,
     history,
     historyDrawerVisible,
     setHistoryDrawerVisible,
@@ -32,22 +33,31 @@ export const StockCalculator: React.FC = () => {
     clearHistory,
     deleteHistory,
     openHistoryDrawer,
-    isFieldValid,
     handleValuesChange,
     currentParams,
   } = useStockCalculator();
 
+  // 历史回填：先同步表单参数（setFieldsValue 不会触发 onValuesChange，
+  // 结果由 hook 的 loadFromHistory 直接写入，避免重复计算与防抖延迟）
+  const handleLoadHistory = useCallback(
+    (item: CalculationHistory) => {
+      form.setFieldsValue(item.params);
+      loadFromHistory(item);
+    },
+    [form, loadFromHistory],
+  );
+
   return (
     <ErrorBoundary>
       <PageContainer>
-        {error && (
+        {errorMessage && (
           <Alert
             title={t("stockCalculator.errors.inputError")}
-            description={error}
+            description={errorMessage}
             type="error"
             showIcon
             closable
-            onClose={() => setError(null)}
+            onClose={() => setErrorMessage(null)}
             className="mb-6 rounded-xl shadow-sm"
             style={{
               animation: "shake 0.5s ease-in-out",
@@ -61,8 +71,7 @@ export const StockCalculator: React.FC = () => {
               <CalculationForm
                 form={form}
                 onValuesChange={handleValuesChange}
-                isFieldValid={isFieldValid}
-                error={error}
+                error={errorMessage}
               />
             </div>
           </Col>
@@ -80,7 +89,7 @@ export const StockCalculator: React.FC = () => {
         onClose={() => setHistoryDrawerVisible(false)}
         history={history}
         isMobile={isMobile}
-        onLoadHistory={loadFromHistory}
+        onLoadHistory={handleLoadHistory}
         onClearHistory={clearHistory}
         onDeleteHistory={deleteHistory}
       />

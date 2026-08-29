@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  # Covers branch pushes that never become a PR. `main` is excluded because
+  # deploy.yml already builds it.
+  push:
+    branches-ignore: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Vite+ (vp)
+        id: setup-vp
+        uses: voidzero-dev/setup-vp@v1.18.0
+        with:
+          node-version: "24"
+          cache: true
+          run-install: false
+
+      - name: Install dependencies
+        run: vp install --frozen-lockfile
+
+      - name: Format check
+        run: vp run format:check
+
+      - name: Lint
+        run: vp run lint
+
+      - name: Type check
+        run: vp run typecheck
+
+      - name: i18n key consistency check
+        run: vp run check:i18n
+
+      - name: Test
+        run: vp test run --coverage
+
+      - name: Build
+        run: vp run build

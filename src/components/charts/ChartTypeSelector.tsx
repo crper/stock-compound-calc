@@ -8,6 +8,9 @@ import { useTranslation } from "react-i18next";
 
 type ChartType = "BAR" | "LINE";
 
+// Segmented 的 onChange 返回宽泛的 string | number，用类型守卫安全收窄
+const isChartType = (val: string | number): val is ChartType => val === "BAR" || val === "LINE";
+
 interface ChartTypeSelectorProps {
   value: ChartType;
   onChange: (type: ChartType) => void;
@@ -32,7 +35,9 @@ export const ChartTypeSelector: React.FC<ChartTypeSelectorProps> = React.memo(
           },
         ]}
         value={value}
-        onChange={(val) => onChange(val as ChartType)}
+        onChange={(val) => {
+          if (isChartType(val)) onChange(val);
+        }}
         size={isMobile ? "small" : "middle"}
       />
     );

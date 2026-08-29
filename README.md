@@ -3,10 +3,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![React 19](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-7-3178c6.svg)](https://www.typescriptlang.org)
-[![Bun](https://img.shields.io/badge/Bun-1.4-f472b6.svg)](https://bun.sh)
+[![Vite+](https://img.shields.io/badge/Vite%2B-0.3-f472b6.svg)](https://viteplus.dev)
 [![Deploy](https://github.com/crper/stock-compound-calc/actions/workflows/deploy.yml/badge.svg)](https://github.com/crper/stock-compound-calc/actions/workflows/deploy.yml)
 
-基于 React 19 + Bun + TypeScript 的股票投资计算工具集，包含连板收益计算器和亏损回本计算器，支持高精度计算、历史记录管理和数据可视化。已优化移动端体验，支持手机浏览器直接访问，可平滑移植到小程序。
+基于 React 19 + Vite+ + TypeScript 的股票投资计算工具集，包含连板收益计算器和亏损回本计算器，支持高精度计算、历史记录管理和数据可视化。已优化移动端体验，支持手机浏览器直接访问，可平滑移植到小程序。
 
 **在线体验**：<https://crper.github.io/stock-compound-calc/>
 
@@ -31,9 +31,10 @@
 - **双向计算**：同时计算涨停和跌停的收益情况
 - **高精度计算**：使用 Decimal.js 确保计算精度
 - **年化收益率**：计算投资的复合年增长率（CAGR）以评估长期表现
-- **数据可视化**：多种图表类型展示（柱状图、曲线图，双Y轴图）
+- **数据可视化**：多种图表类型展示（柱状图、曲线图，双Y轴图），深色模式自适应
 - **实时响应**：参数变化自动触发计算
 - **历史记录**：保存和查询历史计算记录
+- **红涨绿跌**：涨跌配色遵循 A 股惯例（涨=红、跌=绿），结果区与历史区语义统一
 
 ### 📉 亏损回本计算器
 
@@ -69,23 +70,25 @@
 
 ### 后端（简化）
 
-- **Bun 1.4.0** - JavaScript 运行时、构建工具与静态文件服务器
+- **Node.js 22+** - JavaScript 运行时（生产预览由 `vp preview` 提供）
 - **Zod 4.4.3** - Schema 验证
 - **Decimal.js 10.6.0** - 高精度计算
 - **es-toolkit 1.51.0** - 现代工具库
 
 ### 开发工具
 
+- **Vite+ 0.3.0** - 统一工具链（构建、测试、Lint、格式化）
 - **TypeScript 7.0.2** - 类型安全（tsc 原生 Go 版）
-- **oxlint 1.79.0** - 快速代码检查（类型感知，支持100+ ESLint规则）
-- **oxfmt 0.64.0** - 代码格式化
+- **oxlint / oxfmt** - 代码检查与格式化（由 Vite+ 内置提供）
 
 ## 快速开始
+
+> 依赖安装与脚本执行统一由 Vite+（`vp`）驱动，底层包管理器为 npm（锁文件 `package-lock.json`）。所有 `npm run xxx` 命令均可等价换成 `vp run xxx` / 直接使用 `vp` 子命令。
 
 ### 安装依赖
 
 ```bash
-bun install
+vp install
 ```
 
 ### 开发模式
@@ -93,19 +96,21 @@ bun install
 启动开发服务器（端口 3000，支持 HMR）：
 
 ```bash
-bun dev
+npm run dev
 ```
 
 ### 生产构建
 
 ```bash
-bun run build
+npm run build
 ```
 
 ### 生产运行
 
+构建并本地预览：
+
 ```bash
-bun start
+npm run start
 ```
 
 ## 开发指南
@@ -117,31 +122,31 @@ bun start
 TypeScript 类型检查：
 
 ```bash
-bun run typecheck
+npm run typecheck
 ```
 
 运行 lint 检查（类型感知）：
 
 ```bash
-bun run lint
+npm run lint
 ```
 
 自动修复 lint 问题：
 
 ```bash
-bun run lint:fix
+npm run lint:fix
 ```
 
 格式化代码：
 
 ```bash
-bun run format
+npm run format
 ```
 
 检查格式：
 
 ```bash
-bun run format:check
+npm run format:check
 ```
 
 ### 测试
@@ -149,19 +154,25 @@ bun run format:check
 运行所有测试：
 
 ```bash
-bun test
+npm run test
 ```
 
 运行特定测试：
 
 ```bash
-bun test -t "测试名称"
+npm run test -- -t "测试名称"
 ```
 
 监听模式：
 
 ```bash
-bun test --watch
+npm run test:watch
+```
+
+覆盖率报告：
+
+```bash
+npm run test:coverage
 ```
 
 ### 项目结构
@@ -192,8 +203,8 @@ src/
 │   └── locales/                # 翻译文件
 │       ├── zh-CN.ts            # 简体中文
 │       └── en-US.ts            # 英文
-├── services/        # 业务服务层
-│   ├── calculationService.ts # 计算服务
+├── services/        # 业务服务层（计算 + 持久化编排，无 HTTP 语义）
+│   ├── calculationService.ts # 计算与存储编排
 │   └── __tests__/            # 服务测试
 ├── utils/           # 工具函数
 │   ├── stockCalculator.ts    # 连板计算逻辑
@@ -243,7 +254,7 @@ const result = CalculationParamsSchema.safeParse(input);
 import { db } from "@/db/dexie";
 
 await db.calculations.put({
-  id: Date.now().toString(),
+  id: crypto.randomUUID(),
   timestamp: Date.now(),
   initialPrice: params.initialPrice,
   // ...
@@ -295,27 +306,27 @@ declare module "i18next" {
 
 ### 环境要求
 
-- Bun >= 1.4.0
-- Node.js >= 18（如使用 polyfill）
+- Node.js ^20.19 || ^22.18 || >=24.11（Vite+ 运行时要求）
+- npm（随 Node.js 自带；`vp install` 会自动检测并使用）
 
 ### 本地部署
 
 1. 安装依赖
 
 ```bash
-bun install
+vp install
 ```
 
 2. 构建
 
 ```bash
-bun run build
+npm run build
 ```
 
-3. 运行
+3. 运行（本地预览）
 
 ```bash
-bun start
+npm run start
 ```
 
 服务默认监听 `http://localhost:3000`。
@@ -345,189 +356,50 @@ NODE_ENV=production
 **工作流执行步骤：**
 
 1. Checkout 代码
-2. 安装 Bun 与依赖
-3. i18n 翻译键一致性检查
-4. oxlint 类型感知代码检查
-5. TypeScript 类型检查
-6. Bun 单元测试
-7. 生产构建（Bun bundler）
-8. 添加 `.nojekyll` 禁用 Jekyll 处理
-9. 通过 `actions/deploy-pages` 发布到 Pages
+2. 通过 `voidzero-dev/setup-vp` 安装 Vite+（Node 24），再 `vp install --frozen-lockfile` 安装依赖
+3. 格式检查（`vp run format:check`）
+4. oxlint 类型感知代码检查（`vp run lint`）
+5. TypeScript 类型检查（`vp run typecheck`）
+6. i18n 翻译键一致性检查（`vp run check:i18n`）
+7. 单元测试（`vp test run`）
+8. 生产构建（`vp run build`）
+9. 添加 `.nojekyll` 禁用 Jekyll 处理
+10. 通过 `actions/deploy-pages` 发布到 Pages
 
 **为什么用 HashRouter：** 单页应用部署在 GitHub Pages 的子路径下时，BrowserRouter 会因刷新导致 404；HashRouter 将路径放在 `#/` 之后，无需服务端路由重写，对 Pages 完全友好。
 
 **资源路径：** `index.html` 中所有 CSS/JS/图片都使用相对路径（`./chunk-...`），与部署子路径无关，仓库名变动也无需重新构建。
 
-## Oxlint 配置说明
+## 工具链说明（Vite+）
 
-项目使用 oxlint 进行代码检查，配置文件为 `oxlint.json`。
+项目已迁移到 [Vite+](https://viteplus.dev)，构建、测试、Lint、格式化统一由 `vp` 驱动。
+所有工具配置集中在 `vite.config.ts` 的对应配置块（`lint` / `fmt` / `test` / `staged`），
+不再需要独立的 `oxlint.json`、`vitest.config.ts` 等文件。
 
-### 核心特性
+### 常用命令
 
-- **类型感知**: 通过 `--type-aware` 标志启用 TypeScript 类型检查
-- **批量规则**: 使用 categories 隐式继承数百条规则，无需逐条声明
-- **三方插件集成**: 支持 React、TypeScript、Unicorn、Promise 等插件
-- **导入排序**: 实验性导入排序功能自动组织 import 语句
+| 命令                                                   | 说明                                                    |
+| ------------------------------------------------------ | ------------------------------------------------------- |
+| `vp install`                                           | 安装依赖（自动检测 npm 引擎，锁文件 package-lock.json） |
+| `npm run dev` / `vp dev`                               | 启动开发服务器（端口 3000）                             |
+| `npm run build` / `vp build`                           | 生产构建                                                |
+| `npm test` / `vp test run`                             | 运行测试                                                |
+| `npm run lint` / `vp lint --type-aware src`            | 类型感知 Lint                                           |
+| `npm run format` / `vp fmt src scripts vite.config.ts` | 格式化                                                  |
+| `vp check`                                             | 一次跑完 Lint + 格式检查 + 类型检查（提交前推荐）       |
 
-### 配置结构
+### Lint 配置要点
 
-```json
-{
-  "plugins": ["unicorn", "typescript", "oxc", "react", "jsx-a11y", "promise", "react-hooks"],
-  "categories": {
-    "correctness": "error",
-    "suspicious": "warn",
-    "style": "warn",
-    "restriction": "off",
-    "perf": "off",
-    "nursery": "warn"
-  },
-  "rules": {
-    "typescript/no-explicit-any": "error",
-    "typescript/no-unsafe-assignment": "error",
-    "typescript/no-unsafe-call": "error",
-    "typescript/no-unsafe-member-access": "error"
-  }
-}
-```
+- **类型感知**：开启 `typeAware` 与 `typeCheck`，可捕获 `no-unsafe-*` 等类型问题
+- **批量规则**：用 `categories` 继承规则集，再在 `rules` 中按需覆盖
+- **三方插件**：`unicorn`、`typescript`、`oxc`、`react`、`jsx-a11y`、`promise`
+- **已关闭的高噪声纯风格规则**：`no-magic-numbers`、`no-ternary`、`jsx-max-depth`、`sort-keys` 等；
+  另外 `unicorn/filename-case` 与本项目 PascalCase 组件命名约定冲突，
+  `react/react-in-jsx-scope` 在项目使用自动 JSX runtime 时属于误报，均已关闭
 
-### 规则分类
+### 代码分割
 
-- **correctness**: 代码错误或无用代码
-- **suspicious**: 可能有问题或无用的代码
-- **style**: 风格一致性规则
-- **restriction**: 禁止特定模式或功能
-- **perf**: 性能优化规则
-- **nursery**: 开发中的实验性规则
+首屏只加载连板计算器，图表（Recharts）与「关于」「亏损回本」页面按需懒加载，
+首屏 JS 体积相比单包方案减少约 48%。
 
 更多详情见 [AGENTS.md](./AGENTS.md)。
-
-## 更新日志
-
-### 2026-08-24
-
-**依赖全面更新（依赖最新稳定版）**
-
-- antd 6.3.0 → 6.6.1
-- @ant-design/icons 6.1.0 → 6.3.2
-- react 19.2.4 → 19.2.8
-- react-dom 19.2.4 → 19.2.8
-- react-router-dom 7.13.0 → 7.18.2
-- i18next 25.8.6 → 26.4.0（主版本）
-- react-i18next 16.5.4 → 17.0.12（主版本）
-- i18next-browser-languagedetector 8.2.0 → 8.2.1
-- dexie 4.3.0 → 4.4.5
-- dexie-react-hooks 4.2.0 → 4.4.0
-- es-toolkit 1.44.0 → 1.51.0
-- dayjs 1.11.19 → 1.11.23
-- recharts 3.7.0 → 3.10.1
-- tailwindcss 4.1.18 → 4.3.3
-- zod 4.3.6 → 4.4.3
-- @types/react 19.2.14 → 19.2.18
-- @types/react-dom 19.2.3 → 19.2.4
-- @types/bun latest → 1.4.0
-- oxlint 1.47.0 → 1.79.0
-- oxlint-tsgolint 0.11.5 → 7.0.2001
-- oxfmt 0.28.0 → 0.64.0
-- **TypeScript 5.9.3 → 7.0.2**（升级到原生 Go 版 tsc）
-
-**TypeScript 7 适配**
-
-- `bun-env.d.ts` 新增 `declare module "*.css"`（TS7 严格化 side-effect CSS 导入类型检查）
-- `HistoryDrawer.tsx` 修复 `count: number | undefined` 类型错误（`?? 0` 兜底）
-
-**代码清理与质量提升**
-
-- 删除冗余文件：`package-lock.json`（项目用 bun）、`calculations.db`（SQLite 残留）、`todo.md`（空文件）、`scripts/test-all.sh`（含硬编码假统计）、`scripts/e2e-test.sh`（依赖 agent-browser 环境的本地脚本）
-- 删除整目录 `src/config/`（含服务端 env 残留、DB_PATH、未生效的 decimal 精度配置）
-- 删除已废弃组件：`src/components/navigation/NavMenu.tsx`（旧导航）、`src/components/layout/MobileNavigation.tsx`（被 NavigationMenu 抽屉模式替代）
-- 删除死常量：`API_LIMITS`、`SPACING`/`BREAKPOINTS` 快捷导出、`DECIMAL_CONFIG`（从未生效）、`UI_CONSTANTS.RESPONSIVE_BREAKPOINT`（被硬编码）
-- 删除死 schema：`BatchDeleteSchema`/`BatchDeleteRequest`
-- 清理 `components/index.ts` 死导出（LanguageSelector、ResultOverviewCard、BasicChart、ChartTypeSelector 等）
-- 简化 `NavigationMenu.tsx`：删除已无消费者的 `isDrawer` 抽屉分支
-- `useResponsive` 默认值改用 `UI_CONSTANTS.RESPONSIVE_BREAKPOINT` 替代硬编码 768
-- 优化 import 排序与死代码
-
-**移动端体验优化（为移植小程序做准备）**
-
-- 新增 `MobileTabBar` 组件：小程序风格固定底部 TabBar，3 标签（连板计算 / 亏损回本 / 关于），active 态用主色着色，含 `aria-current` 无障碍属性
-- `MainLayout` 重构：
-  - 桌面端保留水平导航菜单
-  - 移动端使用底部 TabBar，移除汉堡菜单+Drawer
-  - 移动端头部右侧新增主题切换 + 语言切换快捷按钮（紧凑 40×40）
-  - 移动端头部高度 64px → 56px
-- 安全区适配：`env(safe-area-inset-bottom)` 应用于 TabBar 高度、HistoryFloatButton bottom 偏移、Footer padding
-- `index.html` viewport 加 `viewport-fit=cover`（iPhone 全面屏）、新增 `theme-color`/`description`/`apple-mobile-web-app-capable` meta
-- `index.css` 全局：`touch-action: manipulation`（禁用双击缩放、保留捏合）、`-webkit-tap-highlight-color: transparent`、字体抗锯齿
-- `HistoryFloatButton` 移动端 bottom 自动避开 TabBar
-- 所有资源使用相对路径（`./...`），便于 GitHub Pages 子路径部署
-
-**GitHub Pages 自动部署**
-
-- 新增 `.github/workflows/deploy.yml`：push 到 main / workflow_dispatch 触发
-- 步骤：install → i18n 检查 → lint → typecheck → test → build → 上传 dist → deploy-pages
-- 缓存 Bun 安装以加速
-- 写入 `dist/.nojekyll` 禁用 Jekyll 处理
-
-**质量验证**
-
-- oxlint 类型感知：0 warnings, 0 errors（66 文件，111 规则）
-- TypeScript 7.0.2 类型检查：通过
-- 单元测试：86 / 86 通过（5 个文件）
-- i18n 翻译键：193 个中英文一致
-- 生产构建：成功，dist 产物 2.21 MB JS + 54 KB CSS
-
-### 2026-02-12
-
-**依赖更新**
-
-- antd 6.2.3 → 6.3.0
-- i18next 25.8.4 → 25.8.6
-- oxlint 1.43.0 → 1.47.0
-- oxlint-tsgolint 0.11.4 → 0.11.5
-- @types/react 19.2.10 → 19.2.14
-- @types/bun 更新到最新
-
-**类型安全优化**
-
-- 定义 `ValidationKey` 联合类型，实现验证键的类型安全
-- 移除 `as never` 类型断言，使用规范类型推断
-- 删除废弃的 `getFieldErrorMessage` 函数
-- 修复 package.json 中 typecheck 命令（`bun run tsc` → `bunx tsc`）
-- 添加缺失的翻译键：`common.tags.lossRecovery`、`stockCalculator.results.metrics.tooltip`
-
-### 2026-02-08
-
-**i18n 类型安全重构**
-
-- 采用 i18next 官方类型安全模式，使用 `as const` 和 `CustomTypeOptions`
-- 实现完整的翻译键 IDE 自动补全支持
-- 添加错误类型翻译：`common.errors.types.{validation|calculation|network|system}`
-- 优化错误处理逻辑，使用类型安全的 switch 语句替代模板字符串
-
-**移动端优化**
-
-- 历史记录 Drawer 移动端尺寸调整为 85%，避免全屏遮挡
-- 表单组件支持响应式尺寸（Input、Select、DatePicker）
-- PC 端布局宽度从 1280px 扩展至 1600px
-
-**技术改进**
-
-- 清理未使用的导入（FooterContent 中的 Space）
-- 使用 `Form.useWatch` 替代 `form.getFieldValue` 避免警告
-- 图表容器添加防抖机制 (debounce=1)
-- Drawer size 属性废弃 API 迁移完成
-
-**代码质量**
-
-- oxlint 类型感知检查：0 warnings, 0 errors
-- 测试覆盖率：86 个测试全部通过
-- 生产构建成功，bundle 大小优化
-
-## 许可证
-
-本项目基于 [MIT License](./LICENSE) 开源，可自由用于个人学习与商业用途，转载请注明出处。
-
-## 免责声明
-
-本项目仅供学习和研究使用，不构成任何投资建议。股市有风险，投资需谨慎。开发者不对使用本工具产生的任何直接或间接损失承担责任。

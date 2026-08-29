@@ -283,9 +283,15 @@
     transform: scale(1.2);
   }
 
-  /* 修复 Slider 刻度挤压 */
+  /* 修复 Slider 刻度挤压；同时加深文字色，
+     antd 默认的 rgba(0,0,0,.45) 在小字号下达不到 WCAG AA 4.5:1 */
   .ant-slider-mark-text {
     white-space: nowrap !important;
+    color: rgba(0, 0, 0, 0.65);
+  }
+
+  .dark .ant-slider-mark-text {
+    color: rgba(255, 255, 255, 0.75);
   }
 
   /* 卡片悬停效果 */
@@ -324,6 +330,40 @@
       transition-duration: 0.01ms !important;
     }
   }
+}
+
+/* ========== 吸顶头部 ========== */
+/* 移动端页面很长，吸顶保证导航与主题切换随时可用；
+   z-index 低于底部 TabBar(100)，避免两者重叠时互相遮挡 */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+/* ========== 跳转到主内容（键盘/读屏无障碍） ========== */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 200;
+  padding: 10px 16px;
+  border-radius: 0 0 8px 0;
+  background: #667eea;
+  color: #fff;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  left: 0;
+  outline: 2px solid #764ba2;
+  outline-offset: 2px;
+}
+
+/* 主内容作为焦点目标时不要显示默认焦点框（仅为读屏定位用） */
+#main-content:focus {
+  outline: none;
 }
 
 /* ========== 移动端底部 TabBar（小程序风格） ========== */

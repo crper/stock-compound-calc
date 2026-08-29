@@ -15,7 +15,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { CHART_CONFIG } from "@/constants";
 import type { CalculationResult } from "@/types";
 import { formatCurrency } from "@/utils/formatters";
@@ -66,6 +66,10 @@ const getChartConfig = (isMobile: boolean) => ({
   lineWidth: isMobile ? 2 : 3,
 });
 
+// 纯函数，无闭包依赖，提升到模块级避免每次渲染重建
+const priceTickFormatter = (value: number) => formatCurrency(value, { compact: true, decimals: 1 });
+const priceTooltipFormatter = (value: unknown) => `¥${(Number(value) || 0).toFixed(2)}`;
+
 export const BasicChart: React.FC<BasicChartProps> = React.memo(
   ({ results, isMobile, chartType = "BAR" }) => {
     const { theme } = useTheme();
@@ -103,6 +107,13 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
         tickLine={{ stroke: colors.axisLine }}
       />
     );
+    const commonYAxis = (
+      <YAxis
+        tick={{ fill: colors.axisTick, fontSize: config.tickFontSize }}
+        tickLine={{ stroke: colors.axisLine }}
+        tickFormatter={priceTickFormatter}
+      />
+    );
     const commonTooltip = (
       <Tooltip
         contentStyle={{
@@ -111,18 +122,10 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
           borderRadius: 6,
         }}
         itemStyle={{ color: colors.tooltipText }}
+        formatter={priceTooltipFormatter}
       />
     );
     const commonLegend = <Legend wrapperStyle={{ fontSize: 12 }} />;
-
-    const priceTickFormatter = useCallback(
-      (value: number) => formatCurrency(value, { compact: true, decimals: 1 }),
-      [],
-    );
-    const priceTooltipFormatter = useCallback(
-      (value: unknown) => `¥${(Number(value) || 0).toFixed(2)}`,
-      [],
-    );
 
     if (chartType === "LINE") {
       return (
@@ -133,11 +136,7 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
             <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               {commonGrid}
               {commonXAxis}
-              <YAxis
-                tick={{ fill: "#999", fontSize: config.tickFontSize }}
-                tickLine={{ stroke: "#d9d9d9" }}
-                tickFormatter={priceTickFormatter}
-              />
+              {commonYAxis}
               {commonTooltip}
               {commonLegend}
               <Line
@@ -166,16 +165,8 @@ export const BasicChart: React.FC<BasicChartProps> = React.memo(
           <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             {commonGrid}
             {commonXAxis}
-            <YAxis
-              tick={{ fill: "#999", fontSize: config.tickFontSize }}
-              tickLine={{ stroke: "#d9d9d9" }}
-              tickFormatter={priceTickFormatter}
-            />
-            <Tooltip
-              contentStyle={{ backgroundColor: "rgba(0,0,0,0.85)", color: "#fff", borderRadius: 6 }}
-              itemStyle={{ color: "#fff" }}
-              formatter={priceTooltipFormatter}
-            />
+            {commonYAxis}
+            {commonTooltip}
             {commonLegend}
             <Bar
               dataKey="涨停"

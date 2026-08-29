@@ -3,6 +3,7 @@
  * 显示持仓市值变化和盈亏
  */
 import { Typography } from "antd";
+import { TREND_COLORS } from "@/constants";
 import { formatCurrency, formatPercentage } from "@/utils/formatters";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -22,12 +23,9 @@ interface PositionChangeSectionProps {
 export const PositionChangeSection: React.FC<PositionChangeSectionProps> = React.memo(
   ({ positionValue, positionGain, stockQuantity, isUp }) => {
     const { t } = useTranslation();
-    const bgColorClass = isUp
-      ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
-      : "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800";
-    const textColorClass = isUp
-      ? "text-red-600 dark:text-red-400"
-      : "text-green-600 dark:text-green-400";
+    const colors = isUp ? TREND_COLORS.up : TREND_COLORS.down;
+    const bgColorClass = `${colors.bg} ${colors.border}`;
+    const textColorClass = colors.text;
 
     return (
       <div className={`rounded-lg p-4 border ${bgColorClass}`}>

@@ -24,7 +24,8 @@ export const useHistoryPagination = () => {
 
   const pagination = paginatedHistoryResult?.pagination ?? DEFAULT_PAGINATION;
   const history = paginatedHistoryResult?.data ?? [];
-  const isLoadingHistory = pagination.totalCount === 0;
+  // useLiveQuery 返回 undefined 表示首帧查询尚未完成；空历史（totalCount=0）不是加载中
+  const isLoadingHistory = paginatedHistoryResult === undefined;
 
   // 分页控制
   const goToPage = useCallback((page: number) => {

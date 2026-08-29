@@ -1,8 +1,8 @@
-import { FORM_CONFIG } from "@/constants";
+import { FORM_CONFIG, DEFAULT_VALUES } from "@/constants";
 import { CARD_STYLES, SLIDER_STYLES } from "@/constants/uiPatterns";
 import { useResponsive } from "@/hooks/useResponsive";
 import type { CalculationParams } from "@/types";
-import { getFieldValidationKey } from "@/utils/validator";
+import { getFieldValidationKey, isFieldValid } from "@/utils/validator";
 import type { InputNumberProps } from "antd";
 import { Alert, Button, Card, Form, InputNumber, Slider, Space, Typography } from "antd";
 import type { FormInstance } from "antd/es/form";
@@ -11,20 +11,37 @@ import { useTranslation } from "react-i18next";
 
 const { Text, Title } = Typography;
 
+// 股票数量输入解析：去除千分位逗号后返回数字；无法解析时返回原字符串，
+// rc-input-number 内部会判定为 NaN 而不触发 value 更新（保持输入框文本）
+const parseQuantity: NonNullable<InputNumberProps["parser"]> = (displayValue) => {
+  if (!displayValue) return "";
+  const cleaned = displayValue.replace(/,/g, "");
+  const parsed = Number(cleaned);
+  return Number.isNaN(parsed) ? cleaned : parsed;
+};
+
+// 初始股价解析：去除货币符号/单位/千分位；清空或无法解析时返回原字符串，
+// 避免清空输入框后又被强制回填边界值
+const parsePrice: NonNullable<InputNumberProps["parser"]> = (displayValue) => {
+  if (!displayValue) return "";
+  const cleaned = displayValue.replace(/¥\s?|元|,/g, "");
+  const parsed = Number(cleaned);
+  return Number.isNaN(parsed) ? cleaned : parsed;
+};
+
 interface CalculationFormProps {
   form: FormInstance<CalculationParams>;
   onValuesChange: (changedValues: Partial<CalculationParams>, allValues: CalculationParams) => void;
-  isFieldValid: (value: unknown, fieldName: keyof CalculationParams) => boolean;
   error?: string | null;
 }
 
 export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
-  ({ form, onValuesChange, isFieldValid, error = null }) => {
+  ({ form, onValuesChange, error = null }) => {
     const { t } = useTranslation();
     const { isMobile, size: responsiveSize, cardSize, spacing, buttonSize } = useResponsive();
     const [hoveredPreset, setHoveredPreset] = useState<number | null>(null);
 
-    // 使用 Form.useWatch 监听表单值，避免在渲染期间直接调用 form.getFieldValue
+    // useWatch 仅用于展示（初始市值、预设按钮激活态高亮），不参与计算触发
     const dailyReturnValue = Form.useWatch("dailyReturn", form) ?? 10;
     const boardCountValue = Form.useWatch("boardCount", form) ?? 1;
     const initialPriceValue = Form.useWatch("initialPrice", form);
@@ -64,40 +81,23 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
           help: isValid ? "" : validationKey ? t(validationKey) : "",
         };
       },
-      [isFieldValid, dailyReturnValue, boardCountValue, initialPriceValue, stockQuantityValue],
+      [t, dailyReturnValue, boardCountValue, initialPriceValue, stockQuantityValue],
     );
 
-    // 处理值变化并触发计算
-    const handleFieldChange = useCallback(
-      (fieldName: keyof CalculationParams, value: number | string | null) => {
-        if (value !== null && typeof value !== "string") {
-          form.setFieldsValue({ [fieldName]: value });
-          // 使用 useWatch 获取的最新值构建 allValues
-          const allValues: CalculationParams = {
-            initialPrice: fieldName === "initialPrice" ? value : (initialPriceValue ?? 10),
-            boardCount: fieldName === "boardCount" ? value : (boardCountValue ?? 1),
-            dailyReturn: fieldName === "dailyReturn" ? value : (dailyReturnValue ?? 10),
-            stockQuantity: fieldName === "stockQuantity" ? value : stockQuantityValue,
-          };
-          onValuesChange({ [fieldName]: value }, allValues);
-        }
-      },
-      [
-        form,
-        onValuesChange,
-        initialPriceValue,
-        boardCountValue,
-        dailyReturnValue,
-        stockQuantityValue,
-      ],
-    );
+    // 一次性取各字段的校验状态，JSX 中显式传入 validateStatus/help，避免 props 展开
+    const initialPriceValidation = getFieldValidation("initialPrice");
+    const stockQuantityValidation = getFieldValidation("stockQuantity");
+    const dailyReturnValidation = getFieldValidation("dailyReturn");
+    const boardCountValidation = getFieldValidation("boardCount");
 
-    // 处理预设按钮点击
+    // 预设按钮位于 Form.Item 之外，无法由 antd 注入 value/onChange，
+    // 这里先写回 form store（单一数据源），再用 store 的最新值触发一次计算
     const handlePresetChange = useCallback(
       (value: number) => {
-        handleFieldChange("dailyReturn", value);
+        form.setFieldsValue({ dailyReturn: value });
+        onValuesChange({ dailyReturn: value }, form.getFieldsValue());
       },
-      [handleFieldChange],
+      [form, onValuesChange],
     );
 
     return (
@@ -105,7 +105,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
         size={cardSize}
         title={
           <div className="flex items-center justify-between">
-            <Title level={4} className="!m-0 dark:text-gray-100 text-lg lg:text-base font-semibold">
+            {/* 语义层级用 h2，视觉字号由 className 固定 */}
+            <Title level={2} className="!m-0 dark:text-gray-100 text-lg lg:text-base font-semibold">
               {t("stockCalculator.form.title")}
             </Title>
           </div>
@@ -122,7 +123,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
       >
         {error && (
           <Alert
-            message={t("stockCalculator.errors.inputError")}
+            title={t("stockCalculator.errors.inputError")}
             description={error}
             type="error"
             showIcon
@@ -139,9 +140,9 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
           layout="vertical"
           className="flex-1 flex flex-col"
           initialValues={{
-            initialPrice: 10,
-            boardCount: 1,
-            dailyReturn: 10,
+            initialPrice: DEFAULT_VALUES.INITIAL_PRICE,
+            boardCount: DEFAULT_VALUES.BOARD_COUNT,
+            dailyReturn: DEFAULT_VALUES.DAILY_RETURN,
           }}
           onValuesChange={onValuesChange}
           requiredMark={false}
@@ -161,7 +162,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 </Space>
               }
               tooltip={t("stockCalculator.form.tooltips.initialPrice")}
-              {...getFieldValidation("initialPrice")}
+              validateStatus={initialPriceValidation.validateStatus}
+              help={initialPriceValidation.help}
               style={{ marginBottom: isMobile ? 16 : 20 }}
             >
               <InputNumber
@@ -179,12 +181,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 prefix="¥"
                 suffix={t("stockCalculator.form.units.yuan")}
                 className="hover:border-blue-400 focus:border-blue-500 transition-colors duration-300"
-                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                parser={(value: string | undefined): number => {
-                  const parsed = value ? Number(value.replace(/¥\s?|元|(,*)/g, "")) : 0.01;
-                  return Math.max(0.01, Math.min(1000000000, parsed));
-                }}
-                onChange={(value) => handleFieldChange("initialPrice", value)}
+                formatter={(value) => `${value}`.replace(/\B(?=(?:\d{3})+(?!\d))/g, ",")}
+                parser={parsePrice}
               />
             </Form.Item>
 
@@ -202,7 +200,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 </Space>
               }
               tooltip={t("stockCalculator.form.tooltips.stockQuantity")}
-              {...getFieldValidation("stockQuantity")}
+              validateStatus={stockQuantityValidation.validateStatus}
+              help={stockQuantityValidation.help}
               style={{ marginBottom: isMobile ? 16 : 20 }}
             >
               <InputNumber
@@ -219,15 +218,8 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 size={responsiveSize}
                 suffix={t("stockCalculator.form.units.shares")}
                 className="hover:border-blue-400 focus:border-blue-500 transition-colors duration-300"
-                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                parser={
-                  ((displayValue: string | undefined) => {
-                    if (!displayValue) return null;
-                    const parsed = Number(displayValue.replace(/,/g, ""));
-                    return isNaN(parsed) ? null : parsed;
-                  }) as NonNullable<InputNumberProps["parser"]>
-                }
-                onChange={(value) => handleFieldChange("stockQuantity", value)}
+                formatter={(value) => `${value}`.replace(/\B(?=(?:\d{3})+(?!\d))/g, ",")}
+                parser={parseQuantity}
               />
             </Form.Item>
 
@@ -248,45 +240,49 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               </div>
             )}
 
-            {/* 涨跌幅滑动条 */}
-            <Form.Item
-              name="dailyReturn"
-              {...getFieldValidation("dailyReturn")}
+            {/* 涨跌幅滑动条：Form.Item 直接包裹 Slider，value/onChange 由 antd 注入，
+                样式容器放在 Form.Item 外层，避免包装层导致注入断链 */}
+            <div
+              className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700"
               style={{ marginBottom: 28 }}
             >
-              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
-                <Space size="small" style={{ marginBottom: 12 }} className="whitespace-nowrap">
-                  <Text strong className="dark:text-gray-200 text-base lg:text-sm">
-                    {t("stockCalculator.form.dailyReturn")}
-                  </Text>
-                  <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
-                    ({t("stockCalculator.form.units.percent")})
-                  </Text>
-                </Space>
+              <Space size="small" style={{ marginBottom: 12 }} className="whitespace-nowrap">
+                <Text strong className="dark:text-gray-200 text-base lg:text-sm">
+                  {t("stockCalculator.form.dailyReturn")}
+                </Text>
+                <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
+                  ({t("stockCalculator.form.units.percent")})
+                </Text>
+              </Space>
+              <Form.Item
+                name="dailyReturn"
+                validateStatus={dailyReturnValidation.validateStatus}
+                help={dailyReturnValidation.help}
+                style={{ marginBottom: 0 }}
+              >
                 <Slider
                   min={1}
                   max={30}
                   step={1}
                   marks={FORM_CONFIG.RETURN_SLIDER_MARKS}
-                  value={dailyReturnValue}
+                  // 滑块需要有可访问名称，否则读屏/axe 会把它识别为无名控件
+                  ariaLabelForHandle={t("stockCalculator.form.dailyReturn")}
                   tooltip={{
                     formatter: (val) => `${val}%`,
                     placement: "top",
                     className: "rounded-lg",
                   }}
-                  onChange={handlePresetChange}
                   className="custom-slider"
-                  trackStyle={SLIDER_STYLES.primary.track}
-                  handleStyle={SLIDER_STYLES.primary.handle}
+                  styles={SLIDER_STYLES.primary}
                 />
-                <Text
-                  type="secondary"
-                  className="dark:text-gray-400 block mt-4 text-xs lg:text-[11px]"
-                >
-                  {t("stockCalculator.form.sliderDescriptions.dailyReturn")}
-                </Text>
-              </div>
-            </Form.Item>
+              </Form.Item>
+              <Text
+                type="secondary"
+                className="dark:text-gray-400 block mt-4 text-xs lg:text-[11px]"
+              >
+                {t("stockCalculator.form.sliderDescriptions.dailyReturn")}
+              </Text>
+            </div>
 
             {/* 预设按钮 */}
             <div style={{ marginBottom: 20 }}>
@@ -353,21 +349,22 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
               </Space>
             </div>
 
-            {/* 连板数量滑块 */}
-            <Form.Item
-              name="boardCount"
-              {...getFieldValidation("boardCount")}
-              style={{ marginBottom: 8 }}
-            >
-              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
-                <Space size="small" style={{ marginBottom: 12 }} className="whitespace-nowrap">
-                  <Text strong className="dark:text-gray-200 text-base lg:text-sm">
-                    {t("stockCalculator.form.boardCount")}
-                  </Text>
-                  <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
-                    ({t("stockCalculator.form.units.days")})
-                  </Text>
-                </Space>
+            {/* 连板数量滑块：同上，Form.Item 直接包裹 Slider */}
+            <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
+              <Space size="small" style={{ marginBottom: 12 }} className="whitespace-nowrap">
+                <Text strong className="dark:text-gray-200 text-base lg:text-sm">
+                  {t("stockCalculator.form.boardCount")}
+                </Text>
+                <Text type="secondary" className="dark:text-gray-400 text-xs lg:text-[11px]">
+                  ({t("stockCalculator.form.units.days")})
+                </Text>
+              </Space>
+              <Form.Item
+                name="boardCount"
+                validateStatus={boardCountValidation.validateStatus}
+                help={boardCountValidation.help}
+                style={{ marginBottom: 0 }}
+              >
                 <Slider
                   min={1}
                   max={15}
@@ -378,24 +375,22 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                     10: `10${t("stockCalculator.results.overview.days")}`,
                     15: `15${t("stockCalculator.results.overview.days")}`,
                   }}
-                  value={boardCountValue}
-                  onChange={(value) => handleFieldChange("boardCount", value)}
+                  ariaLabelForHandle={t("stockCalculator.form.boardCount")}
                   tooltip={{
                     formatter: (val) => t("stockCalculator.results.overview.days", { count: val }),
                     className: "rounded-lg",
                   }}
                   className="custom-slider"
-                  trackStyle={SLIDER_STYLES.primary.track}
-                  handleStyle={SLIDER_STYLES.primary.handle}
+                  styles={SLIDER_STYLES.primary}
                 />
-                <Text
-                  type="secondary"
-                  className="dark:text-gray-400 block mt-4 text-xs lg:text-[11px]"
-                >
-                  {t("stockCalculator.form.sliderDescriptions.boardCount")}
-                </Text>
-              </div>
-            </Form.Item>
+              </Form.Item>
+              <Text
+                type="secondary"
+                className="dark:text-gray-400 block mt-4 text-xs lg:text-[11px]"
+              >
+                {t("stockCalculator.form.sliderDescriptions.boardCount")}
+              </Text>
+            </div>
           </div>
         </Form>
       </Card>

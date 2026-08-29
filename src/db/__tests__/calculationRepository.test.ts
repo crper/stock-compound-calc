@@ -1,4 +1,7 @@
-import { describe, expect, it, beforeEach, afterEach } from "bun:test";
+import { setTimeout as sleep } from "node:timers/promises";
+import { afterEach, beforeEach, describe, expect, it } from "vite-plus/test";
+import type { calculationRepository as CalculationRepository } from "../calculationRepository";
+import type { StockCalculatorDB } from "../dexie";
 
 describe("calculationRepository", () => {
   if (typeof indexedDB === "undefined") {
@@ -8,14 +11,14 @@ describe("calculationRepository", () => {
     return;
   }
 
-  let calculationRepository: typeof import("../calculationRepository").calculationRepository;
-  let db: import("../dexie").StockCalculatorDB;
+  let calculationRepository: typeof CalculationRepository;
+  let db: StockCalculatorDB;
 
   beforeEach(async () => {
     const mod = await import("../calculationRepository");
     calculationRepository = mod.calculationRepository;
     const dbMod = await import("../dexie");
-    db = dbMod.db as unknown as import("../dexie").StockCalculatorDB;
+    db = dbMod.db;
     await db.calculations.clear();
   });
 
@@ -32,7 +35,6 @@ describe("calculationRepository", () => {
         finalPrice: 16.1051,
         totalReturn: 61.051,
         totalGain: 6.1051,
-        details: ["第 1 天: 10.00 → 11.00 (+1.00, 10.00%)"],
         dailyDetails: [
           { day: 1, openPrice: 10, closePrice: 11, dailyGain: 1, dailyReturnPercent: 10 },
         ],
@@ -42,7 +44,6 @@ describe("calculationRepository", () => {
         finalPrice: 5.9049,
         totalReturn: -40.951,
         totalGain: -4.0951,
-        details: ["第 1 天: 10.00 → 9.00 (-1.00, -10.00%)"],
         dailyDetails: [
           { day: 1, openPrice: 10, closePrice: 9, dailyGain: -1, dailyReturnPercent: -10 },
         ],
@@ -65,8 +66,8 @@ describe("calculationRepository", () => {
   it("应该获取分页数据", async () => {
     const params = { initialPrice: 10, boardCount: 5, dailyReturn: 10 };
     const results = {
-      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, details: [], dailyDetails: [] },
-      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, details: [], dailyDetails: [] },
+      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, dailyDetails: [] },
+      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, dailyDetails: [] },
     };
 
     await calculationRepository.save(params, results);
@@ -82,8 +83,8 @@ describe("calculationRepository", () => {
   it("应该正确返回分页信息", async () => {
     const params = { initialPrice: 10, boardCount: 5, dailyReturn: 10 };
     const results = {
-      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, details: [], dailyDetails: [] },
-      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, details: [], dailyDetails: [] },
+      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, dailyDetails: [] },
+      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, dailyDetails: [] },
     };
 
     for (let i = 0; i < 15; i++) {
@@ -105,8 +106,8 @@ describe("calculationRepository", () => {
   it("应该删除单条记录", async () => {
     const params = { initialPrice: 10, boardCount: 5, dailyReturn: 10 };
     const results = {
-      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, details: [], dailyDetails: [] },
-      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, details: [], dailyDetails: [] },
+      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, dailyDetails: [] },
+      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, dailyDetails: [] },
     };
 
     const saved = await calculationRepository.save(params, results);
@@ -121,8 +122,8 @@ describe("calculationRepository", () => {
   it("应该批量删除记录", async () => {
     const params = { initialPrice: 10, boardCount: 5, dailyReturn: 10 };
     const results = {
-      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, details: [], dailyDetails: [] },
-      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, details: [], dailyDetails: [] },
+      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, dailyDetails: [] },
+      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, dailyDetails: [] },
     };
 
     const saved1 = await calculationRepository.save(params, results);
@@ -140,8 +141,8 @@ describe("calculationRepository", () => {
   it("应该清空所有记录", async () => {
     const params = { initialPrice: 10, boardCount: 5, dailyReturn: 10 };
     const results = {
-      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, details: [], dailyDetails: [] },
-      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, details: [], dailyDetails: [] },
+      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, dailyDetails: [] },
+      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, dailyDetails: [] },
     };
 
     await calculationRepository.save(params, results);
@@ -156,14 +157,14 @@ describe("calculationRepository", () => {
   it("应该按时间戳倒序排序", async () => {
     const params = { initialPrice: 10, boardCount: 5, dailyReturn: 10 };
     const results = {
-      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, details: [], dailyDetails: [] },
-      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, details: [], dailyDetails: [] },
+      up: { finalPrice: 16.1, totalReturn: 61, totalGain: 6.1, dailyDetails: [] },
+      down: { finalPrice: 5.9, totalReturn: -41, totalGain: -4.1, dailyDetails: [] },
     };
 
     const first = await calculationRepository.save(params, results);
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await sleep(10);
     const second = await calculationRepository.save({ ...params, initialPrice: 20 }, results);
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await sleep(10);
     const third = await calculationRepository.save({ ...params, initialPrice: 30 }, results);
 
     const result = await calculationRepository.getAll();

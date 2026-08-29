@@ -16,6 +16,12 @@ export const CALCULATION_LIMITS = {
   MAX_INITIAL_PRICE: 1000000000,
   /** 最小初始股价 */
   MIN_INITIAL_PRICE: 0.01,
+  /** 最大股票数量（100亿股） */
+  MAX_STOCK_QUANTITY: 10000000000,
+  /** 最小股票数量 */
+  MIN_STOCK_QUANTITY: 1,
+  /** 最小连板天数 */
+  MIN_BOARD_COUNT: 1,
   /** 最大年化收益率显示阈值 */
   MAX_ANNUALIZED_RETURN: 100000,
   /** 最大增长因子（用于年化计算） */

@@ -3,6 +3,7 @@
  * 简洁显示单股价格变化和收益率
  */
 import { Typography } from "antd";
+import { TREND_COLORS } from "@/constants";
 import { formatCurrency, formatPercentage } from "@/utils/formatters";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -19,9 +20,7 @@ interface PriceChangeSectionProps {
 export const PriceChangeSection: React.FC<PriceChangeSectionProps> = React.memo(
   ({ initialPrice, finalPrice, totalReturn, isUp }) => {
     const { t } = useTranslation();
-    const colorClass = isUp
-      ? "text-red-500 dark:text-red-400"
-      : "text-green-500 dark:text-green-400";
+    const colorClass = isUp ? TREND_COLORS.up.text : TREND_COLORS.down.text;
 
     return (
       <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4 border border-gray-200 dark:border-gray-700">

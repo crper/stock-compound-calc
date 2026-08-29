@@ -3,3 +3,4 @@
  */
 export { ErrorBoundary } from "./ErrorBoundary";
 export { LoadingState } from "./LoadingState";
+export { PageLoading } from "./PageLoading";

@@ -1,45 +1,21 @@
 import { calculationRepository } from "@/db/calculationRepository";
 import { calculateBidirectionalReturns } from "@/utils/stockCalculator";
 import type { CalculationHistory, CalculationParams, CalculationResult } from "@/types";
-import type { ApiResponse, PaginatedData } from "@/types";
-import { ErrorHandler } from "@/utils/errorHandler";
 
+/**
+ * 计算服务：负责「计算 + 持久化」的编排入口。
+ * 无任何 HTTP 语义，不做响应包装；计算/存储层抛出的本就是 AppError，原样透传。
+ */
 export const calculationService = {
-  calculate: async (
-    params: CalculationParams,
-  ): Promise<{ up: CalculationResult; down: CalculationResult }> => {
-    try {
-      return calculateBidirectionalReturns(params);
-    } catch (error) {
-      throw ErrorHandler.handleUnknown(error);
-    }
-  },
+  calculate: (params: CalculationParams): { up: CalculationResult; down: CalculationResult } =>
+    calculateBidirectionalReturns(params),
 
-  saveCalculation: async (
+  saveCalculation: (
     params: CalculationParams,
     results: { up: CalculationResult; down: CalculationResult },
-  ): Promise<CalculationHistory> => {
-    return calculationRepository.save(params, results);
-  },
+  ): Promise<CalculationHistory> => calculationRepository.save(params, results),
 
-  getPaginatedHistory: async (
-    page: number,
-    limit: number,
-  ): Promise<ApiResponse<PaginatedData<CalculationHistory>>> => {
-    const result = await calculationRepository.getAll({
-      limit,
-      offset: (page - 1) * limit,
-    });
-    return { success: true, data: result };
-  },
+  clearHistory: (): Promise<void> => calculationRepository.clear(),
 
-  clearHistory: async (): Promise<ApiResponse<{ message: string }>> => {
-    await calculationRepository.clear();
-    return { success: true, data: { message: "History cleared" } };
-  },
-
-  deleteHistory: async (ids: string[]): Promise<ApiResponse<{ deletedCount: number }>> => {
-    const deletedCount = await calculationRepository.deleteMany(ids);
-    return { success: true, data: { deletedCount } };
-  },
+  deleteHistory: (ids: string[]): Promise<number> => calculationRepository.deleteMany(ids),
 };

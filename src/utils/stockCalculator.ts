@@ -1,6 +1,6 @@
 import { CALCULATION_LIMITS } from "@/constants";
 import type { CalculationParams, CalculationResult, DailyDetail, KeyMetrics } from "@/types";
-import { ErrorFactory, ErrorHandler } from "@/utils/errorHandler";
+import { ErrorFactory } from "@/utils/errorHandler";
 import { validateCalculationParams as validateParams } from "@/utils/validator";
 import Decimal from "decimal.js";
 
@@ -10,11 +10,8 @@ import Decimal from "decimal.js";
  * 计算股价收益
  */
 export const calculateStockReturns = (params: CalculationParams): CalculationResult => {
-  try {
-    validateParams(params);
-  } catch (error) {
-    throw ErrorHandler.handleUnknown(error);
-  }
+  // validateParams 抛出的本就是 AppError，原样透传
+  validateParams(params);
 
   const { initialPrice, boardCount, dailyReturn, stockQuantity } = params;
 
@@ -36,23 +33,21 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
   let currentPriceDecimal = new Decimal(initialPrice);
   const initialPriceDecimal = new Decimal(initialPrice);
   const dailyReturnDecimal = new Decimal(dailyReturn).div(100);
+  // 每日乘数不随循环变化，提到循环外只构建一次
+  const dailyMultiplierDecimal = new Decimal(1).plus(dailyReturnDecimal);
 
-  const details: string[] = [];
   const dailyDetails: DailyDetail[] = [];
 
   for (let i = 1; i <= boardCount; i++) {
     const previousPriceDecimal = currentPriceDecimal;
 
-    const multiplier = new Decimal(1).plus(dailyReturnDecimal);
-    currentPriceDecimal = currentPriceDecimal.mul(multiplier);
+    currentPriceDecimal = currentPriceDecimal.mul(dailyMultiplierDecimal);
 
     const dailyGainDecimal = currentPriceDecimal.minus(previousPriceDecimal);
-    const dailyReturnPercentDecimal = dailyGainDecimal.div(previousPriceDecimal).mul(100);
 
     const previousPrice = Number(previousPriceDecimal.toString());
     const currentPrice = Number(currentPriceDecimal.toString());
     const dailyGain = Number(dailyGainDecimal.toString());
-    const dailyReturnPercent = Number(dailyReturnPercentDecimal.toString());
 
     if (!isFinite(currentPrice) || currentPrice <= 0) {
       throw ErrorFactory.calculation(`第${i}天计算结果异常，请检查输入参数`, {
@@ -62,16 +57,13 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
       });
     }
 
-    details.push(
-      `第 ${i} 天: ${previousPrice.toFixed(2)} → ${currentPrice.toFixed(2)} (${dailyReturn > 0 ? "+" : ""}${dailyGain.toFixed(2)}, ${dailyReturnPercent.toFixed(2)}%)`,
-    );
-
     dailyDetails.push({
       day: i,
       openPrice: previousPrice,
       closePrice: currentPrice,
       dailyGain,
-      dailyReturnPercent,
+      // 日收益率数学上恒等于输入的 dailyReturn，无需重复计算
+      dailyReturnPercent: dailyReturn,
     });
   }
 
@@ -114,7 +106,6 @@ export const calculateStockReturns = (params: CalculationParams): CalculationRes
     finalPrice,
     totalReturn,
     totalGain,
-    details,
     dailyDetails,
     keyMetrics,
     positionValue,
@@ -168,22 +159,16 @@ export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
   let tenXDays: number | null = null;
 
   if (dailyReturn > 0) {
-    const doublePrice = initialPriceDecimal.mul(2);
-    const tenXPrice = initialPriceDecimal.mul(10);
-
     const multiplierLn = multiplier.ln();
 
-    // Double Days: ln(doublePrice / initialPrice) / ln(multiplier)
-    const doubleRatio = doublePrice.div(initialPriceDecimal);
-    doubleDays = doubleRatio.ln().div(multiplierLn).ceil().toNumber();
+    // Double Days: ln(2) / ln(multiplier)，向上取整
+    doubleDays = new Decimal(2).ln().div(multiplierLn).ceil().toNumber();
 
-    // TenX Days: ln(tenXPrice / initialPrice) / ln(multiplier)
-    const tenXRatio = tenXPrice.div(initialPriceDecimal);
-    tenXDays = tenXRatio.ln().div(multiplierLn).ceil().toNumber();
+    // TenX Days: ln(10) / ln(multiplier)，向上取整
+    tenXDays = new Decimal(10).ln().div(multiplierLn).ceil().toNumber();
   }
 
   const currentPriceDecimal = initialPriceDecimal.mul(multiplier.pow(boardCount));
-  const finalPrice = Number(currentPriceDecimal.toString());
 
   let breakEvenReturn: number | null = null;
   // breakEvenReturn: 从终价回到初始价所需的价格变动百分比（无论盈亏场景）
@@ -192,38 +177,39 @@ export const calculateKeyMetrics = (params: CalculationParams): KeyMetrics => {
   // 计算公式: (finalPrice - initialPrice) / finalPrice × 100
   // 例如: 10→11元(盈利10%), 回撤到10元需要 (11-10)/11×100 = 9.09%
   // 例如: 10→9元(亏损10%), 回升到10元需要 (9-10)/9×100 = -11.11%(即需要11.11%的涨幅)
-  if (finalPrice !== 0) {
-    const breakEvenDecimal = new Decimal(finalPrice).minus(initialPrice).div(finalPrice).mul(100);
+  // 全程 Decimal 链计算，避免 Number 往返引入浮点误差
+  if (!currentPriceDecimal.isZero()) {
+    const breakEvenDecimal = currentPriceDecimal
+      .minus(initialPriceDecimal)
+      .div(currentPriceDecimal)
+      .mul(100);
     breakEvenReturn = Number(breakEvenDecimal.toString());
   }
 
   // 计算年化收益率
   let annualizedReturn: number | null = null;
   if (boardCount > 0) {
-    // 将天数转换为年份（按365天/年计算）
-    const years = new Decimal(boardCount).div(365).toNumber();
-    if (years > 0) {
-      // CAGR = (最终价值 ÷ 初始价值)^(1 ÷ 年数) - 1
-      // 使用对数计算以避免大数计算问题
-      const growthFactor = new Decimal(finalPrice).div(initialPrice);
+    // 年数（按365天/年计算），boardCount > 0 时恒为正
+    const yearsDecimal = new Decimal(boardCount).div(365);
+    // CAGR = (最终价值 ÷ 初始价值)^(1 ÷ 年数) - 1
+    // 全程使用 Decimal 链，避免 Number 往返
+    const growthFactor = currentPriceDecimal.div(initialPriceDecimal);
 
-      // 对于非常大的增长因子，我们需要特别处理
-      if (growthFactor.gt(CALCULATION_LIMITS.MAX_GROWTH_FACTOR)) {
+    // 对于非常大的增长因子，我们需要特别处理
+    if (growthFactor.gt(CALCULATION_LIMITS.MAX_GROWTH_FACTOR)) {
+      annualizedReturn = null;
+    } else {
+      // 使用对数形式计算以避免溢出
+      // CAGR = exp(ln(growthFactor) / years) - 1
+      const cagrDecimal = growthFactor.ln().div(yearsDecimal).exp().minus(1).mul(100);
+      annualizedReturn = Number(cagrDecimal.toString());
+
+      // 检查是否为有限数
+      if (
+        !isFinite(annualizedReturn) ||
+        Math.abs(annualizedReturn) > CALCULATION_LIMITS.MAX_ANNUALIZED_RETURN
+      ) {
         annualizedReturn = null;
-      } else {
-        // 使用对数形式计算以避免溢出
-        // CAGR = exp(ln(growthFactor) / years) - 1
-        const yearsDecimal = new Decimal(boardCount).div(365);
-        const cagrDecimal = growthFactor.ln().div(yearsDecimal).exp().minus(1).mul(100);
-        annualizedReturn = Number(cagrDecimal.toString());
-
-        // 检查是否为有限数
-        if (
-          !isFinite(annualizedReturn) ||
-          Math.abs(annualizedReturn) > CALCULATION_LIMITS.MAX_ANNUALIZED_RETURN
-        ) {
-          annualizedReturn = null;
-        }
       }
     }
   }

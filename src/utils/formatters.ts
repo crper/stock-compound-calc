@@ -9,16 +9,16 @@ import "dayjs/locale/zh-cn";
 dayjs.locale("zh-cn");
 
 /**
- * 安全解析数字字符串
+ * 安全解析数字字符串（空值 / 非法输入一律返回 null）
  */
-const parseNumber = (value: string | number): number | null => {
+const parseNumber = (value: string | number | null | undefined): number | null => {
   if (typeof value === "number") return value;
   if (typeof value !== "string") return null;
 
   const trimmed = value.trim();
   if (!trimmed) return null;
 
-  const regex = /^-?\d+(\.\d+)?$/;
+  const regex = /^-?\d+(?<decimal>\.\d+)?$/;
   if (!regex.test(trimmed)) return null;
 
   const parsed = Number(trimmed);
@@ -97,7 +97,7 @@ export const formatNumber = (
   if (useGrouping) {
     const parts = formatted.split(".");
     if (parts[0]) {
-      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      parts[0] = parts[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
     }
     formatted = parts.join(".");
   }
@@ -130,18 +130,9 @@ export const formatCurrency = (
     ...numberOptions
   } = options;
 
-  if (value === null || value === undefined || value === "") {
-    return "--";
-  }
-
+  // 紧凑模式：对于过大的数值使用万/亿（formatNumber 已兜底非法值，这里只需防 numValue 为 null）
   const numValue = parseNumber(value);
-
-  if (numValue === null) {
-    return "--";
-  }
-
-  // 紧凑模式：对于过大的数值使用万/亿
-  if (compact && Math.abs(numValue) >= 10000) {
+  if (compact && numValue !== null && Math.abs(numValue) >= 10000) {
     let displayValue: number;
     let unit: string;
 
@@ -163,10 +154,10 @@ export const formatCurrency = (
     return symbolPosition === "before" ? `${symbol}${formatted}` : `${formatted}${symbol}`;
   }
 
+  // 非法值（null/undefined/""/非数）由 formatNumber 统一返回 "--"
   const formattedNumber = formatNumber(value, {
     decimals,
     useGrouping: true,
-    showPlus: numberOptions.showPlus,
     ...numberOptions,
   });
 

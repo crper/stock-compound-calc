@@ -1,20 +1,40 @@
 import { db, type CalculationEntity } from "./dexie";
-import type {
-  CalculationHistory,
-  CalculationParams,
-  CalculationResult,
-  PaginatedData,
-} from "@/types";
+import { z } from "zod";
+import {
+  DailyDetailSchema,
+  KeyMetricsSchema,
+  PositionValueSchema,
+  type CalculationHistory,
+  type CalculationParams,
+  type CalculationResult,
+  type DailyDetail,
+  type KeyMetrics,
+  type PositionValue,
+} from "@/schemas";
+import type { PaginatedData } from "@/types";
 import { generateId } from "@/utils/idGenerator";
 
-const safeJsonParse = <T>(json: string | undefined, defaultValue: T): T => {
+// JSON 反序列化统一走 Zod 校验：IndexedDB 属于持久化存储，
+// 结构可能因历史版本/手改而损坏，直接 JSON.parse as T 是不安全的
+const safeJsonParse = <T>(json: string | undefined, schema: z.ZodType<T>, defaultValue: T): T => {
   if (!json) return defaultValue;
   try {
-    return JSON.parse(json) as T;
+    const parsed: unknown = JSON.parse(json);
+    const result = schema.safeParse(parsed);
+    return result.success ? result.data : defaultValue;
   } catch {
     return defaultValue;
   }
 };
+
+const parseDailyDetails = (json: string | undefined): DailyDetail[] =>
+  safeJsonParse(json, z.array(DailyDetailSchema), []);
+
+const parseKeyMetrics = (json: string | undefined): KeyMetrics | undefined =>
+  safeJsonParse(json, KeyMetricsSchema.optional(), undefined);
+
+const parsePositionValue = (json: string | undefined): PositionValue | undefined =>
+  safeJsonParse(json, PositionValueSchema.optional(), undefined);
 
 const entityToHistory = (row: CalculationEntity): CalculationHistory => ({
   id: row.id,
@@ -30,20 +50,18 @@ const entityToHistory = (row: CalculationEntity): CalculationHistory => ({
       finalPrice: row.finalPriceUp,
       totalReturn: row.totalReturnUp,
       totalGain: row.totalGainUp,
-      details: safeJsonParse(row.detailsUp, []),
-      dailyDetails: safeJsonParse(row.dailyDetailsUp, []),
-      keyMetrics: safeJsonParse(row.keyMetricsUp, undefined),
-      positionValue: safeJsonParse(row.positionValueUp, undefined),
+      dailyDetails: parseDailyDetails(row.dailyDetailsUp),
+      keyMetrics: parseKeyMetrics(row.keyMetricsUp),
+      positionValue: parsePositionValue(row.positionValueUp),
       positionGain: row.positionGainUp,
     },
     down: {
       finalPrice: row.finalPriceDown,
       totalReturn: row.totalReturnDown,
       totalGain: row.totalGainDown,
-      details: safeJsonParse(row.detailsDown, []),
-      dailyDetails: safeJsonParse(row.dailyDetailsDown, []),
-      keyMetrics: safeJsonParse(row.keyMetricsDown, undefined),
-      positionValue: safeJsonParse(row.positionValueDown, undefined),
+      dailyDetails: parseDailyDetails(row.dailyDetailsDown),
+      keyMetrics: parseKeyMetrics(row.keyMetricsDown),
+      positionValue: parsePositionValue(row.positionValueDown),
       positionGain: row.positionGainDown,
     },
   },
@@ -67,14 +85,12 @@ export const calculationRepository = {
       finalPriceUp: results.up.finalPrice,
       totalReturnUp: results.up.totalReturn,
       totalGainUp: results.up.totalGain,
-      detailsUp: JSON.stringify(results.up.details),
       dailyDetailsUp: JSON.stringify(results.up.dailyDetails),
       positionValueUp: JSON.stringify(results.up.positionValue),
       positionGainUp: results.up.positionGain,
       finalPriceDown: results.down.finalPrice,
       totalReturnDown: results.down.totalReturn,
       totalGainDown: results.down.totalGain,
-      detailsDown: JSON.stringify(results.down.details),
       dailyDetailsDown: JSON.stringify(results.down.dailyDetails),
       keyMetricsUp: JSON.stringify(results.up.keyMetrics),
       keyMetricsDown: JSON.stringify(results.down.keyMetrics),
@@ -98,6 +114,7 @@ export const calculationRepository = {
     const totalCount = await db.calculations.count();
     const rows = await db.calculations
       .orderBy("timestamp")
+      // oxlint-disable-next-line unicorn/no-array-reverse -- 这是 Dexie Collection 的 reverse()（数据库降序查询），并非 Array.prototype.reverse
       .reverse()
       .offset(offset)
       .limit(limit)

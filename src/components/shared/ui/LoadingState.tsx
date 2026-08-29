@@ -18,7 +18,11 @@ interface LoadingStateProps {
 
 export const LoadingState: React.FC<LoadingStateProps> = React.memo(
   ({ loading, text, children, showOverlay = true }) => (
-    <Spin spinning={loading} tip={text} wrapperClassName={showOverlay ? "min-h-[100px]" : ""}>
+    <Spin
+      spinning={loading}
+      description={text}
+      wrapperClassName={showOverlay ? "min-h-[100px]" : ""}
+    >
       {children}
     </Spin>
   ),

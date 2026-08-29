@@ -9,8 +9,10 @@
 export const UI_CONSTANTS = {
   /** 防抖延迟时间（毫秒） */
   DEBOUNCE_DELAY_MS: 150,
-  /** 响应式断点（像素） */
+  /** 响应式断点（像素）：小于该值为手机档 */
   RESPONSIVE_BREAKPOINT: 768,
+  /** 平板 / 桌面断点（像素）：大于等于该值为桌面档 */
+  TABLET_BREAKPOINT: 1200,
 } as const;
 
 /**
@@ -51,22 +53,26 @@ export const CHART_CONFIG = {
  * 表单配置常量
  */
 export const FORM_CONFIG = {
-  /** 预设按钮配置 */
+  /**
+   * 预设按钮配置。
+   * color 会作为选中态的背景色并在上面放白字，因此必须达到 WCAG AA 4.5:1：
+   * 原始色 #1890ff / #52c41a / #fa8c16 分别只有 3.24 / 2.29 / 2.15:1，这里换成同色系深一档的取值。
+   */
   PRESETS: [
     {
       value: PRESET_VALUES.A_STOCK_MAIN_BOARD,
       subLabel: "10%",
-      color: "#1890ff",
+      color: "#1677d2", // 4.56:1
     },
     {
       value: PRESET_VALUES.STAR_MARKET,
       subLabel: "20%",
-      color: "#52c41a",
+      color: "#237804", // 5.59:1
     },
     {
       value: PRESET_VALUES.BEIJING_STOCK_EXCHANGE,
       subLabel: "30%",
-      color: "#fa8c16",
+      color: "#ad4e00", // 5.39:1
     },
   ],
   /** 涨跌幅滑块刻度 */
