@@ -33,11 +33,14 @@ jobs:
           # Vite+ requires Node ^20.19 || ^22.18 || >=24.11
           node-version: "24"
           cache: true
-          # Install runs as an explicit step below so `--frozen-lockfile` applies
+          # Install runs as an explicit step below so lockfile policy applies
           run-install: false
 
+      # 不使用 --frozen-lockfile：vite-plus 通过 8 个平台 optionalDependencies 装 native binding，
+      # lockfile 在非 Linux 平台生成时可能跳过 linux binding，导致 CI 上 .node binary 缺失、
+      # 触发 binding 的 WASI 兜底链再次找不到 wasm32-wasi 包。让 npm 在 CI 平台自由解析可避免此问题。
       - name: Install dependencies
-        run: vp install --frozen-lockfile
+        run: vp install --no-frozen-lockfile
 
       - name: Format check
         run: vp run format:check
