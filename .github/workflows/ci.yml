@@ -33,7 +33,9 @@ jobs:
           run-install: false
 
       - name: Install dependencies
-        run: vp install --no-frozen-lockfile
+        run: |
+          rm -f package-lock.json
+          vp install --ignore-scripts
 
       - name: Format check
         run: vp run format:check

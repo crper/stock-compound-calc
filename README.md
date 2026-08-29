@@ -356,9 +356,11 @@ NODE_ENV=production
 **工作流执行步骤：**
 
 1. Checkout 代码
-2. 通过 `voidzero-dev/setup-vp` 安装 Vite+（Node 24），再 `vp install --no-frozen-lockfile` 安装依赖
-   （CI 不使用 `--frozen-lockfile`：vite-plus 通过 8 个平台 optionalDependencies 分发 native binding，
-   跨平台锁文件可能跳过当前平台包，导致 install 后 `.node` 缺失并触发 binding 的 WASI 兜底链失败）
+2. 通过 `voidzero-dev/setup-vp` 安装 Vite+（Node 24），再 `vp install --no-frozen-lockfile --ignore-scripts` 安装依赖
+   （CI 不使用 `--frozen-lockfile`：`vite-plus` 通过 8 个平台 `optionalDependencies` 分发 native binding，
+   跨平台 lockfile 锁定当前 OS 的 tarball，CI 直接 install 仍会缺失当前平台 binding。
+   加 `--ignore-scripts` 是为了跳过 `prepare: vp config` 钩子：钩子会在 binding 装齐前触发 vp 子命令，
+   加载项目 node_modules/vite-plus/binding 失败、进而中断 install 本身。）
 3. 格式检查（`vp run format:check`）
 4. oxlint 类型感知代码检查（`vp run lint`）
 5. TypeScript 类型检查（`vp run typecheck`）
