@@ -33,6 +33,12 @@ jobs:
           run-install: false
 
       - name: Install dependencies
+        # npm has a known bug (npm/cli#4828) where optionalDependencies —
+        # which vite-plus uses to ship per-platform native binaries — are
+        # silently skipped when a lockfile is present. Removing it forces a
+        # fresh resolution so the linux-x64-gnu binary is actually installed.
+        # --ignore-scripts skips the `prepare` hook (`vp config`) which
+        # loads the native binding and would crash before it's ready.
         run: |
           rm -f package-lock.json
           vp install --ignore-scripts

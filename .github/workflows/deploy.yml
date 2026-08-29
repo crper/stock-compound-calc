@@ -33,8 +33,23 @@ jobs:
           # Vite+ requires Node ^20.19 || ^22.18 || >=24.11
           node-version: "24"
           cache: true
-          # Install runs as an explicit step below so lockfile policy applies
-          run-install: true
+          # Install runs as an explicit step below so we can work around
+          # npm's optionalDependencies bug (npm/cli#4828) and skip the
+          # `prepare` hook that would fire before the native binding is
+          # ready.
+          run-install: false
+
+      - name: Install dependencies
+        # npm has a known bug (npm/cli#4828) where optionalDependencies —
+        # which vite-plus uses to ship per-platform native binaries — are
+        # silently skipped when a lockfile is present, even when the entry
+        # matches the current platform/cpu/libc. vite-plus's own error
+        # message recommends removing the lockfile and retrying.
+        # --ignore-scripts skips the `prepare` hook (`vp config`) which
+        # loads the native binding and would otherwise crash mid-install.
+        run: |
+          rm -f package-lock.json
+          vp install --ignore-scripts
 
       - name: Format check
         run: vp run format:check
