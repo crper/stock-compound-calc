@@ -78,13 +78,14 @@ src/
 
 ## 响应式与视觉
 
-- `useResponsive()` 提供 mobile (<768px) / tablet (768–1199px) / desktop (≥1200px) 三档，基于 `useSyncExternalStore` + `matchMedia`，不要改回 resize 监听
-- 断点常量在 `src/constants/index.ts` 的 `UI_CONSTANTS`；栅格用 `Row`/`Col` 的 `xs`/`md`/`lg` 对应三档
+- `useResponsive()` 提供 mobile (<768px) / tablet (768–1199px) / desktop (≥1200px) 三档，断点订阅委托 antd `Grid.useBreakpoint()`（基于 matchMedia），不要改回 resize 监听
+- 断点含义交由 antd 定义：`md: 768` / `xl: 1200` 对应三档上/下界，栅格用 `Row`/`Col` 的 `xs`/`md`/`lg` 对应三档，不再维护独立断点常量
 - 导航：桌面/平板用 `NavigationMenu`，手机端用底部 `MobileTabBar`
 - 新增响应式样式必须同时给出 `dark:` 变体，保持深色/浅色模式兼容
 - 重型依赖（页面、Recharts 图表）用 `React.lazy` + `Suspense` 懒加载
 - 纯图标按钮补 `aria-label`，切换类按钮补 `aria-pressed`
 - **涨跌配色统一为红涨绿跌（A 股惯例）**：一律消费 `src/constants/colors.ts` 的 `TREND_COLORS`，禁止在组件里硬编码涨跌色串
+- **品牌主色（indigo→violet）统一消费 `src/index.css` 的 `@theme` brand token**：Tailwind 类用 `brand`/`brand-deep`/`brand-border`/`brand-soft`（如 `bg-brand`、`text-brand-soft`、`from-brand to-brand-deep`），内联样式用 `var(--color-brand*)`。组件内禁止直接写品牌色 hex（`#667eea`/`#764ba2` 等）；antd seed 色 `colorPrimary` 与 `index.html` 的 `theme-color` 因需具体色值做派生/不支持变量，仅这两处保留字面量
 
 ## i18n 规范
 
@@ -108,7 +109,7 @@ src/
 - ✅ 数据访问用 Dexie + Repository 模式，响应式查询用 `useLiveQuery`（不用 React Query）
 - ✅ service 层只做「计算 + 持久化」编排，不做响应包装（无 `ApiResponse` 假网络层）；计算/存储层抛出的 AppError 原样透传
 - ✅ 异步操作（删除/清空历史等）的错误处理收敛在 hook 内（toast + 日志），UI 组件 await 成功后才提示成功
-- ✅ 数值边界（股价/连板数/涨跌幅/股数）统一引用 `CALCULATION_LIMITS`，Zod schema、validator、InputNumber min/max 三处同源
+- ✅ 数值边界（股价/连板数/涨跌幅/股数）统一引用 `CALCULATION_LIMITS`；Zod schema 引用它作为唯一约束来源，validator 与表单均从 schema 派生，不再各自内联边界
 - ✅ 防抖统一用 es-toolkit `debounce`（与 useStockCalculator 一致），ID 统一用 `crypto.randomUUID()`（见 `utils/idGenerator`，含 legacy fallback）
 - ✅ API/用户输入用 Zod schema 验证
 - ✅ 修改现有文件前先读取内容；提交前必须通过 lint + test
