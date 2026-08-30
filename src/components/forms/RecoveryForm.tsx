@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, Form, Slider, Typography, Space, Flex } from "antd";
+import { Button, Card, Form, Slider, Typography, Space, Flex } from "antd";
 import { useResponsive } from "@/hooks/useResponsive";
 import { CARD_STYLES, SLIDER_STYLES } from "@/constants/uiPatterns";
 import { LAYOUT_CONSTANTS } from "@/constants/layout";
@@ -111,26 +111,17 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
               {t("recoveryCalculator.form.presets.label")}
             </Text>
             <Space wrap>
-              {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((preset) => {
-                const isActive = value === preset;
-                return (
-                  <button
-                    key={preset}
-                    // 位于 <Form> 内，不显式声明 type 会默认按 submit 处理
-                    type="button"
-                    aria-pressed={isActive}
-                    aria-label={`${t("recoveryCalculator.form.presets.label")} ${preset}%`}
-                    onClick={() => onChange(preset)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
-                      isActive
-                        ? "bg-gradient-to-r from-brand to-brand-deep text-white shadow-lg"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                    }`}
-                  >
-                    {preset}%
-                  </button>
-                );
-              })}
+              {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((preset) => (
+                <Button
+                  key={preset}
+                  size="small"
+                  type={value === preset ? "primary" : "default"}
+                  aria-pressed={value === preset}
+                  onClick={() => onChange(preset)}
+                >
+                  {preset}%
+                </Button>
+              ))}
             </Space>
           </div>
         </div>

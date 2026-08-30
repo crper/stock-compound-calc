@@ -98,6 +98,7 @@ src/
 
 - 主题统一在 `src/theme/index.tsx` 的 ConfigProvider 配置（`colorPrimary: #667eea`），不要用 CSS 覆盖组件样式
 - 避免废弃 API：`Space direction="vertical"` → `Flex vertical`；`Statistic valueStyle` → `styles.content`；**新增 `Alert` 一律用 `title=`（禁 `message=`）**；`Slider` 的 `trackStyle/handleStyle` → `styles` 对象
+- **优先复用 antd 原生组件**：能用 `Statistic`/`Button`/`Segmented`/`Row`/`Col` 等原语表达的就直接用原生组件，不要再自造同类轻封装（如自写指标卡片 `MetricItem`、手写 `<button>` 预设组）；同一判定在多格/多行复用时先派生一次（如 `useMemo` 产出 `Set`）再共用，避免重复计算
 - 渲染期间读取表单值用 `Form.useWatch`，不要调 `form.getFieldValue()`（会触发 useForm 警告）
 - **表单数据流单一化**：`Form.Item` 的子元素必须直接接受 antd 注入的 `value/onChange`（不要在中间包一层 `<div>` 导致注入断链）；禁止在子组件 `onChange` 里手动 `setFieldsValue` + 二次调用 `onValuesChange`。位于 `Form.Item` 之外的控件（如预设按钮）是唯一例外：先 `form.setFieldsValue`，再用 `form.getFieldsValue()` 触发一次
 

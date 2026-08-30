@@ -6,6 +6,8 @@
 
 ### 重构
 
+- **善用 antd 原生组件**：`MetricsGrid` 去掉自写 `MetricItem` 卡片封装与手写 `gridTemplateColumns`，改用 antd `Statistic` + `Row`/`Col`（`styles.content` 控制数值样式、`title` 内置 Tooltip）；`RecoveryForm` 预设档位由手写 `<button>` + 内联激活态改为 antd `Button` 主次态，消除重复的激活样式逻辑。
+- **判定收敛为单次派生**：`RecoveryTable` 三处重复的 `Math.abs(lossPercent - currentValue) <= 1` 高亮判定合并为一次 `useMemo` 派生 `Set`，columns 与 `rowClassName` 共用，去除重复计算。
 - **布局扁平化：移除「卡套卡」嵌套**：删除 `PageContainer` / `ContentCard` / `BackgroundDecor` 三个壳组件，计算页内容卡片直接上浮于品牌氛围光（aurora）背景，层级更扁平、留白更激进。
 - **响应式断点委托 antd**：`useResponsive` 改为基于 antd `Grid.useBreakpoint()`（matchMedia），删除自实现的 matchMedia 订阅逻辑与断点常量。
 - **字段校验下沉到 Zod**：`validator.getFieldValidationKey` 改为从 `schema.shape[field].safeParse().issues` 推导翻译键，删除手写的 `CALCULATION_LIMITS` 边界 switch，约束边界只在 Zod schema 一处声明。

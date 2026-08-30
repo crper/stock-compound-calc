@@ -59,9 +59,18 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
     return rows;
   }, []);
 
+  // 高亮「当前亏损档位」：差值 ≤1 的整行统一高亮。
+  // 一次性派生出命中的档位集合，columns 与 rowClassName 复用，避免每格重复计算
+  const highlightedLoss = useMemo(() => {
+    const set = new Set<number>();
+    for (let loss = 0; loss <= 100; loss++) {
+      if (Math.abs(loss - currentValue) <= 1) set.add(loss);
+    }
+    return set;
+  }, [currentValue]);
+
   const getRowClassName = (record: TableData): string => {
-    const diff = Math.abs(record.lossPercent - currentValue);
-    if (diff <= 1) {
+    if (highlightedLoss.has(record.lossPercent)) {
       return "bg-gradient-to-r from-brand/20 to-brand-deep/20 dark:from-brand/30 dark:to-brand-deep/30 font-semibold";
     }
     return "";
@@ -87,7 +96,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       width: isMobile ? 100 : 120,
       align: "center",
       render: (value: Decimal, record: TableData) => {
-        const isHighlighted = Math.abs(record.lossPercent - currentValue) <= 1;
+        const isHighlighted = highlightedLoss.has(record.lossPercent);
         return (
           <Text strong className={isHighlighted ? "text-[#52c41a] dark:text-[#73d13d]" : ""}>
             {formatRecoveryNumber(value)}%
@@ -102,7 +111,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       width: isMobile ? 80 : 100,
       align: "center",
       render: (value: Decimal, record: TableData) => {
-        const isHighlighted = Math.abs(record.lossPercent - currentValue) <= 1;
+        const isHighlighted = highlightedLoss.has(record.lossPercent);
         const displayValue = formatRecoveryNumber(value);
         return (
           <Text
