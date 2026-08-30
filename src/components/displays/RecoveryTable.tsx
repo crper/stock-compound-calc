@@ -62,7 +62,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
   const getRowClassName = (record: TableData): string => {
     const diff = Math.abs(record.lossPercent - currentValue);
     if (diff <= 1) {
-      return "bg-gradient-to-r from-[#667eea]/20 to-[#764ba2]/20 dark:from-[#667eea]/30 dark:to-[#764ba2]/30 font-semibold";
+      return "bg-gradient-to-r from-brand/20 to-brand-deep/20 dark:from-brand/30 dark:to-brand-deep/30 font-semibold";
     }
     return "";
   };
@@ -75,7 +75,7 @@ export const RecoveryTable: React.FC<RecoveryTableProps> = React.memo(({ current
       width: isMobile ? 80 : 100,
       align: "center",
       render: (value: number) => (
-        <Text strong className={value === currentValue ? "text-[#667eea] dark:text-[#8b9ef0]" : ""}>
+        <Text strong className={value === currentValue ? "text-brand dark:text-brand-soft" : ""}>
           {value}%
         </Text>
       ),

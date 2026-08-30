@@ -11,13 +11,12 @@ import { useResponsive } from "@/hooks/useResponsive";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/theme";
 import { LANGUAGES, type Language } from "@/i18n";
+import { BACKGROUND_COLORS } from "@/constants/colors";
+import { CONTENT_MAX_WIDTH } from "@/constants/layout";
 import { HeaderContent } from "./HeaderContent";
 import { FooterContent } from "./FooterContent";
 import { NavigationMenu } from "./NavigationMenu";
 import { MobileTabBar } from "./MobileTabBar";
-
-/** 内容区最大宽度，超宽屏下避免文字行长过长影响阅读 */
-const CONTENT_MAX_WIDTH = 1600;
 
 export const MainLayout: React.FC = React.memo(() => {
   const { isMobile } = useResponsive();
@@ -44,20 +43,29 @@ export const MainLayout: React.FC = React.memo(() => {
     i18n.language === LANGUAGES.ZH_CN ? LANGUAGES.EN_US : LANGUAGES.ZH_CN;
 
   return (
-    <Layout className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <Layout
+      className="min-h-screen transition-colors duration-300"
+      style={{
+        backgroundColor:
+          theme === "dark" ? BACKGROUND_COLORS.base.dark : BACKGROUND_COLORS.base.light,
+        backgroundImage: theme === "dark" ? BACKGROUND_COLORS.dark : BACKGROUND_COLORS.light,
+      }}
+    >
       {/* 键盘用户的跳转链接：视觉隐藏，获得焦点时显示在顶部 */}
       <a href="#main-content" className="skip-to-content">
         {t("common.a11y.skipToContent", { defaultValue: "跳转到主要内容" })}
       </a>
 
-      {/* 头部区域：吸顶，保证长页面滚动时导航始终可达 */}
+      {/* 头部区域：吸顶 + 毛玻璃，滚动时内容从背景透出，更现代的沉浸感 */}
       <Layout.Header
         className="app-header shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors duration-300"
         style={{
           padding: "0 16px",
           height: isMobile ? "56px" : "64px",
           lineHeight: isMobile ? "56px" : "64px",
-          backgroundColor: theme === "dark" ? "#1f2937" : "#ffffff",
+          backgroundColor: theme === "dark" ? "rgba(15, 18, 36, 0.78)" : "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(14px) saturate(1.6)",
+          WebkitBackdropFilter: "blur(14px) saturate(1.6)",
         }}
       >
         <Flex justify="space-between" align="center" style={{ height: "100%" }}>
@@ -100,7 +108,7 @@ export const MainLayout: React.FC = React.memo(() => {
         id="main-content"
         ref={mainRef}
         tabIndex={-1}
-        className={`mx-auto w-full px-4 sm:px-6 lg:px-8 ${isMobile ? "py-4 pb-24" : "py-8"}`}
+        className={`mx-auto w-full px-4 sm:px-6 lg:px-10 ${isMobile ? "py-5 pb-24" : "py-10"}`}
         style={{ maxWidth: CONTENT_MAX_WIDTH }}
       >
         <Outlet />
@@ -108,7 +116,7 @@ export const MainLayout: React.FC = React.memo(() => {
 
       {/* 底部区域 */}
       <Layout.Footer
-        className={`bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 ${
+        className={`text-gray-500 dark:text-gray-400 border-t border-gray-200/70 dark:border-gray-700/60 backdrop-blur-sm ${
           isMobile ? "!py-4 !pb-24" : ""
         }`}
       >

@@ -99,7 +99,3 @@ export function getDifficultyLevel(lossPercent: number): DifficultyInfo {
     bgColor: "bg-red-50 dark:bg-red-900/20",
   };
 }
-
-export function isValidLossPercent(value: unknown): value is number {
-  return typeof value === "number" && value >= 0 && value <= 100;
-}

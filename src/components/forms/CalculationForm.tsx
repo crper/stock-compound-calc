@@ -6,7 +6,8 @@ import { getFieldValidationKey, isFieldValid } from "@/utils/validator";
 import type { InputNumberProps } from "antd";
 import { Alert, Button, Card, Form, InputNumber, Slider, Space, Typography } from "antd";
 import type { FormInstance } from "antd/es/form";
-import React, { useCallback, useState } from "react";
+import Decimal from "decimal.js";
+import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const { Text, Title } = Typography;
@@ -46,6 +47,12 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
     const boardCountValue = Form.useWatch("boardCount", form) ?? 1;
     const initialPriceValue = Form.useWatch("initialPrice", form);
     const stockQuantityValue = Form.useWatch("stockQuantity", form);
+
+    // 初始市值展示：必须走 Decimal 避免浮点误差，转 Number 时经 toString 中转
+    const initialMarketValue = useMemo(() => {
+      if (!initialPriceValue || !stockQuantityValue) return 0;
+      return Number(new Decimal(initialPriceValue).mul(stockQuantityValue).toString());
+    }, [initialPriceValue, stockQuantityValue]);
 
     // 获取字段验证状态和帮助信息
     const getFieldValidation = useCallback(
@@ -180,7 +187,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 size={responsiveSize}
                 prefix="¥"
                 suffix={t("stockCalculator.form.units.yuan")}
-                className="hover:border-blue-400 focus:border-blue-500 transition-colors duration-300"
+                className="hover:border-brand-border focus:border-brand transition-colors duration-300"
                 formatter={(value) => `${value}`.replace(/\B(?=(?:\d{3})+(?!\d))/g, ",")}
                 parser={parsePrice}
               />
@@ -217,7 +224,7 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
                 controls
                 size={responsiveSize}
                 suffix={t("stockCalculator.form.units.shares")}
-                className="hover:border-blue-400 focus:border-blue-500 transition-colors duration-300"
+                className="hover:border-brand-border focus:border-brand transition-colors duration-300"
                 formatter={(value) => `${value}`.replace(/\B(?=(?:\d{3})+(?!\d))/g, ",")}
                 parser={parseQuantity}
               />
@@ -225,14 +232,14 @@ export const CalculationForm: React.FC<CalculationFormProps> = React.memo(
 
             {/* 初始市值显示（当有数量时） */}
             {initialPriceValue && stockQuantityValue && (
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-3 border border-blue-200 dark:border-blue-800 mb-5">
+              <div className="bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-900/20 dark:to-violet-900/20 rounded-xl p-3 border border-indigo-200 dark:border-indigo-800 mb-5">
                 <div className="flex justify-between items-center">
                   <Text className="text-sm text-gray-600 dark:text-gray-400">
                     {t("stockCalculator.form.initialMarketValue")}
                   </Text>
-                  <Text strong className="text-base text-blue-600 dark:text-blue-400">
+                  <Text strong className="text-base text-indigo-600 dark:text-indigo-400">
                     ¥
-                    {(initialPriceValue * stockQuantityValue).toLocaleString("zh-CN", {
+                    {initialMarketValue.toLocaleString("zh-CN", {
                       maximumFractionDigits: 2,
                     })}
                   </Text>

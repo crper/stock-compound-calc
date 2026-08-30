@@ -9,11 +9,11 @@ const { Text, Title } = Typography;
 
 /** 按亏损程度返回警示色（纯函数，与组件状态无关，提升到模块作用域避免每次渲染重建） */
 const getColorByValue = (val: number): string => {
-  if (val < 20) return "#52c41a";
-  if (val < 40) return "#1677ff";
-  if (val < 60) return "#faad14";
-  if (val < 80) return "#fa541c";
-  return "#ff4d4f";
+  if (val < 20) return "#10b981";
+  if (val < 40) return "#38bdf8";
+  if (val < 60) return "#f59e0b";
+  if (val < 80) return "#f97316";
+  return "#ef4444";
 };
 
 interface RecoveryFormProps {
@@ -123,7 +123,7 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = React.memo(({ value, on
                     onClick={() => onChange(preset)}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? "bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-lg"
+                        ? "bg-gradient-to-r from-brand to-brand-deep text-white shadow-lg"
                         : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                     }`}
                   >

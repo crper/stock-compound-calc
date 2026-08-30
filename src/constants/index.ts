@@ -9,10 +9,6 @@
 export const UI_CONSTANTS = {
   /** 防抖延迟时间（毫秒） */
   DEBOUNCE_DELAY_MS: 150,
-  /** 响应式断点（像素）：小于该值为手机档 */
-  RESPONSIVE_BREAKPOINT: 768,
-  /** 平板 / 桌面断点（像素）：大于等于该值为桌面档 */
-  TABLET_BREAKPOINT: 1200,
 } as const;
 
 /**
@@ -25,8 +21,6 @@ export const DEFAULT_VALUES = {
   BOARD_COUNT: 1,
   /** 默认涨跌幅 */
   DAILY_RETURN: 10,
-  /** 默认股票数量 */
-  STOCK_QUANTITY: 100,
 } as const;
 
 /**

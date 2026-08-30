@@ -13,7 +13,6 @@ import {
   ResultsDisplay,
   HistoryDrawer,
   ErrorBoundary,
-  PageContainer,
   HistoryFloatButton,
 } from "@/components";
 
@@ -49,40 +48,33 @@ export const StockCalculator: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <PageContainer>
-        {errorMessage && (
-          <Alert
-            title={t("stockCalculator.errors.inputError")}
-            description={errorMessage}
-            type="error"
-            showIcon
-            closable
-            onClose={() => setErrorMessage(null)}
-            className="mb-6 rounded-xl shadow-sm"
-            style={{
-              animation: "shake 0.5s ease-in-out",
-            }}
-          />
-        )}
+      {errorMessage && (
+        <Alert
+          title={t("stockCalculator.errors.inputError")}
+          description={errorMessage}
+          type="error"
+          showIcon
+          closable={{ onClose: () => setErrorMessage(null) }}
+          className="mb-8 rounded-xl shadow-sm"
+          style={{
+            animation: "shake 0.5s ease-in-out",
+          }}
+        />
+      )}
 
-        <Row gutter={[32, 32]} className="flex-1 items-start">
-          <Col xs={24} lg={12} xl={10} xxl={9}>
-            <div className="h-full animate-[slideIn_0.4s_ease-out]">
-              <CalculationForm
-                form={form}
-                onValuesChange={handleValuesChange}
-                error={errorMessage}
-              />
-            </div>
-          </Col>
+      <Row gutter={[32, 32]} className="flex-1 items-start">
+        <Col xs={24} lg={12} xl={10} xxl={9}>
+          <div className="h-full animate-[slideIn_0.4s_ease-out]">
+            <CalculationForm form={form} onValuesChange={handleValuesChange} error={errorMessage} />
+          </div>
+        </Col>
 
-          <Col xs={24} lg={12} xl={14} xxl={15}>
-            <div className="h-full animate-[slideIn_0.4s_ease-out_0.1s_both]">
-              <ResultsDisplay results={results} isMobile={isMobile} params={currentParams} />
-            </div>
-          </Col>
-        </Row>
-      </PageContainer>
+        <Col xs={24} lg={12} xl={14} xxl={15}>
+          <div className="h-full animate-[slideIn_0.4s_ease-out_0.1s_both]">
+            <ResultsDisplay results={results} isMobile={isMobile} params={currentParams} />
+          </div>
+        </Col>
+      </Row>
 
       <HistoryDrawer
         visible={historyDrawerVisible}

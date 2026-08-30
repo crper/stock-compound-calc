@@ -75,7 +75,7 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(
                   suffix="%"
                   styles={{
                     content: {
-                      color: "#ff4d4f",
+                      color: "#ef4444",
                       fontSize: "2rem",
                       fontWeight: 700,
                     },
@@ -84,7 +84,7 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(
               </Flex>
             </div>
 
-            <div className="p-4 bg-gradient-to-br from-[#667eea]/10 to-[#764ba2]/10 dark:from-[#667eea]/20 dark:to-[#764ba2]/20 rounded-xl border border-[#667eea]/20 dark:border-[#667eea]/30">
+            <div className="p-4 bg-gradient-to-br from-brand/10 to-brand-deep/10 dark:from-brand/20 dark:to-brand-deep/20 rounded-xl border border-brand/20 dark:border-brand/30">
               <Flex vertical gap="small" className="w-full">
                 <Text className="dark:text-gray-300 text-sm flex items-center gap-1">
                   <ArrowUpOutlined className="text-green-500" />
@@ -95,14 +95,14 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(
                   suffix={metrics.isInfinity ? "" : "%"}
                   styles={{
                     content: {
-                      color: metrics.isInfinity ? "#ff4d4f" : "#52c41a",
+                      color: metrics.isInfinity ? "#ef4444" : "#16a34a",
                       fontSize: "2.5rem",
                       fontWeight: 800,
                       background: metrics.isInfinity
                         ? "none"
-                        : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        : "linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-deep) 100%)",
                       WebkitBackgroundClip: metrics.isInfinity ? "none" : "text",
-                      WebkitTextFillColor: metrics.isInfinity ? "#ff4d4f" : "transparent",
+                      WebkitTextFillColor: metrics.isInfinity ? "#ef4444" : "transparent",
                     },
                   }}
                 />
@@ -119,7 +119,7 @@ export const RecoveryResult: React.FC<RecoveryResultProps> = React.memo(
                 <Text
                   className="text-3xl font-bold"
                   style={{
-                    color: metrics.isInfinity ? "#ff4d4f" : "#1677ff",
+                    color: metrics.isInfinity ? "#ef4444" : "var(--color-brand)",
                   }}
                 >
                   {metrics.isInfinity ? "∞" : formatRecoveryNumber(metrics.multiplier)}

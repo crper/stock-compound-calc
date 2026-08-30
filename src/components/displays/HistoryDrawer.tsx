@@ -158,7 +158,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = React.memo(
         title={
           <Flex align="center" gap={isMobile ? 8 : 12} wrap>
             <div
-              className={`${isMobile ? "w-8 h-8" : "w-9 h-9"} rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center flex-shrink-0`}
+              className={`${isMobile ? "w-8 h-8" : "w-9 h-9"} rounded-xl bg-gradient-to-br from-brand to-brand-deep flex items-center justify-center flex-shrink-0`}
             >
               <HistoryOutlined className={`${isMobile ? "text-base" : "text-lg"} text-white`} />
             </div>

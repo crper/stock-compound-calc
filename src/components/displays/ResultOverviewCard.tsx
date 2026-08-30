@@ -72,7 +72,7 @@ export const ResultOverviewCard: React.FC<ResultOverviewCardProps> = React.memo(
           body: `p-5 md:p-6 bg-white dark:bg-gray-800 rounded-b-xl`,
         }}
         hoverable
-        className={`rounded-xl border-2 ${colors.border} overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}
+        className={`rounded-xl border ${colors.border} overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}
       >
         {/* 摘要区 - 始终显示 */}
         <div className={`text-center p-5 rounded-lg border ${colors.bg} ${colors.border}`}>

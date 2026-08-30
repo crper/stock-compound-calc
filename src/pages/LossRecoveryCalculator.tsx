@@ -1,6 +1,5 @@
 /**
  * 亏损回本计算器主页面组件
- * 使用 PageContainer 统一布局管理
  */
 import React from "react";
 import { Card, Row, Col, Drawer, Empty, Tag, Popconfirm, Button, App, Typography } from "antd";
@@ -13,10 +12,8 @@ import {
   RecoveryResult,
   RecoveryTable,
   ErrorBoundary,
-  PageContainer,
   HistoryFloatButton,
 } from "@/components";
-import { PRIMARY_COLORS } from "@/constants/colors";
 
 const { Text } = Typography;
 
@@ -43,36 +40,32 @@ export const LossRecoveryCalculator: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <PageContainer>
-        <Row gutter={[32, 32]} className="flex-1 items-start">
-          {/* 手机单列 / 平板：表单与结果并排、速查表整行 / 桌面三列 */}
-          <Col xs={24} md={12} lg={8}>
-            <div className="h-full animate-[slideIn_0.4s_ease-out]">
-              <RecoveryForm value={lossPercent} onChange={handleLossChange} />
-            </div>
-          </Col>
+      <Row gutter={[32, 32]} className="flex-1 items-start">
+        {/* 手机单列 / 平板：表单与结果并排、速查表整行 / 桌面三列 */}
+        <Col xs={24} md={12} lg={8}>
+          <div className="h-full animate-[slideIn_0.4s_ease-out]">
+            <RecoveryForm value={lossPercent} onChange={handleLossChange} />
+          </div>
+        </Col>
 
-          <Col xs={24} md={12} lg={8}>
-            <div className="h-full animate-[slideIn_0.4s_ease-out_0.1s_both]">
-              <RecoveryResult lossPercent={lossPercent} isMobile={isMobile} />
-            </div>
-          </Col>
+        <Col xs={24} md={12} lg={8}>
+          <div className="h-full animate-[slideIn_0.4s_ease-out_0.1s_both]">
+            <RecoveryResult lossPercent={lossPercent} isMobile={isMobile} />
+          </div>
+        </Col>
 
-          <Col xs={24} md={24} lg={8}>
-            <div className="h-full animate-[slideIn_0.4s_ease-out_0.2s_both]">
-              <RecoveryTable currentValue={lossPercent} />
-            </div>
-          </Col>
-        </Row>
-      </PageContainer>
+        <Col xs={24} md={24} lg={8}>
+          <div className="h-full animate-[slideIn_0.4s_ease-out_0.2s_both]">
+            <RecoveryTable currentValue={lossPercent} />
+          </div>
+        </Col>
+      </Row>
 
       {/* 历史记录抽屉 */}
       <Drawer
         title={
           <div className="flex items-center gap-3">
-            <div
-              className={`w-9 h-9 rounded-xl bg-gradient-to-br ${PRIMARY_COLORS.tailwind.from} ${PRIMARY_COLORS.tailwind.to} flex items-center justify-center`}
-            >
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand to-brand-deep flex items-center justify-center">
               <HistoryOutlined className="text-white text-lg" />
             </div>
             <div className="flex items-center gap-2">

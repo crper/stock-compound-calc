@@ -11,9 +11,3 @@ export { FooterContent } from "./FooterContent";
 export { NavigationMenu } from "./NavigationMenu";
 
 export { MobileTabBar } from "./MobileTabBar";
-
-export { PageContainer } from "./PageContainer";
-
-export { BackgroundDecor } from "./BackgroundDecor";
-
-export { ContentCard } from "./ContentCard";

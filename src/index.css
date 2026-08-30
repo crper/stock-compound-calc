@@ -1,6 +1,15 @@
 @import "tailwindcss";
 @variant dark (&:where(.dark, .dark *));
 
+/* 品牌色单一数据源：由此生成 Tailwind 类（bg-brand/text-brand/from-brand 等）与 CSS 变量（--color-brand*），
+   组件内禁止再直接写 #hex 品牌色，统一引用 brand* token */
+@theme {
+  --color-brand: #667eea;
+  --color-brand-deep: #764ba2;
+  --color-brand-border: #a5b4fc;
+  --color-brand-soft: #8b9cf7;
+}
+
 @layer base {
   :root {
     @apply text-gray-900 bg-white font-sans;
@@ -8,6 +17,8 @@
 
   body {
     @apply m-0 p-0 min-h-screen w-full;
+    /* 金融数字统一等宽数字，切换参数时金额/百分比不抖动 */
+    font-variant-numeric: tabular-nums;
     /* 移动端禁用双击缩放（保留捏合缩放能力，兼顾无障碍） */
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
@@ -239,13 +250,13 @@
   /* 渐变边框动画 */
   @keyframes gradientBorder {
     0% {
-      border-color: #667eea;
+      border-color: var(--color-brand);
     }
     50% {
-      border-color: #764ba2;
+      border-color: var(--color-brand-deep);
     }
     100% {
-      border-color: #667eea;
+      border-color: var(--color-brand);
     }
   }
 
@@ -294,13 +305,21 @@
     color: rgba(255, 255, 255, 0.75);
   }
 
-  /* 卡片悬停效果 */
+  /* 卡片悬停效果：轻微上浮 + 柔和抬升阴影 */
   .ant-card {
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .ant-card:hover {
     transform: translateY(-2px);
+    box-shadow:
+      0 8px 24px -6px rgba(17, 24, 39, 0.12),
+      0 2px 8px rgba(17, 24, 39, 0.06);
+    border-color: rgba(102, 126, 234, 0.3);
+  }
+
+  .dark .ant-card:hover {
+    box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.55);
   }
 
   /* 全局平滑滚动 */
@@ -349,7 +368,7 @@
   z-index: 200;
   padding: 10px 16px;
   border-radius: 0 0 8px 0;
-  background: #667eea;
+  background: var(--color-brand);
   color: #fff;
   font-size: 14px;
   text-decoration: none;
@@ -357,7 +376,7 @@
 
 .skip-to-content:focus {
   left: 0;
-  outline: 2px solid #764ba2;
+  outline: 2px solid var(--color-brand-deep);
   outline-offset: 2px;
 }
 
@@ -413,12 +432,12 @@
 }
 
 .mobile-tab-bar-item-active {
-  color: #667eea;
+  color: var(--color-brand);
   font-weight: 600;
 }
 
 .dark .mobile-tab-bar-item-active {
-  color: #8b9cf7;
+  color: var(--color-brand-soft);
 }
 
 /* 横向短屏（如折叠屏半开）下 TabBar 保持可用 */

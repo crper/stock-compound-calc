@@ -43,7 +43,8 @@ export const HeaderContent: React.FC = () => {
       <div
         className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
         style={{
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          background:
+            "linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-deep) 100%)",
         }}
       >
         <LineChartOutlined className="text-white text-base" />
@@ -54,7 +55,8 @@ export const HeaderContent: React.FC = () => {
         <h1
           className="text-base font-bold truncate"
           style={{
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            background:
+              "linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-deep) 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             margin: 0,

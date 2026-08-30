@@ -9,29 +9,42 @@ export const TREND_COLORS = {
     text: "text-red-600 dark:text-red-400",
     bg: "bg-[#fff2f0] dark:bg-red-900/20",
     border: "border-[#ffccc7] dark:border-red-800/50",
-    divider: "border-red-200 dark:border-red-800/50",
-    iconColor: "text-[#ff4d4f] dark:text-red-400",
+    iconColor: "text-red-500 dark:text-red-400",
   },
   down: {
     text: "text-green-600 dark:text-green-400",
     bg: "bg-[#f6ffed] dark:bg-green-900/20",
     border: "border-[#b7eb8f] dark:border-green-800/50",
-    divider: "border-green-200 dark:border-green-800/50",
-    iconColor: "text-[#52c41a] dark:text-green-400",
+    iconColor: "text-green-500 dark:text-green-400",
   },
 } as const;
 
 /**
  * 主色调配置
- * 用于渐变、按钮、图标等高亮元素
+ * 品牌色值已收口到 src/index.css 的 @theme token（--color-brand* / brand 工具类），
+ * 此处仅保留无法用 CSS 变量承载的投影。
  */
 export const PRIMARY_COLORS = {
-  start: "#667eea",
-  end: "#764ba2",
-  gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-  shadow: "0 4px 14px rgba(102, 126, 234, 0.4)",
-  tailwind: {
-    from: "from-[#667eea]",
-    to: "to-[#764ba2]",
+  /** 品牌主色投影（用于高亮表面） */
+  shadow: "0 4px 14px rgba(102, 126, 234, 0.35)",
+} as const;
+
+/**
+ * 页面全局背景光晕（aurora）
+ * 取代平灰底色，为浅色/深色模式分别提供带品牌色调的柔和背景，
+ * 增强现代感与层次，同时保持低对比度、不干扰内容阅读
+ */
+export const BACKGROUND_COLORS = {
+  /** 浅色模式：冷白基底 + indigo/violet 微妙光晕 */
+  light: `radial-gradient(56rem 56rem at 112% -8%, rgba(102, 126, 234, 0.16), transparent 62%),
+           radial-gradient(48rem 48rem at -12% 4%, rgba(118, 75, 162, 0.12), transparent 56%),
+           radial-gradient(40rem 40rem at 55% 118%, rgba(90, 103, 216, 0.09), transparent 62%)`,
+  /** 深色模式：靛夜基底 + 更克制的品牌光晕 */
+  dark: `radial-gradient(56rem 56rem at 112% -8%, rgba(102, 126, 234, 0.2), transparent 62%),
+          radial-gradient(48rem 48rem at -12% 4%, rgba(118, 75, 162, 0.14), transparent 56%),
+          radial-gradient(40rem 40rem at 55% 118%, rgba(30, 27, 75, 0.55), transparent 62%)`,
+  base: {
+    light: "#f7f8ff",
+    dark: "#0e1224",
   },
 } as const;

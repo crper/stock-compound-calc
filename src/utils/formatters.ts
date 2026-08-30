@@ -74,7 +74,7 @@ interface DateFormatOptions {
  * @param options - 格式化选项
  * @returns 格式化后的字符串
  */
-export const formatNumber = (
+const formatNumber = (
   value: number | string | null | undefined,
   options: NumberFormatOptions = {},
 ): string => {

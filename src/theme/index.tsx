@@ -90,6 +90,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo
         colorPrimaryActive: THEME_COLORS.primaryActive,
         borderRadius: 8,
         fontFamily: DEFAULT_FONT_FAMILY,
+        // 聚焦描边：品牌色柔化，统一输入框 / 按钮 / 滑块的焦点反馈
+        controlOutline: "rgba(90, 103, 216, 0.22)",
         ...(theme === "dark" ? DARK_TOKENS : LIGHT_TEXT_TOKENS),
       },
       components: {
@@ -101,8 +103,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo
         Card: {
           borderRadiusLG: 12,
           borderRadius: 12,
+          // 分层柔和阴影（现代感）：浅层描边 + 远端漫射
           boxShadow:
-            theme === "dark" ? "0 4px 12px rgba(0, 0, 0, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.08)",
+            theme === "dark"
+              ? "0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px -10px rgba(0, 0, 0, 0.55)"
+              : "0 1px 2px rgba(17, 24, 39, 0.06), 0 8px 24px -8px rgba(17, 24, 39, 0.1)",
           colorBgContainer: theme === "dark" ? "#1f2937" : "#fff",
         },
         Button: {
@@ -116,8 +121,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo
           colorBorder: theme === "dark" ? "#4b5563" : "#d9d9d9",
           colorText: theme === "dark" ? "#f3f4f6" : "#000",
           colorTextPlaceholder: theme === "dark" ? "#6b7280" : "#bfbfbf",
-          activeBorderColor: theme === "dark" ? "#667eea" : "#4096ff",
-          hoverBorderColor: theme === "dark" ? "#5a67d8" : "#4096ff",
+          activeBorderColor: theme === "dark" ? "#a5b4fc" : "#667eea",
+          hoverBorderColor: theme === "dark" ? "#8b9cf7" : "#a5b4fc",
         },
         InputNumber: {
           borderRadius: 10,
@@ -125,8 +130,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = React.memo
           colorBorder: theme === "dark" ? "#4b5563" : "#d9d9d9",
           colorText: theme === "dark" ? "#f3f4f6" : "#000",
           colorTextPlaceholder: theme === "dark" ? "#6b7280" : "#bfbfbf",
-          activeBorderColor: theme === "dark" ? "#667eea" : "#4096ff",
-          hoverBorderColor: theme === "dark" ? "#5a67d8" : "#4096ff",
+          activeBorderColor: theme === "dark" ? "#a5b4fc" : "#667eea",
+          hoverBorderColor: theme === "dark" ? "#8b9cf7" : "#a5b4fc",
         },
         Slider: {
           colorPrimary: THEME_COLORS.primary,

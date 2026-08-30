@@ -15,12 +15,6 @@ export const LANGUAGES = {
 
 export type Language = (typeof LANGUAGES)[keyof typeof LANGUAGES];
 
-// 语言显示名称
-export const LANGUAGE_NAMES: Record<Language, string> = {
-  [LANGUAGES.ZH_CN]: "中文",
-  [LANGUAGES.EN_US]: "English",
-};
-
 // i18next 官方推荐的类型定义方式
 export const defaultNS = "translation";
 export const resources = {

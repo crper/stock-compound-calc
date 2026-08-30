@@ -14,7 +14,7 @@ import {
   HeartOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { ErrorBoundary, PageContainer } from "@/components";
+import { ErrorBoundary } from "@/components";
 import alipayImg from "@/assets/sponsor/sponsor_alipay.jpg";
 import wechatImg from "@/assets/sponsor/sponsor_wechat.jpg";
 
@@ -78,7 +78,7 @@ export const About: React.FC = React.memo(() => {
 
   return (
     <ErrorBoundary>
-      <PageContainer>
+      <div className="bg-white/85 dark:bg-gray-900/70 backdrop-blur-xl rounded-3xl border border-gray-100 dark:border-gray-700/60 shadow-xl p-6 sm:p-10 md:p-12">
         {/* Tech Stack */}
         <div className="mb-8">
           <Title level={2} className="!text-xl mb-4 dark:text-white flex items-center gap-2">
@@ -243,7 +243,7 @@ export const About: React.FC = React.memo(() => {
             {t("about.disclaimer.content")}
           </Paragraph>
         </div>
-      </PageContainer>
+      </div>
     </ErrorBoundary>
   );
 });

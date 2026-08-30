@@ -3,7 +3,6 @@ import {
   calculateRecovery,
   formatRecoveryNumber,
   getDifficultyLevel,
-  isValidLossPercent,
   DifficultyLevel,
 } from "../lossRecovery";
 import Decimal from "decimal.js";
@@ -297,83 +296,6 @@ describe("getDifficultyLevel", () => {
       expect(getDifficultyLevel(74.99).level).toBe(DifficultyLevel.VERY_HARD);
       expect(getDifficultyLevel(75).level).toBe(DifficultyLevel.ALMOST_IMPOSSIBLE);
       expect(getDifficultyLevel(100).level).toBe(DifficultyLevel.ALMOST_IMPOSSIBLE);
-    });
-  });
-});
-
-describe("isValidLossPercent", () => {
-  describe("有效值", () => {
-    it("should return true for 0% loss", () => {
-      expect(isValidLossPercent(0)).toBe(true);
-    });
-
-    it("should return true for 50% loss", () => {
-      expect(isValidLossPercent(50)).toBe(true);
-    });
-
-    it("should return true for 100% loss", () => {
-      expect(isValidLossPercent(100)).toBe(true);
-    });
-
-    it("should return true for decimal values", () => {
-      expect(isValidLossPercent(33.33)).toBe(true);
-      expect(isValidLossPercent(0.01)).toBe(true);
-      expect(isValidLossPercent(99.99)).toBe(true);
-    });
-
-    it("should return true for very small values", () => {
-      expect(isValidLossPercent(0.001)).toBe(true);
-    });
-  });
-
-  describe("无效值", () => {
-    it("should return false for negative values", () => {
-      expect(isValidLossPercent(-1)).toBe(false);
-      expect(isValidLossPercent(-10)).toBe(false);
-      expect(isValidLossPercent(-0.01)).toBe(false);
-    });
-
-    it("should return false for values greater than 100", () => {
-      expect(isValidLossPercent(101)).toBe(false);
-      expect(isValidLossPercent(150)).toBe(false);
-      expect(isValidLossPercent(100.01)).toBe(false);
-    });
-
-    it("should return false for non-number types", () => {
-      expect(isValidLossPercent("50")).toBe(false);
-      expect(isValidLossPercent(null)).toBe(false);
-      expect(isValidLossPercent(undefined as unknown)).toBe(false);
-      expect(isValidLossPercent({})).toBe(false);
-    });
-
-    it("should return false for NaN", () => {
-      expect(isValidLossPercent(NaN)).toBe(false);
-    });
-
-    it("should return false for Infinity", () => {
-      expect(isValidLossPercent(Infinity)).toBe(false);
-      expect(isValidLossPercent(-Infinity)).toBe(false);
-    });
-  });
-
-  describe("类型守卫", () => {
-    it("should narrow type correctly", () => {
-      const value: unknown = 50;
-
-      if (isValidLossPercent(value)) {
-        // TypeScript should know value is number here
-        expect(value).toBe(50);
-        expect(typeof value).toBe("number");
-      }
-    });
-
-    it("should not narrow type for invalid values", () => {
-      const value: unknown = "50";
-
-      if (isValidLossPercent(value)) {
-        // This should not happen for invalid values
-        expect.unreachable();
-      }
     });
   });
 });

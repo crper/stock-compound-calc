@@ -21,7 +21,7 @@ export const LoadingState: React.FC<LoadingStateProps> = React.memo(
     <Spin
       spinning={loading}
       description={text}
-      wrapperClassName={showOverlay ? "min-h-[100px]" : ""}
+      classNames={{ root: showOverlay ? "min-h-[100px]" : "" }}
     >
       {children}
     </Spin>
